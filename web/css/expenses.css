@@ -1,0 +1,178 @@
+/*#expenses_app {*/
+/*background: url('/img/vvgps/menuBg.jpg');*/
+/*}*/
+
+/*@media only screen and (max-width: 600px) {*/
+#expenses_app {
+    padding: 10px;
+    min-height: 75%;
+    position: relative;
+    /* transform: translateX(-50%); */
+    /* left: 50%; */
+}
+
+#expenses_app > div > div {
+    padding: 10px 30px;
+}
+
+#expenses_app > div > h2 {
+    text-align: center;
+}
+
+#expenses_app > div > .actions {
+
+}
+
+#expenses_app > div {
+    display: flex;
+    /* height: 100%; */
+    width: 100%;
+    min-height: 100%;
+    flex-direction: column;
+    /* background-color: rgba(255,255,255,0.9); */
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.flex1 {
+    flex-grow: 1;
+}
+
+.btnGroup {
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btnGroup > * {
+    margin: 0 5px;
+}
+
+/*}*/
+
+#groupStack > li {
+    padding: 5px 0;
+}
+
+.centerBox {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.submitIconContainer {
+    margin: 0 auto;
+    font-size: 60px;
+}
+
+.expensesProfilePic {
+    width: 200px;
+    height: 200px;
+    padding: 0;
+    margin: 15px auto;
+    border-radius: 4px;
+}
+
+/*@media only screen and (max-width: 600px) {*/
+/*#expenses_app {*/
+/*!* height: 100%; *!*/
+/*}*/
+/*}*/
+
+.expense-status {
+    color: white;
+    font-weight: bold;
+    padding: 4px 9px;
+    border-radius: 4px;
+}
+
+.expense-status.awaiting {
+    background-color: #ff852c;
+}
+
+.expense-status.approved {
+    background-color: #6faf2a;
+}
+
+.expense-status.processed {
+    background-color: #6faf2a;
+}
+
+.expense-status.denied {
+    background-color: #c9302c;
+}
+
+@media (min-width: 600px) {
+    #expenses_app {
+        max-width: 700px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    #expenses_app > div {
+        background-color: rgba(255, 255, 255, 0.9);
+    }
+}
+
+.expenseStatusExplenation {
+    margin: 10px;
+}
+
+.editPersonData {
+    height: 34px;
+    font-size: 18px !important;
+}
+
+.publicTransportTicketContainer {
+    display: flex;
+    align-items: center;
+}
+
+.publicTransportTicketsGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.publicTransportTicketsGroup > * {
+    padding: 20px 0;
+}
+
+.modalTicketImage {
+    max-width: 80%;
+    margin: 10px auto;
+}
+
+.modalTicketContainer {
+    display: flex;
+    align-items: center;
+    flex-direction:  column;
+}
+
+.estimateDistanceProposal {
+    font-size: 24px;
+}
+
+.green {
+    color: green;
+}
+
+.summary {
+    text-align: center;
+    font-size: 18px;
+    line-height: 38px;
+    max-width: 85%;
+    margin: 36px auto;
+}
+
+.accentuate {
+    background-color: #6db649;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 9px;
+    white-space: nowrap;
+    font-weight: bold;
+}

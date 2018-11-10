@@ -1,0 +1,178 @@
+{% extends "base.html.twig" %}
+{#{% if regionId != 0 %}#}
+    {#{% set expenses_only = true %}#}
+    {#{% set regionId = regionId %}#}
+{#{% endif %}#}
+
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/expenses.css') }}?v={{ random(999999) }}">
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8 centerBox">
+                <h1>Welkom op de onkostentool</h1>
+
+                <span class="alert alert-info">
+                    <h4>De onkostentool staat nog maar in zijn kinderschoentjes en dus kan ik jouw hulp zeker goed gebruiken!</h4>
+                    <p>Heb je ergens een fout gevonden, is er iets niet duidelijk, staan er nog ergens schrijffouten, heb je nog een zot idee voor een uitbreiding of is er volgens jou nog een 'feature' die ontbreekt? Meld het dan hieronder zodat ik er verder mee aan de slag kan gaan :D</p>
+                    <a class="btn btn-yellow" target="_blank" href="https://goo.gl/forms/NkVAowEoqFXlvcaK2">Vul het feedback formulier in!</a>
+                </span>
+
+                <p class="center">Hier kan je al je transport onkosten indienen. Je vindt verder ook een overzicht van je
+                    eerder ingediende onkosten.
+                    {#Voor meer info over waar je een killometervergoeding voor kan indienen, kan je de <a href="">onkostennota</a> raadplegen.#}
+                </p>
+                {% if app.user %}
+                    <a href="{{ path("expenses_add",{ 'regionId': regionId }) }}" class="btn btn-yellow btn-zoom">onkosten toevoegen</a>
+                {% else %}
+                    <div class="alert alert-info width100">
+                        <span>Om onkosten in te dienen moet je ingelogd zijn.</span>
+                        <div class="facebook-login-alert-wrapper">
+                            <div class="register-facebook">
+                                <a href="{{ fbLoginUrl }}" target="_top" class="fb-login-btn"><span class="fa fa-facebook"></span>Login
+                                    met Facebook</a>
+                            </div>
+                        </div>
+                        <span>of met je
+                                <a href="{{ path('security_login_region', {'regionId': regionId}) }}">email</a>.
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-md-2">
+            </div>
+        </div>
+
+        {% if app.user %}
+            <div class="row">
+                <div class="col-md-12 centerBox">
+                    <h2>Ingediende onkosten</h2>
+                </div>
+            </div>
+
+            <div class="row scrollH">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Datum</th>
+                        <th scope="col">Activiteit</th>
+                        <th scope="col">Van</th>
+                        <th scope="col">Naar</th>
+                        {#<th scope="col">Rit info</th>#}
+                        {#<th scope="col">Bedrag</th>#}
+                        <th scope="col">Status</th>
+                        <th scope="col">Meer info</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% set tripCount = 0 %}
+                    {% for trip in trips %}
+                        {% set tripCount = tripCount + 1 %}
+                        <tr>
+                            <td>{{ tripCount }}</td>
+                            <td class="nowrap">{{ trip.date|date('j-n-Y') }}</td>
+                            <td>{{ trip.group.name }} - {{ trip.activity.name }}</td>
+                            <td>{{ trip.from }}</td>
+                            <td>{{ trip.to }}</td>
+                            {#{% if trip.distance %}#}
+                            {#<td>{{ trip.distance }} KM</td>#}
+                            {#{% else %}#}
+                            {#todo: loop over tickets#}
+                            {#<td><a href="{{ trip.tickets }}">ticketje</a></td>#}
+                            {#{% endif %}#}
+                            {#<td>{{ trip.price }} &euro;</td>#}
+                            <td>
+                                <span class="expense-status nowrap {{ trip.status }}">{{ ('trip.status.'~trip.status)|trans }}</span>
+
+                            </td>
+                            {#<td>{{ trip.status }}</td>#}
+                            <td><a href="#" data-toggle="modal" data-target="#tripDetailModal{{ trip.id }}">details</a>
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <div class="expenseStatusExplenation">
+                    <span class="expense-status awaiting">in afwachting</span>
+                    <span> Je onkosten zijn nog niet bekeken door een educatief medewerker.</span>
+                </div>
+                <div class="expenseStatusExplenation">
+                    <span class="expense-status approved">goedgekeurd</span>
+                    <span> Een educatief medewerker heeft je onkost goedgekeurd.</span>
+                </div>
+                <div class="expenseStatusExplenation">
+                    <span class="expense-status processed">behandeld</span>
+                    <span> Je onkosten zijn op weg naar de boekhouding. Je zult ze spoedig op je rekening zien verschijnen.</span>
+                </div>
+                <div class="expenseStatusExplenation">
+                    <span class="expense-status denied">afgekeurd</span>
+                    <span> Kazou heeft besloten je deze onkost niet te vergoeden.</span>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    {# moddals #}
+    <div>
+        {% for trip in trips %}
+            <div class="modal fade" id="tripDetailModal{{ trip.id }}" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Mijn rit van {{ trip.date|date('j-n-Y') }}</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Groep: </strong>{{ trip.group.name }}</p>
+                            <p><strong>Activiteit: </strong>{{ trip.activity }}</p>
+                            <p><strong>Status: </strong><span
+                                        class="expense-status nowrap {{ trip.status }}">{{ ('trip.status.'~trip.status)|trans }}</span>
+                            </p>
+                            <p><strong>Van: </strong>{{ trip.from }}</p>
+                            <p><strong>Naar: </strong>{{ trip.to }}</p>
+                            <p><strong>Voertuig: </strong>
+                                {% if trip.transportType == 'car' %}
+                                    auto
+                                {% elseif trip.transportType == 'OV' %}
+                                    openbaar vervoer
+                                {% endif %}
+                            </p>
+                            <p><strong>Datum activiteit: </strong>{{ trip.date|date('j-n-Y') }}</p>
+                            {% if trip.distance %}
+                                <p><strong>Afstand: </strong>{{ trip.distance }}</p>
+                            {% endif %}
+                            <p><strong>Bedrag: </strong>{{ trip.price }}</p>
+                            <p><strong>Comment: </strong>{{ trip.comment }}</p>
+                            <p><strong>Aangemaakt op: </strong>{{ trip.createdAt|date('j-n-Y H:i:s') }}</p>
+                            {% if trip.tickets %}
+                                {#todo: loop over tickets#}
+                                <p><strong>Ticketjes: </strong></p>
+                                <p class="modalTicketContainer">
+                                    {% for ticket in trip.tickets %}
+                                        <img class="modalTicketImage" src="{{ asset(ticket) }}" alt="">
+                                    {% endfor %}
+                                </p>
+
+                            {% endif %}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

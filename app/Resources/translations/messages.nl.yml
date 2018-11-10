@@ -1,0 +1,28 @@
+vvgps:
+    menu:
+        beforeDeparture: voor het vertrek
+        duringVacation: de vakantie
+        extra: extra
+
+admin:
+    user: gebruiker
+    code: code
+    name: naam
+    parent: parent
+    tripActivity: Activiteit
+    startDate: start datum
+    endDate: eind datum
+    location: locatie
+    general: Algemeen
+    forHolidays: voor vakanties
+    enabled: actief
+    link: link
+
+trip:
+    status:
+        awaiting: in afwachting
+        approved: goedgekeurd
+        processed: behandeld
+        denied: afgekeurd
+    error:
+        distance_vs_estimate_overflow: Omdat het door jou opgegeven aantal kilometers te veel afwijkt van het geschatte aantal kilometers is een opmerking met meer uitleg verplicht.

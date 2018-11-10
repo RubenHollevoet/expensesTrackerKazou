@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="ff27832c-19dd-4cb6-b7e5-e681ab8c4172" name="testing" url="http://kazourmt.be">
+        <fileTransfer host="kazourmt.be" port="4000" privateKey="$USER_HOME$/.ssh/id_rsa" rootFolder="/home/kazour1q/testing.kazourmt.be" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="4000" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="56e9e331-b3d8-4147-9b41-abeaede0ae7f" name="live" url="http://kazourmt.be">
+        <fileTransfer host="kazourmt.be" port="4000" privateKey="$USER_HOME$/.ssh/id_rsa" rootFolder="/home/kazour1q" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="4000" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

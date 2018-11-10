@@ -1,0 +1,18 @@
+.template_imageArray_imageContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.template_imageArray_imageContainer > img {
+    width: 600px;
+    max-width: 80%;
+    margin-bottom: 20px;
+}
+
+
+
+.template_hierarchyType_paddingLeft {
+    padding-left: 40px;
+    background-color: #6db64966;
+    margin-right: 4px;
+}

@@ -1,0 +1,76 @@
+{% extends "base.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/vacanvy.css') }}">
+{% endblock %}
+
+{% block body %}
+    {#TODO: move line to JS block when development is finished and there are no more dump functions#}
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="vacancy_app" :json="setStartData({{ vacancies }})">
+{#<div id="vacancy_app" :json="setStartData({  {{ vacancies }} })">#}
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Open plaatsen</h1>
+                    {#{{ dump(vacancies) }}#}
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-2">
+                    <h3>zoeken:</h3>
+                </div>
+                <div class="col-md-10">
+                    <div class="filters">
+                        <vacancy-filter
+                                v-for="ageGroup in ageGroups"
+                                v-bind:name="ageGroup"
+                                v-bind:key="ageGroup">
+                        </vacancy-filter>
+                    </div>
+                    <span>reset filters</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <h3>filter:</h3>
+                </div>
+                <div class="col-md-10">
+                    <div class="filters">
+
+                    </div>
+                </div>
+            </div>
+            {#<div class="row">#}
+            {#<table>#}
+            {#<tr>#}
+            {#<th>Code</th>#}
+            {#<th>Naam</th>#}
+            {#<th>Plaats</th>#}
+            {#<th>Van</th>#}
+            {#<th>Tot</th>#}
+            {#<th>Functies</th>#}
+            {#<th>Opmerking</th>#}
+            {#<th></th>#}
+            {#</tr>#}
+            {#<tr>#}
+
+            {#</tr>#}
+            {#</table>#}
+            {#</div>#}
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src={{ asset('/js/vue/vacancy.js') }}></script>
+
+{% endblock %}

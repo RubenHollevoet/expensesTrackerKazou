@@ -1,0 +1,522 @@
+{% extends "base.html.twig" %}
+{% if regionId != 0 %}
+    {% set expenses_only = true %}
+{% endif %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/expenses.css') }}?v={{ random(999999) }}">
+    {{ parent() }}
+    <style>
+        @media (min-width: 768px) {
+            .main-content {
+                background: url('/img/vvgps/menuBg.jpg');
+                background-size: cover;
+            }
+        }
+    </style>
+{% endblock %}
+
+{#{% block header %}#}
+{#{% endblock %}#}
+
+{% block body %}
+    {#TODO: move line to JS block when development is finished and there are no more dump functions#}
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <div id="expenses_app"
+            {#{% if app.user %}#}
+         :json="setStartData(
+            {
+                user: {name: '{{ app.user.firstName }} {{ app.user.lastName }}', email: '{{ app.user.email }}', personId: '{{ app.user.personId }}', iban: '{{ app.user.iban }}', address: '{{ app.user.address }}'},
+                regionId: {{ regionId }}
+            }
+         )">
+        {#{% else %}#}
+            {#:json="setUserData({});setRegionId({{ regionId }})">#}
+        {#{% endif %}#}
+        <div v-show="page === 0">
+            <h2>voor we beginnen</h2>
+            <div class="col-md-12">
+                <h3>enkele spelregels</h3>
+                <div class="alert alert-info">
+                    <ul>
+                        <li>We raden iedereen aan om zoveel mogelijk te carpoolen, je bewijst er de aarde (en dus ook
+                            jezelf) een dienst mee!
+                        </li>
+                        <li>Bij misbruik worden er geen onkosten terugbetaald.</li>
+                        <li>
+                            5 keer per jaar betalen wij vervoersonkosten terug. Belangrijk is dat je vergaderingen
+                            onmiddellijk
+                            ingeeft in de onkostentool.<br>
+                            Wanneer je onkosten doorgeeft van een initiatief na de deadline van terugbetaling, kunnen
+                            wij geen
+                            terugbetaling meer voorzien voor dat initiatief.<br>
+                            Volgende data zijn jaarlijks vastgelegd:
+                            <ul>
+                                <li>Herfst: 30 November</li>
+                                <li>Kerst: 31 januari</li>
+                                <li>Krokus: 31 maart</li>
+                                <li>Pasen: 31 mei</li>
+                                <li>Zomer: 30 September</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <span class="flex1"></span>
+            <div class="actions btnGroup">
+                <a href="{{ path('expenses_region', {'regionId': regionId}) }}" class="btn btn-yellow btn-zoom">Terug</a>
+                <span class="btn btn-yellow btn-zoom" v-on:click="nextStep">Akkoord!</span>
+            </div>
+        </div>
+        <div v-show="page === 1">
+            <h2>Wie ben je?</h2>
+            {% if app.user and app.user.picture %}
+                <img src="{{ app.user.picture }}" class="expensesProfilePic">
+            {% else %}
+                <img src="{{ asset('img/profile_placeholder.png') }}" class="expensesProfilePic">
+            {% endif %}
+            <div class="row">
+                <div class="col-md-4 col-xs-12">Naam:</div>
+                <div class="col-md-7 col-xs-10">
+                    {% if(app.user.firstName and app.user.lastName) %}
+                        <input id="name" class="form-control" type="text" v-model="userData.name" disabled>
+                    {% else %}
+                        <input id="name" class="form-control" type="text" v-model="userData.name"
+                               placeholder="voor- en achternaam">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-xs-12">Email:</div>
+                <div class="col-md-7 col-xs-10">
+                    {% if(app.user.email) %}
+                        <input id="email" class="form-control" type="email" v-model="userData.email" disabled>
+                    {% else %}
+                        <input id="email" class="form-control" type="email" v-model="userData.email">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-xs-12">IBAN:</div>
+                <div class="col-md-7 col-xs-10">
+                    {% if(app.user.iban) %}
+                        <input id="iban" class="form-control" placeholder="BE..." type="text" v-model="userData.iban"
+                               v-bind:disabled="!editPersonData.iban">
+                    {% else %}
+                        <input id="iban" class="form-control" placeholder="BE..." type="text" v-model="userData.iban">
+                    {% endif %}
+                </div>
+                <div class="col-md-1 col-xs-2">
+                    <span class="editPersonData btn btn-success fa fa-pencil"
+                          v-on:click="editPersonData.iban=true"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-xs-12">Rijksregisternummer:</div>
+                <div class="col-md-7 col-xs-10">
+                    {% if(app.user.personId) %}
+                        <input id="personId" class="form-control" placeholder="xxxxxxxxx" type="text"
+                               v-model="userData.personId" v-bind:disabled="!editPersonData.personId">
+                    {% else %}
+                        <input id="personId" class="form-control" placeholder="xxxxxxxxx" type="text"
+                               v-model="userData.personId">
+                    {% endif %}
+                </div>
+                <div class="col-md-1 col-xs-2">
+                    <span class="editPersonData btn btn-success fa fa-pencil"
+                          v-on:click="editPersonData.personId=true"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-xs-12">Woonplaats:</div>
+                <div class="col-md-7 col-xs-10">
+                    {% if(app.user.address) %}
+                        <input id="address" class="form-control" placeholder="straat, nummer, postcode, gemeente"
+                               type="text"
+                               v-model="userData.address" v-bind:disabled="!editPersonData.address">
+                    {% else %}
+                        <input id="address" class="form-control" placeholder="straat, nummer, postcode, gemeente"
+                               type="text"
+                               v-model="userData.address">
+                    {% endif %}
+                </div>
+                <div class="col-md-1 col-xs-2">
+                    <span class="editPersonData btn btn-success fa fa-pencil"
+                          v-on:click="editPersonData.address=true"></span>
+                </div>
+            </div>
+            <div class="row" v-show="editPersonData.iban||editPersonData.personId||editPersonData.address">
+                <div class="col-md-12">
+                    <div class="alert alert-info">
+                        Persoonsgegevens die je hier aanpast <strong>zijn van toepassing op je hele account</strong> dus
+                        ook de eerder ingediende onkosten.
+                    </div>
+                </div>
+            </div>
+            <span class="flex1"></span>
+            <div class="col-md-12" v-show="formErrors.length">
+                <div class="<div alert alert-danger">
+                    <ul>
+                        <form-errors
+                                v-for="error in formErrors"
+                                v-bind:error="error"
+                                v-bind:key="error">
+                        </form-errors>
+                    </ul>
+                </div>
+            </div>
+            <div class="actions btnGroup">
+                <span class="btn btn-yellow btn-zoom" v-on:click="prevStep">vorige</span>
+                <span class="btn btn-yellow btn-zoom" v-on:click="nextStep">Dit ben ik</span>
+            </div>
+        </div>
+        <div v-show="page === 2">
+            <h2>Waarvoor dien je Km in?</h2>
+            <div>
+                <h3>activiteit</h3>
+                <ul id="groupStack" class="disableList">
+                    <groupstack-item
+                            v-for="group in groupStack"
+                            v-bind:group="group"
+                            v-bind:key="group.id">
+                    </groupstack-item>
+                </ul>
+                <div class="btnGroup">
+                    <groupsavaliable-item
+                            v-for="group in activeGroups"
+                            v-bind:group="group"
+                            v-bind:key="group.id">
+                    </groupsavaliable-item>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>datum</h3>
+                    <div class="form-group">
+                        <input class="form-control " v-model="tripData.date" type="date">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h3>plaats</h3>
+                    <div class="form-group">
+                        {% if regionId == 0 %}
+                            <span class="btn btn-default" v-on:click="updateTo('CM Mechelen Noord')"
+                                  v-bind:class="[tripData.to === 'CM Mechelen Noord' ? 'btn-primary' : 'btn-default']">Rezzon</span>
+                            <span class="btn btn-default" v-on:click="updateTo('CM Turnhout')"
+                                  v-bind:class="[tripData.to === 'CM Turnhout' ? 'btn-primary' : 'btn-default']">Bar Volontar</span>
+                            <span class="btn btn-default" v-on:click="updateTo('')"
+                                  v-bind:class="[tripData.to !== 'CM Mechelen Noord' && tripData.to !== 'CM Turnhout' ? 'btn-primary' : 'btn-default']">Overige</span>
+                            <input id="meetingLocation" class="form-control"
+                                   v-show="tripData.to !== 'CM Mechelen Noord' && tripData.to !== 'CM Turnhout'"
+                                   v-model="tripData.to" placeholder="waar vond de activiteit plaats?"
+                                   type="text">
+                        {% elseif regionId == 1 %}
+                            <span class="btn btn-default" v-on:click="updateTo('Haachtsesteenweg 1805, 1130 Haren')"
+                                  v-bind:class="[tripData.to === 'Haachtsesteenweg 1805, 1130 Haren' ? 'btn-primary' : 'btn-default']">Verbondsgebouw</span>
+                            <span class="btn btn-default" v-on:click="updateTo('Wilgenlaan 1, 1861 Meise')"
+                                  v-bind:class="[tripData.to === 'Wilgenlaan 1, 1861 Meise' ? 'btn-primary' : 'btn-default']">CM Meise</span>
+                            <span class="btn btn-default" v-on:click="updateTo('Ninoofsesteenweg 176, 1700 Dilbeek')"
+                                  v-bind:class="[tripData.to === 'Ninoofsesteenweg 176, 1700 Dilbeek' ? 'btn-primary' : 'btn-default']">CM Dilbeek</span>
+                            <span class="btn btn-default" v-on:click="updateTo('Molenbos1, 1731 Asse')"
+                                  v-bind:class="[tripData.to === 'Molenbos1, 1731 Asse' ? 'btn-primary' : 'btn-default']">Vertrekplaats Asse</span>
+                            <span class="btn btn-default" v-on:click="updateTo('')"
+                                  v-bind:class="[tripData.to !== 'Haachtsesteenweg 1805, 1130 Haren' && tripData.to !== 'Wilgenlaan 1, 1861 Meise' && tripData.to !== 'Ninoofsesteenweg 176, 1700 Dilbeek' && tripData.to !== 'Molenbos1, 1731 Asse' ? 'btn-primary' : 'btn-default']">Overige</span>
+                            <input id="meetingLocation" class="form-control"
+                                   v-show="tripData.to !== 'Haachtsesteenweg 1805, 1130 Haren' && tripData.to !== 'Wilgenlaan 1, 1861 Meise' && tripData.to !== 'Ninoofsesteenweg 176, 1700 Dilbeek' && tripData.to !== 'Molenbos1, 1731 Asse'"
+                                   v-model="tripData.to" placeholder="waar vond de activiteit plaats?"
+                                   type="text">
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+            <span class="flex1"></span>
+            <div class="col-md-12" v-show="formErrors.length">
+                <div class="<div alert alert-danger">
+                    <ul>
+                        <form-errors
+                                v-for="error in formErrors"
+                                v-bind:error="error"
+                                v-bind:key="error">
+                        </form-errors>
+                    </ul>
+                </div>
+            </div>
+            <div class="actions btnGroup">
+                <span class="btn btn-yellow btn-zoom" v-on:click="prevStep">vorige</span>
+                <span class="btn btn-yellow btn-zoom" v-on:click="nextStep">volgende</span>
+            </div>
+        </div>
+        <div class="" v-show="page === 3">
+            <h2>vervoer?</h2>
+            <div class="col-md-12">
+                <h3>Waar ben je vertrokken?</h3>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="btnGroup" role="group">
+                                <span class="btn btn-default" v-on:click="updateFrom(userData.address)"
+                                      v-bind:class="[tripData.from === userData.address ? 'btn-primary' : 'btn-default']"><span
+                                            class="fa fa-home"></span> Thuis</span>
+                                <span class="btn btn-default" v-on:click="updateFrom('')"
+                                      v-bind:class="[tripData.from !== userData.address ? 'btn-primary' : 'btn-default']">elders</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="btnGroup" role="group">
+                                <input id="departureLocation" class="form-control"
+                                       v-show="tripData.from !== userData.address"
+                                       v-model="tripData.from" @blur.native="calculateDistance()"
+                                       placeholder="vertrekplaats" type="text">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {#{{ form_row(form.from_) }}#}
+                <h3>Welk vervoer heb je gebruikt?</h3>
+                <div class="btnGroup">
+                    <div v-bind:class="[tripData.transportType ? 'car' : '123', '456']"></div>
+                    <span class="btn" v-bind:class="[tripData.transportType === 'car' ? 'btn-primary' : 'btn-default']"
+                          v-on:click="tripData.transportType = 'car'">auto of moto (+50cc)</span>
+                    <span class="btn"
+                          v-bind:class="[tripData.transportType === 'publicTransport' ? 'btn-primary' : 'btn-default']"
+                          v-on:click="tripData.transportType = 'publicTransport'">openbaar vervoer</span>
+                    <span class="btn" v-bind:class="[tripData.transportType === 'bike' ? 'btn-primary' : 'btn-default']"
+                          v-on:click="tripData.transportType = 'bike'">fiets</span>
+                    <span class="btn"
+                          v-bind:class="[tripData.transportType === 'scooter' ? 'btn-primary' : 'btn-default']"
+                          v-on:click="tripData.transportType = 'scooter'">brommer (-50cc)</span>
+                </div>
+                <div class="btnGroup" v-show="tripData.transportType === 'car'">
+                    <span class="btn btn-default"
+                          v-bind:class="[tripData.company === 'soloDriver' ? 'btn-primary' : 'btn-default']"
+                          v-on:click="tripData.company = 'soloDriver'">alleen gereden
+                    </span>
+                    <span class="btn btn-default"
+                          v-bind:class="[tripData.company === 'groupDriver' ? 'btn-primary' : 'btn-default']"
+                          v-on:click="tripData.company = 'groupDriver'">carpool (als bestuurder)
+                    </span>
+                    <span class="btn btn-default"
+                          v-bind:class="[tripData.company === 'carpooler' ? 'btn-primary' : 'btn-default']"
+                          v-on:click="tripData.company = 'carpooler'">carpool (geen bestuurder)
+                    </span>
+                </div>
+                <div v-show="tripData.transportType === 'publicTransport'">
+                    <div class="row form-group" v-if="!tripData.tickets.length">
+                        <h2 class="center">Upload al je ticketjes</h2>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-8">
+                            <input type="file" @change="onFileChange" class="form-control" id="files" name="report"
+                                   multiple="" required="true">
+                        </div>
+                        <div class="col-md-2"></div>
+                    </div>
+                    <div class="row publicTransportTicketsGroup" v-else>
+                        <div class="row publicTransportTicketContainer" v-for="(ticket, i) in tripData.tickets">
+                            <div class="col-md-10 col-xs-10">
+                                <img :src="ticket.content" class="width100"/>
+                            </div>
+                            <div class="col-md-2 col-xs-2">
+                                <span @click="removeTicket(i)" class="btn btn-danger fa fa-remove"></span>
+                            </div>
+                        </div>
+                        <button @click="removeTicket" class="center btn btn-danger">alle afbeeldingen verwijderen
+                        </button>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input class="form-control" v-model="tripData.price" placeholder="vertrekplaats"
+                                       type="number" min="0" max="500"
+                                       step="0.01">
+                                <div class="input-group-addon">&euro;</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                </div>
+                <div v-show="tripData.transportType === 'car' && (tripData.company === 'soloDriver' || tripData.company === 'groupDriver')">
+                    <h3>Hoeveel Km heb je afgelegd? (heen + terug)</h3>
+                    <div v-show="tripData.estimateDistance > 0">
+                        <span class="btnGroup">
+                            <span class="estimateDistanceProposal">
+                                <span>schatting: </span>
+                                <span class="green">${String(tripData.estimateDistance).replace('.',',')} Km</span>
+                            </span>
+                            <span class="btn btn-default"
+                                  v-bind:class="[tripData.distance === tripData.estimateDistance ? 'btn-primary' : 'btn-default']"
+                                  v-on:click="tripData.distance = tripData.estimateDistance">gebruik schatting
+                            </span>
+                            <span class="btn btn-default"
+                                  v-bind:class="[tripData.distance !== tripData.estimateDistance ? 'btn-primary' : 'btn-default']"
+                                  v-on:click="tripData.distance = 0">zelf invullen
+                            </span>
+                        </span>
+                    </div>
+                    <div class="form-group" v-show="tripData.distance !== tripData.estimateDistance">
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input class="form-control" v-model="tripData.distance" placeholder="vertrekplaats"
+                                           type="number" min="0" max="5000"
+                                           step="0.01">
+                                    <div class="input-group-addon">Km</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-info"
+                     v-show="(tripData.company === 'carpooler' && tripData.transportType === 'car') || tripData.transportType === 'bike' || tripData.transportType === 'scooter'">
+                    Helaas, hiervoor betalen we geen onkosten terug. We vragen je toch het formulier in te dienen om zo
+                    een beeld te krijgen van welke vervoersmiddelen er allemaal gebruikt worden.
+                </div>
+                <div>
+                    <h3>Opmerkingen</h3>
+                    <div class="form-group">
+                <textarea class="form-control" v-model="tripData.comment"
+                          placeholder="zijn er nog opmerkingen? Ben je iemand gaan ophalen? Vermeld hier dan wie en waar"
+                          type="text"></textarea>
+                    </div>
+                </div>
+            </div>
+            <span class="flex1"></span>
+            <div class="col-md-12" v-show="formErrors.length">
+                <div class="<div alert alert-danger">
+                    <ul>
+                        <form-errors
+                                v-for="error in formErrors"
+                                v-bind:error="error"
+                                v-bind:key="error">
+                        </form-errors>
+                    </ul>
+                </div>
+            </div>
+            <div class="actions btnGroup">
+                <span class="btn btn-yellow btn-zoom" v-on:click="prevStep">vorige</span>
+                <span class="btn btn-yellow btn-zoom" v-on:click="nextStep">volgende</span>
+            </div>
+        </div>
+        <div v-if="page === 4">
+            <div class="col-md-12">
+                <h2>We zijn er bijna!</h2>
+                <h3>Controleer nog eventjes of je alles juist hebt ingevuld.</h3>
+                <div class="summary" v-show="tripData.transportType === 'car'">Op <span class="accentuate">${formatDateNl(tripData.date)}</span>
+                    heb ik met de auto <span class="accentuate">${String(tripData.distance).replace('.',',')} Km</span> afgelegd om heen en weer
+                    te rijden tussen <span class="accentuate">${tripData.from}</span> en <span class="accentuate">${tripData.to}</span> voor <span class="accentuate">${groupStack[groupStack.length -1].text}</span>
+                    van <span class="accentuate">${groupStack[groupStack.length -2].text}</span>
+                    voor een bedrag van <span class="accentuate">&euro; ${Math.round(tripData.distance*25)/100}</span>
+                    aan
+                    0,25 cent per Km.
+                </div>
+                <div class="summary" v-show="tripData.transportType === 'publicTransport'">Op <span class="accentuate">${formatDateNl(tripData.date)}</span>
+                    heb ik me met het openbaar vervoer verplaatst van <span class="accentuate">${tripData.from}</span>
+                    naar
+                    <span class="accentuate">${tripData.to}</span>
+                    voor <span class="accentuate">${groupStack[groupStack.length -1].text}</span>
+                    van <span class="accentuate">${groupStack[groupStack.length -2].text}</span>
+                    voor een bedrag van <span class="accentuate">&euro; ${tripData.price}</span>.
+                </div>
+                <span class="flex1"></span>
+                <div class="actions btnGroup">
+                    <span class="btn btn-yellow btn-zoom" v-on:click="prevStep">vorige</span>
+                    <span class="btn btn-yellow btn-zoom" v-on:click="submit">bevestigen</span>
+                </div>
+            </div>
+        </div>
+        <div v-show="page === 5">
+            <h2>Bevestigen</h2>
+            <div class="submitIconContainer">
+                <span v-bind:class="submitStatusClass"></span>
+            </div>
+            <h2 v-show="submitStatus === 0">je data is onderweg naar de server</h2>
+            <h2 v-show="submitStatus === 200">Je onkosten zijn succesvol opgeslagen!</h2>
+            <h2 v-show="submitStatus === 500">Er heeft zich een probleem voorgedaan en je onkosten zij niet opgeslagen.
+                Contacteer het Kazou team indien het probleem zich blijft voordoen.</h2>
+            <span class="flex1"></span>
+            <div class="actions btnGroup">
+                <span class="btn btn-yellow btn-zoom" v-on:click="prevStep" v-show="submitStatus === 500">vorige</span>
+                <a class="btn btn-yellow btn-zoom" v-show="submitStatus === 200" href="{{ path('expenses_region', {'regionId': regionId}) }}">afronden</a>
+            </div>
+        </div>
+    </div>
+    {#{{ form_end(form) }}#}
+
+    {#<div id="js-notes-wrapper"></div>#}
+{% endblock %}
+
+
+    {% block javascripts %}
+        {{ parent() }}
+
+        <script src={{ asset('/js/vue/expensesAdd.js?v=1') }}></script>
+
+        <script src="{{ asset('js/lib/cleave.min.js') }}"></script>
+        <script>
+            // var cleave_iban = new Cleave('#iban', {
+            //     blocks: [4, 4, 4, 4],
+            //     uppercase: true
+            // });
+            //
+            // var cleave_personId = new Cleave('#personId', {
+            //     delimiters: ['.', '.', '-', '.'],
+            //     blocks: [2, 2, 2, 3, 2],
+            //     uppercase: true
+            // });
+        </script>
+
+
+        <script>
+            // This example displays an address form, using the autocomplete feature
+            // of the Google Places API to help users fill in the information.
+
+            // This example requires the Places library. Include the libraries=places
+            // parameter when you first load the API. For example:
+            // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+
+            var autocompleteAddress, autocompleteMeetingLocation, autocompleteDepartureLocation;
+
+            function initAutocomplete() {
+                // Create the autocomplete object, restricting the search to geographical
+                // location types.
+
+                autocompleteAddress = new google.maps.places.Autocomplete(
+                    /** @type {!HTMLInputElement} */(document.getElementById('address')),
+                    {types: ['geocode']});
+                autocompleteAddress.addListener('place_changed', function () {
+                    var place = document.getElementById('address').value;
+                    app.forceUpdateMapsField(place, 'this.userData.address');
+                    app.calculateDistance();
+                });
+
+                autocompleteMeetingLocation = new google.maps.places.Autocomplete(
+                    /** @type {!HTMLInputElement} */(document.getElementById('meetingLocation')),
+                    {types: ['geocode']});
+                autocompleteMeetingLocation.addListener('place_changed', function () {
+                    var place = document.getElementById('meetingLocation').value;
+                    app.forceUpdateMapsField(place, 'this.tripData.to');
+                    app.calculateDistance();
+                });
+
+                autocompleteDepartureLocation = new google.maps.places.Autocomplete(
+                    /** @type {!HTMLInputElement} */(document.getElementById('departureLocation')),
+                    {types: ['geocode']});
+                autocompleteDepartureLocation.addListener('place_changed', function () {
+                    var place = document.getElementById('departureLocation').value;
+                    app.forceUpdateMapsField(place, 'this.tripData.from');
+                    app.calculateDistance();
+                });
+
+            }
+        </script>
+        <script src="{{ 'https://maps.googleapis.com/maps/api/js?key=' ~ google_api_key ~ '&libraries=places&callback=initAutocomplete' }}"
+                async defer>
+        </script>
+
+    {% endblock %}

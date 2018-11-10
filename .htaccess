@@ -1,0 +1,5 @@
+RewriteEngine on
+RewriteRule ^(.*)$ /web/$1 [QSA]
+
+RewriteCond %{HTTP_HOST} [NC]
+RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

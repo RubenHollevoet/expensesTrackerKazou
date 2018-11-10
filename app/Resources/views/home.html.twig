@@ -1,0 +1,34 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+    <style>
+        .btn-lg {
+            margin-bottom: 10px;
+        }
+    </style>
+
+    <div class="home container">
+        <h2>tools</h2>
+        <div class="row">
+            <div>
+                <div class="col-sm-6 col-lg-3">
+                    <a href="{{ path('expenses') }}" class="btn btn-default btn-lg btn-block">Onkosten</a>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <a href="{{ path('amoniac') }}" class="btn btn-default btn-lg btn-block">Amoniac kalender</a>
+                </div>
+            </div>
+        </div>
+        <h2>nuttige links</h2>
+        <div class="row">
+            <div>
+                {% for link in links %}
+                    <div class="col-sm-6 col-lg-3">
+                        <a href="{{ link.link }}" class="btn btn-default btn-lg btn-block">{{ link.name }}</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

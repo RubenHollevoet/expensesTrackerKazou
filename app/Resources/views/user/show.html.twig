@@ -1,0 +1,108 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Profiel</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2>Persoonsgegevens</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        {{ form_row(form.firstName) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_row(form.lastName) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_row(form.email) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        {{ form_row(form.iban) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_row(form.personId) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        {{ form_row(form.address, {'attr': {'placeholder':'straat, nummer, postcode, gemeente'}}) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2>wachtwoord wijzigen</h2>
+                    </div>
+                </div>
+                {% if app.user.password == null %}
+                    <div class="row">
+                        <div class="alert alert-info">
+                            Je account heeft momenteel nog geen wachtwoord. Je kan dus enkel aanmelden via Facebook.
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="row">
+                    <div class="col-md-4">
+                        {{ form_row(form.plainPassword.first) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_row(form.plainPassword.second) }}
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-yellow" formnovalidate>Opslaan</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+
+    {{ parent() }}
+
+    <script src="{{ asset('js/lib/cleave.min.js') }}"></script>
+    <script>
+        var cleave_iban = new Cleave('#user_profile_form_iban', {
+            blocks: [4, 4, 4, 4],
+            uppercase: true
+        });
+
+        var cleave_personId = new Cleave('#user_profile_form_personId', {
+            delimiters: ['.', '.', '-', '.'],
+            blocks: [2, 2, 2, 3, 2],
+            uppercase: true
+        });
+    </script>
+
+    <script>
+        // This example displays an address form, using the autocomplete feature
+        // of the Google Places API to help users fill in the information.
+
+        // This example requires the Places library. Include the libraries=places
+        // parameter when you first load the API. For example:
+        // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+        var autocomplete;
+
+        function initAutocomplete() {
+            // Create the autocomplete object, restricting the search to geographical
+            // location types.
+            autocomplete = new google.maps.places.Autocomplete(
+                /** @type {!HTMLInputElement} */(document.getElementById('user_profile_form_address')),
+                {types: ['geocode']});
+        }
+    </script>
+
+    <script src="{{ 'https://maps.googleapis.com/maps/api/js?key=' ~ google_api_key ~ '&libraries=places&callback=initAutocomplete' }}"
+            async defer>
+    </script>
+{% endblock %}

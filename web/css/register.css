@@ -1,0 +1,38 @@
+.register-selector {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-elements: center;
+}
+
+.register-selector > div {
+    width: 45%;
+    margin: 0 20px;
+}
+
+.register-selector > .split {
+    margin: auto 0;
+    background-color: white;
+    padding: 8px 0;
+}
+
+.register-selector > .split::after {
+    border-right: 1px solid #ddd;
+    content: '';
+    width: 0px;
+    height: 250px;
+    position:  absolute;
+    transform: translate(-10px,-50%) translateY(10px);
+    z-index: -1;
+}
+
+.register-selector > .register-facebook {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.register-selector > .register-facebook > * {
+    /* text-align: center; */
+}

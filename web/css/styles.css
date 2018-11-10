@@ -1,0 +1,252 @@
+/* +++++  GLOBALS  +++++ */
+@import url('https://fonts.googleapis.com/css?family=Archivo+Black');
+@import url('https://fonts.googleapis.com/css?family=Oswald');
+
+html, body, .main-content {
+    height: 100%;
+}
+
+.lineThrough {
+    text-decoration: line-through;
+}
+
+header {
+    position: fixed;
+    background-color: #282f39;
+    top: 0;
+    height: 60px;
+    width: 100%;
+    z-index: 1;
+}
+
+header > a {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+.disableList {
+    list-style: none;
+    padding-left: 0;
+}
+
+/* go to top of page */
+.goToTop {
+    position: fixed;
+    z-index: 1;
+    bottom: 20px;
+    right: 30px;
+    transition: bottom 0.5s;
+    cursor: pointer;
+    color: #282f39;
+}
+
+.goToTop:visited, .goToTop:hover, .goToTop:focus {
+    text-decoration: none;
+    color: #282f39;
+}
+
+.goToTop.down {
+    bottom: -50px;
+}
+
+/* go homes */
+.goHome {
+    color: white;
+    transform-origin: left top;
+    transition: transform 0.5s;
+}
+
+.goHome:visited, .goHome:hover, .goHome:focus {
+    color: white;
+    text-decoration: none;
+}
+
+.goHome.large {
+    transform: scale(1.8);
+}
+
+/* +++++  VV-GPS  +++++ */
+
+/* menu */
+.vvgps_main_menu > .menuContainer > a {
+    padding: 0;
+}
+
+.vvgps_main_menu > .menuContainer > a > .inner {
+    margin: 0 10px;
+    height: 280px;
+    background: url('http://via.placeholder.com/270x270') no-repeat center;
+    background-size: cover;
+}
+
+.vvgps_main_menu > .menuContainer > a > .inner > h2 {
+    color: white;
+}
+
+.vvgps_title {
+    color: white;
+    margin-top: 12px;
+    text-align: right;
+    padding-right: 10px;
+}
+
+@media (max-width: 768px)  {
+    .vvgps_main_menu > .menuContainer > a > .inner {
+        max-height: 25vh;
+    }
+    
+    .vvgps_title {
+        font-size: 30px;
+    }
+}
+
+/* pages */
+.vvgps_goHome.large {
+    transform: scale(3);
+    transition: transform 0.5s;
+}
+
+.vvgps_pageMenu {
+
+}
+
+@media (max-width: 768px)  {
+   .vvgps_pageMenu {
+        min-height: 100vh;
+        background: url('/img/vvgps/menuBg.jpg');
+        background-size: cover;
+    }
+}
+
+.vvgps_checklist {
+    list-style-type: none;
+    padding-left: 10px;
+}
+
+.vvgps_checklist > li {
+    padding: 5px;
+    display: flex;
+    align-items: baseline;
+}
+
+.vvgps_checklist > li > .btn {
+    margin-right: 5px;
+}
+
+.vvgps_infoBlock {
+    margin-top: -60px;
+    padding-top: 60px;
+}
+
+.vvgps_pageMenu_btns {
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(255,255,255,0.6);
+    max-width: 600px;
+    margin: auto;
+}
+
+.vvgps_menu_btn {
+    background-color: #f1d600;
+    padding: 10px 20px;
+    margin: 10px;
+    color: white;
+    border-radius: 4px;
+    font-size: 24px;
+    font-family: 'Oswald', sans-serif;
+    align-self: center;
+}
+
+.vvgps_menu_btn:hover, .vvgps_menu_btn:focus {
+    background-color: #d7bf00;
+    color: white;
+    text-decoration: none;
+}
+
+
+/* general */
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+body > header {
+    flex: 0 1 auto;
+}
+
+body > .main-content {
+    flex: 1 1 auto;
+    /* align-items:  center; */
+    /* justify-self:  center; */
+}
+
+body > footer {
+    flex: 0 1 40px;
+}
+
+.center {
+    text-align: center;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .scrollH {
+        overflow-x: scroll;
+    }
+}
+
+.fb-login-btn {
+    border-radius: 8px;
+    background-color: #0084ff;
+    color: white;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    padding: 11px 25px 11px 20px;
+    font-size: 21px;
+    white-space: nowrap;
+}
+
+.fb-login-btn:hover, .fb-login-btn:focus {
+    /* text-decoration: none; */
+}
+
+.fb-login-btn > span {
+    padding: 5px 6px;
+    /* margin-top: 20px; */
+    /* margin-bottom: 10px; */
+}
+
+.width100 {
+    width: 100%;
+}
+
+.facebook-login-alert-wrapper {
+    padding: 24px 10px 10px 10px;
+}
+
+.alert {
+    margin-top: 20px;
+}
+
+.register-facebook {
+    margin: 0;
+}
+
+.btn {
+    margin-bottom: 8px;
+}
+
+
+.home.container {
+    margin-top: 30px;
+}

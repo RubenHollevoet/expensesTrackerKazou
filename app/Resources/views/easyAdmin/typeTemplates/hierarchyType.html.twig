@@ -1,0 +1,6 @@
+{% for i in 0..item.getParentCount %}
+    {% if i != 0 %}
+        <span class="template_hierarchyType_paddingLeft"></span>
+    {% endif %}
+{% endfor %}
+{{ item.name }}

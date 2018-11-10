@@ -1,0 +1,165 @@
+{% extends 'base.html.twig' %}
+
+{% block title 'VV-GPS | ' ~ 'vvgps.menu.beforeDeparture'|trans %}
+
+{% block header %}
+    {% include 'VvGps/header.html.twig' with {'title' : 'vvgps.menu.beforeDeparture'|trans  } %}
+{% endblock %}
+
+{% block body %}
+    <div id="top" class="container">
+        <a href="#top" class="fa fa-arrow-up fa-3x goToTop down"></a>
+    </div>
+    <div class="container vvgps_pageMenu">
+        <div class="vvgps_pageMenu_btns">
+            <a class="vvgps_menu_btn" href="#startvergadering">Startvergadering</a>
+            <a class="vvgps_menu_btn" href="#tweede-vergadering">Tweede vergadering</a>
+            <a class="vvgps_menu_btn" href="#laatste-vergadering">Laatste vergadering</a>
+            <a class="vvgps_menu_btn" href="#badges">Badges</a>
+            <a class="vvgps_menu_btn" href="#printwerk">Printwerk</a>
+        </div>
+    </div>
+    <div class="container vvgps_page">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="startvergadering" class="vvgps_infoBlock" style="padding-top: 40px; margin-top: -40px">
+                    <h2>Startvergadering</h2>
+                    <p>Dit is de eerste vergadering en deze vindt plaats op de Summer kick-off of SKO.</p>
+                    <p>Wat staat er op de agenda?</p>
+                    <ul id="checklist-1" class="vvgps_checklist">
+                        <li>
+                            <span data-id="1">Kennismaking met de ploeg</span>
+                        </li>
+                        <li>
+                            <span data-id="2">Info over de vakantie: het centrum, de omgeving, het vakantieschema, profileringsactiviteiten, ...</span>
+                        </li>
+                        <li>
+                            <span data-id="3">Vakantiestructuur: één grote groep of verdelen ik ploegjes? Welke monitoren vormen een ploegje?</span>
+                        </li>
+                        <li>
+                            <span data-id="4">Voorbereiden: activiteiten in groepje, avondsluitingen, zinspeelmomenten, welkomsavond, laatste avond en thema</span>
+                        </li>
+                        <li>
+                            <span data-id="5">wie bereidt wat voor en wat is de deadline?</span>
+                        </li>
+                        <li>
+                            <span data-id="6">Afspraken: binnen de moniploeg en met de deelnemers zodat iedereen op dezelfde lijn zit. <br>
+                            <strong>Tip:</strong> hiervoor kan je de Kazoogle uitlenen bij het kazouteam!</span>
+                        </li>
+                        <li>
+                            <span data-id="7">Huisbezoeken voorbereiden (indien van toepassing)</span>
+                        </li>
+                        <li>
+                            <span data-id="8">Tweede vergadering inplannen</span>
+                        </li>
+                    </ul>
+                </div>
+                <div id="tweede-vergadering" class="vvgps_infoBlock">
+                    <h2>Tweede vergadering</h2>
+                    <p>De tweede vergadering staat ongeveer halfweg de voorbereidingen gepland.</p>
+                    <p>Wat staat er op de agenda?</p>
+                    <ul id="checklist-2" class="vvgps_checklist">
+                        <li>
+                            <span data-id="9">Kennismaking met nieuwe monitoren</span>
+                        </li>
+                        <li>
+                            <span data-id="10">Teambuilding</span>
+                        </li>
+                        <li>
+                            <span data-id="11">Nieuwe info over de vakantie of activiteiten</span>
+                        </li>
+                        <li>
+                            <span data-id="12">Stand van zaken van de voorbereidingen</span>
+                        </li>
+                    </ul>
+                    <div class="alert alert-info">
+                        <strong>tip:</strong> Je kan deze vergadering eventueel koppelen aan de vergaderingen van de
+                        groepjes, grote
+                        activiteiten of het thema. Ook knutselen is mogelijk in bijvoorbeeld de Rezzon of Bar Volontär.
+                        Zeker voor vakanties met beginnende monitoren raden we aan om zeker drie vergaderingen te
+                        houden. Verwaarloos deze dus zeker niet!
+                    </div>
+                </div>
+                <div id="laatste-vergadering" class="vvgps_infoBlock">
+                    <h2>Laatste vergadering</h2>
+                    <p>De derde vergadering organiseer je ongeveer een week voor vertrek. Op deze manier is er nog tijd
+                        om bepaalde zaken bij te sturen.</p>
+                    <p>Wat staat er op de agenda?</p>
+                    <ul id="checklist-3" class="vvgps_checklist">
+                        <li>
+                            <span data-id="13">Teambuilding</span>
+                        </li>
+                        <li>
+                            <span data-id="14">Laatste informatie overlopen</span>
+                        </li>
+                        <li>
+                            <span data-id="15">Organiseren van het vertrek: wie vertrekt waar, wie neemt welke taken op zich (bijvoorbeeld busverantwoordelijke, busanimatie, ...)</span>
+                        </li>
+                        <li>
+                            <span data-id="16">Overlopen van materiaal</span>
+                        </li>
+                        <li>
+                            <span data-id="17">Overlopen van de afspraken</span>
+                        </li>
+                        <li>
+                            <span data-id="18">Zijn alle voorbereidingen in orde?</span>
+                        </li>
+                        <li>
+                            <span data-id="19">Medische zaken overlopen <br>
+                            <strong>tip:</strong> indien je op in de Rezzon of Bar Volontär vergadert, kan je ook ineens badges maken!</span>
+                        </li>
+                    </ul>
+                </div>
+                <p>Afspraken en taakverdeling voor het vertrek</p>
+                <ul id="checklist-4" class="vvgps_checklist">
+                    <li>
+                        <span data-id="20">Wie stapt waar op de bus? Opgelet! Op elke stopplaats staat minstens één ervaren moni</span>
+                    </li>
+                    <li>
+                        <span data-id="21">Wie is busverantwoordelijke?</span>
+                    </li>
+                    <li>
+                        <span data-id="22">Weke monitoren vangen de deelnemers op?</span>
+                    </li>
+                    <li>
+                        <span data-id="23">Wie verzamelt de medicatie?</span>
+                    </li>
+                    <li>
+                        <span data-id="24">Wie haalt het materiaal?</span>
+                    </li>
+                </ul>
+                <div id="badges" class="vvgps_infoBlock">
+                    <h2>Badges</h2>
+                    <p>In de Rezzon of Bar Volontär kan je badges maken. Indien het materiaal hiervoor bijna op zijn
+                        (minder dan 100 stuks) geef dan een seintje aan het kazouteam zodat ze tijdig de voorraad kunnen
+                        aanvullen.</p>
+                    <p>Voor het maken van badges staan we kleurenkopies toe. Stuur je printwerk wel minstens 5 werkdagen
+                        op voorhand door, zodat het zeker klaarligt.</p>
+                    <p>Een sjabloon kan je <a href="#todo">hier</a> vinden.</p>
+                </div>
+                <div id="printwerk" class="vvgps_infoBlock">
+                    <h2>Printwerk</h2>
+                    <p>Je kan steeds bij het kazouteam terecht om te kopiëren of papieren af te drukken, daarom
+                        vergoeden we geen kopijkosten.</p>
+                    <p>Tijdens de kantooruren kan met een usb-stick bij het Kazouteam in Turnhout of in Mechelen terecht
+                        om dingen af te drukken.</p>
+                    <p>Ook kan je je printwerk mailen naar <a href="mailto:kazourmt@cm.be">kazou.rmt@cm.be</a>. Doe dit
+                        wel 5 werkdagen op voorhand zodat het op tijd klaar ligt.</p>
+                    <p>We kunnen afdrukken op A3 of A4, enkelzijdig of dubbelzijdig, zwart/wit of in kleur (na
+                        goedkeuring) en op wit/geel/groen/rood/blauw papier. Ook kunnen we bundeltjes nieten en boekjes
+                        maken.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block javascripts %}
+    <script>
+
+    </script>
+    {{ parent() }}
+{% endblock %}

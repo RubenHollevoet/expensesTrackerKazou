@@ -1,0 +1,88 @@
+{% extends '@EasyAdmin/default/list.html.twig' %}
+
+{% block content_header %}
+    {{ parent() }}
+
+    <style>
+        body.list table {
+            background-color: #F5F5F5;
+            border: none;
+        }
+
+        td {
+            padding: 10px 5px;
+        }
+
+        .statusActions {
+            border-radius: 6px;
+            border: 1px solid gray;
+            background-color: white;
+            padding: 10px;
+        }
+
+        .statusActions > span {
+            padding: 10px 7px;
+            cursor: pointer;
+            border-right: 1px solid gray;
+        }
+
+        .statusActions > span:last-child {
+            border-right: 1px solid pink;
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+    {#TODO: move line to JS block when development is finished and there are no more dump functions#}
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <h1>Onkosten valideren</h1>
+
+    <div>
+        De eerste stap in het uitbetalen van de onkosten is het valideren van de onkosten. Je kan per groep onkosten
+        goed- of afkeuren. De vrijwilligers zullen daarna de nieuwe status van hun onkosten in hun onkosten overzicht
+        zien staan.
+    </div>
+
+    <div id="validate_app" :json="setStartData(
+            {
+                regionId: {{ app.user.region.id }}
+            }
+         )">
+
+        <h3>activiteit</h3>
+        <ul id="groupStack" class="disableList">
+            <groupstack-item
+                    v-for="group in groupStack"
+                    v-bind:group="group"
+                    v-bind:key="group.id">
+            </groupstack-item>
+            <div class="btnGroup">
+                <groupsavaliable-item
+                        v-for="group in activeGroups"
+                        v-bind:group="group"
+                        v-bind:key="group.id">
+                </groupsavaliable-item>
+            </div>
+        </ul>
+
+        <span v-on:click="loadExpenses" class="btn btn-yellow">Onkosten ophalen</span>
+
+        <table>
+            <tripgroup-item
+                    v-for="tripGroup in tripGroups"
+                    v-bind:tripgroup="tripGroup"
+                    v-bind:key="tripGroup.name">
+            </tripgroup-item>
+        </table>
+
+    </div>
+{% endblock %}
+
+
+{% block body_javascript %}
+    {{ parent() }}
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src={{ asset('/js/vue/expensesValidate.js?v=1') }}></script>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/register.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row register-selector">
+            <div class="register-facebook">
+                <a href="{{ fbLoginUrl }}" target="_top" class="fb-login-btn"><span class="fa fa-facebook"></span>Registreer met Facebook</a>
+            </div>
+            <span class="split">OF</span>
+            <div>
+                {{ form_start(form) }}
+                {{ form_row(form.firstName) }}
+                {{ form_row(form.lastName) }}
+                {{ form_row(form.email) }}
+                {{ form_row(form.plainPassword.first) }}
+                {{ form_row(form.plainPassword.second) }}
+                <button type="submit" class="btn btn-yellow" formnovalidate>Registreer</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

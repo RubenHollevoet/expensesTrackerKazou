@@ -1,0 +1,180 @@
+easy_admin:
+    site_name: 'onkostentool Kazou'
+    formats:
+        datetime: 'd/m/Y H:i:s'
+    design:
+        brand_color: '#6db649'
+        assets:
+            favicon: 'favicon.ico'
+            css: ['css/easyAdmin.css']
+        menu:
+            - { label: 'Website' }
+            - { entity: 'Link', icon: 'link'}
+            - { label: 'Algemeen' }
+            - { entity: 'User', icon: 'user'}
+            - { entity: 'Vacancy', icon: 'question'}
+            - { label: 'Onkosten' }
+            - { entity: 'Trip', icon: 'car'}
+            - { entity: 'TripGroup', icon: 'filter'}
+            - { entity: 'TripActivity', icon: 'list'}
+            - { label: 'Onkosten verwerken', icon: 'paper-plane', children: [ { entity: 'TripValidate', icon: 'check' }, { entity: 'TripExport', icon: 'download'}] }
+            - { entity: 'TripManual', icon: 'book' }
+            - { label: 'Overigen' }
+            - { entity: 'Region', icon: 'map-marker'}
+    list:
+        max_results: 50
+    entities:
+        Trip:
+            class: AppBundle\Entity\Trip
+            label: 'Ritten'
+            disabled_actions: ['new']
+            list:
+                title: '%%entity_label%%'
+                fields: ['user', 'activity', 'from', 'to', 'date']
+                sort: 'createdAt'
+                actions:
+                    - { name: 'edit', icon: 'pencil', label: '' }
+                    - { name: 'show', icon: 'eye', label: '' }
+                    - { name: '-delete' }
+            edit:
+                fields:
+                    - { property: 'user'}
+                    - { property: 'group'}
+                    - { property: 'activity'}
+                    - { property: 'from', type: 'text'}
+                    - { property: 'to', type: 'text'}
+                    - { property: 'date'}
+                    - { property: 'transportType', type: 'text'}
+                    - { property: 'distance', type: 'text'}
+                    - { property: 'distance', type: 'text'}
+                    - { property: 'comment', type: 'textarea'}
+                    - { property: 'price'}
+                    - { property: 'status', type: 'choice', type_options: { choices: '%trip_status%' }, help: 'Weet waar je mee bezig bent als je de status hier weizigd. De status zou automatisch aangepast moeten worden door onkosten te verwerken of te exporteren.</br> Deze waarde manueel aanpassen kan tot gevolg hebben dat onkosten niet bij de boekhouding geraken.'}
+            show:
+                fields:
+                    - user
+                    - group
+                    - activity
+                    - from
+                    - to
+                    - date
+                    - transportType
+                    - distance
+                    - estimateDistance
+                    - company
+                    - { property: 'tickets', template: 'easyAdmin/typeTemplates/imageArray.html.twig' }
+                    - comment
+                    - price
+                    - status
+        TripGroup:
+            class: AppBundle\Entity\TripGroup
+            label: 'Groepen'
+            list:
+                title: '%%entity_label%%'
+                sort: ['order', 'ASC']
+                fields:
+                    - { property: 'order' }
+                    - { property: 'code' }
+                    - { property: 'nameHierarchy', label: 'Naam', template: 'easyAdmin/typeTemplates/hierarchyType.html.twig' }
+                    - { property: 'startDate' }
+                    - { property: 'endDate' }
+                    - { property: 'location' }
+            new:
+                title: '%%entity_label%%'
+                fields:
+                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.general' }
+                    - { property: 'code', label: 'admin.code' }
+                    - { property: 'name', label: 'admin.name' }
+                    - { property: 'parent', type_options: { expanded: false, multiple: false }, label: 'admin.parent' }
+                    - { property: 'tripActivity', label: 'admin.tripActivity' }
+                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.forHolidays' }
+                    - { property: 'startDate', label: 'admin.startDate', type_options: { widget: 'single_text' }  }
+                    - { property: 'endDate', label: 'admin.endDate', type_options: { widget: 'single_text' } }
+                    - { property: 'location', label: 'admin.location' }
+            edit:
+                title: '%%entity_label%%'
+                fields:
+                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.general' }
+                    - { property: 'code', label: 'admin.code' }
+                    - { property: 'name', label: 'admin.name' }
+                    - { property: 'parent', label: 'admin.parent' }
+                    - { property: 'tripActivity', label: 'admin.tripActivity' }
+                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.forHolidays' }
+                    - { property: 'startDate', label: 'admin.startDate' }
+                    - { property: 'endDate', label: 'admin.endDate', type: 'datetime' ,type_options: { widget: 'single_text' } }
+                    - { property: 'location', label: 'admin.location', type: 'datetime', type_options: { widget: 'single_text' } }
+        TripActivity:
+            class: AppBundle\Entity\TripActivity
+            label: 'Activiteiten'
+            list:
+                title: '%%entity_label%%'
+            new:
+                title: '%%entity_label%%'
+                fields:
+                    - { property: 'code', label: 'admin.code' }
+                    - { property: 'name', label: 'admin.name' }
+            edit:
+                title: '%%entity_label%%'
+                fields:
+                    - { property: 'code', label: 'admin.code' }
+                    - { property: 'name', label: 'admin.name' }
+        TripValidate:
+            class: AppBundle\Entity\Trip
+            label: 'Onkosten valideren'
+            list:
+                title: '%%entity_label%%'
+            templates:
+                list: 'easyAdmin/TripValidate/list.html.twig'
+        TripExport:
+            class: AppBundle\Entity\Trip
+            label: 'Onkosten exporteren'
+            list:
+                title: '%%entity_label%%'
+            templates:
+                list: 'easyAdmin/TripExport/list.html.twig'
+        TripManual:
+            class: AppBundle\Entity\Trip
+            label: 'Handleiding'
+            list:
+                title: '%%entity_label%%'
+            templates:
+                list: 'easyAdmin/TripManual/list.html.twig'
+        User:
+            class: AppBundle\Entity\User
+            label: 'Gebruikers'
+            list:
+                title: '%%entity_label%%'
+        Vacancy:
+            class: AppBundle\Entity\Vacancy
+            label: 'Vacatures'
+            list:
+                title: '%%entity_label%%'
+        Region:
+            class: AppBundle\Entity\Region
+            label: 'Verbonden'
+            list:
+                title: '%%entity_label%%'
+        Link:
+            class: AppBundle\Entity\Link
+            label: 'Knoppen hoofdpagina'
+            list:
+                title: '%%entity_label%%'
+                fields:
+                    - { property: 'name', label: 'admin.name' }
+                    - { property: 'enabled', label: 'admin.enabled' }
+                    - { property: 'createdBy' }
+                    - { property: 'updatedBy' }
+                    - { property: 'updatedAt' }
+                    - { property: 'updatedAt' }
+            new:
+                title: '%%entity_label%%'
+                fields:
+                    - { property: 'name', label: 'admin.name' }
+                    - { property: 'link', label: 'admin.link' }
+                    - { property: 'enabled', label: 'admin.enabled' }
+            edit:
+                title: '%%entity_label%%'
+                fields:
+                    - { property: 'name', label: 'admin.name' }
+                    - { property: 'link', label: 'admin.link' }
+                    - { property: 'enabled', label: 'admin.enabled' }

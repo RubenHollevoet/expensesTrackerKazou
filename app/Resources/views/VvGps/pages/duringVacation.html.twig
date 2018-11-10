@@ -1,0 +1,242 @@
+{% extends "base.html.twig" %}
+
+{% block title 'VV-GPS | ' ~ 'vvgps.menu.duringVacation'|trans %}
+
+{% block header %}
+    {% include 'VvGps/header.html.twig' with {'title' : 'vvgps.menu.duringVacation'|trans  } %}
+{% endblock %}
+
+{% block body %}
+    <div id="top" class="container">
+        <a href="#top" class="fa fa-arrow-up fa-3x goToTop down"></a>
+    </div>
+    <div class="container vvgps_pageMenu">
+        <div class="vvgps_pageMenu_btns">
+            <a class="vvgps_menu_btn" href="#het-vertrek">Het vertrek</a>
+            <a class="vvgps_menu_btn" href="#eerste-dag">Eerste dag</a>
+            <a class="vvgps_menu_btn" href="#vergaderen">Vergaderen</a>
+            <a class="vvgps_menu_btn" href="#paniek">Paniek!</a>
+            <a class="vvgps_menu_btn" href="#laatste-dag">Laatste dag</a>
+            <a class="vvgps_menu_btn" href="#terugreis">Terugreis</a>
+        </div>
+    </div>
+    <div class="container vvgps_page">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="het-vertrek" class="vvgps_infoBlock">
+                    <h2>Het vertrek</h2>
+                    <p>Voor het vertrek: zijn de afspraken besproken? is er een taakverdeling opgesteld? Dit deden
+                        jullie normaal op <a href="{{ path('vvgps_beforeDeparture') }}#laatste-vergadering">de laatste
+                            vergadering</a> (link naar laatste vergadering)</p>
+                    <p>Als VV wordt je vaak aangesproken door ouders met vragen, delegeer daarom zoveel mogelijk taken
+                        naar
+                        je monitoren. Doe ook een babbel met de buschauffeur en vraag of er geholpen moet worden met het
+                        inladen van de bus, wat de busafspraken zijn… De vakantie is begonnen!</p>
+                    <p>Checklist:</p>
+                    <ul id="checklist-6" class="vvgps_checklist">
+                        <li>
+                            <span data-id="25">Monitoren 1 u op voorhand bij het vertrek</span>
+                        </li>
+                        <li>
+                            <span data-id="26">Kazoumateriaal inladen</span>
+                        </li>
+                        <li>
+                            <span data-id="27">Onthaal en tellen van de deelnemers tip: gebruik de opstaplijsten</span>
+                        </li>
+                        <li>
+                            <span data-id="28">Heeft iedereen de identiteitskaart bij?</span>
+                        </li>
+                        <li>
+                            <span data-id="29">Verzamelen van medicatie</span>
+                        </li>
+                        <li>
+                            <span data-id="30">Doe een afscheidswoordje: stel je ploeg voor, laat de deelnemers afscheid nemen en opstappen</span>
+                        </li>
+                        <li>
+                            <span data-id="31">Tel iedereen nog eens na</span>
+                        </li>
+                        <li>
+                            <span data-id="32">Deel sjaaltjes uit</span>
+                        </li>
+                        <li>
+                            <span data-id="33">Voorzie busanimatie, een film, busboekje, …</span>
+                        </li>
+                        <li>
+                            <span data-id="34">Maak bij elke busstop duidelijke afspraken en tel iedereen bij vertrek, vergeet ook de moni’s niet!</span>
+                        </li>
+                    </ul>
+                </div>
+                <div id="eerste-dag" class="vvgps_infoBlock">
+                    <h2>Eerste dag</h2>
+                    <p>We zijn veilig aangekomen! De bagage wordt uit de bus geladen, je moni’s beginnen aan de
+                        kennismakingsactiviteiten, maar wat doe jij?</p>
+
+                    <p>Checklist:</p>
+                    <ul id="checklist-7" class="vvgps_checklist">
+                        </li>
+                        <li>
+                            <span data-id="35">Achterhaal waar de bagage geplaatst mag worden</span>
+                        </li>
+                        <li>
+                            <span data-id="36">Ga langs bij de centrumuitbater</span>
+                        </li>
+                        <li>
+                            <span data-id="37">Maak afspraken met je deelnemers</span>
+                        </li>
+                        <li>
+                            <span data-id="38">Goed aangekomen? Stuur een bericht naar Kazou (link naar extra: contact met Kazou)</span>
+                        </li>
+                        <li>
+                            <span data-id="39">Controleer het gebouw op bestaande schade en geef dit door, indien aanwezig</span>
+                        </li>
+                        <li>
+                            <span data-id="40">Richt het monilokaal in en pak het materiaal uit</span>
+                        </li>
+                        <li>
+                            <span data-id="41">Check de kamerindeling</span>
+                        </li>
+                        <li>
+                            <span data-id="42">Houd je monitoren op de hoogte</span>
+                    </ul>
+                </div>
+                <div id="vergaderen" class="vvgps_infoBlock">
+                    <h2>Vergaderen</h2>
+                    <p>Op vakantie vergader je elke dag met moniploeg. Op grote vakanties kan je eventueel ook een
+                        aparte
+                        vergadering inplannen met de vakantieleiding. Neem indien nodig ook de tijd om dit met de TP,
+                        coördinatie, hoteluitbating,… te doen.</p>
+
+                    <p>Wat staat er op de agenda?</p>
+                    <ul id="checklist-8" class="vvgps_checklist">
+                        <li>
+                            <span data-id="43">Hoe was je dag? Tip: Durf dit als een coachingsmoment te bekijken</span>
+                        </li>
+                        <li>
+                            <span data-id="44">Praktische regeling voor de volgende dag: dagschema overlopen, activiteiten, materiaal, …</span>
+                        </li>
+                        <li>
+                            <span data-id="45">Bespreek eventuele problemen in de moniploeg of bij de deelnemers</span>
+                        </li>
+                    </ul>
+
+                    <p>Tips voor tijdens de vergadering:</p>
+                    <ul id="checklist-9" class="vvgps_checklist">
+                        <li>
+                            <span data-id="46">Een originele opening of inkleding is altijd leuk</span>
+                        </li>
+                        <li>
+                            <span data-id="47">Een vergadering hoeft niet altijd ’s avonds te zijn</span>
+                        </li>
+                        <li>
+                            <span data-id="48">Maak een vergadering niet onnodig lang</span>
+                        </li>
+                        <li>
+                            <span data-id="49">Denk ook aan ontspanning met de moniploeg</span>
+                        </li>
+                    </ul>
+
+                    <p>Taakverdeling bij aankomst:</p>
+                    <ul id="checklist-10" class="vvgps_checklist">
+                        <li>
+                            <span data-id="50">Busverantwoordelijke</span>
+                        </li>
+                        <li>
+                            <span data-id="51">Wie brieft ouders van bepaalde deelnemers? Kinderen die ziek geweest zijn, tekenbeten, heimwee,…</span>
+                        </li>
+                        <li>
+                            <span data-id="52">Wie helpt de bus uitladen?</span>
+                        </li>
+                        <li>
+                            <span data-id="53">Op elke stopplaats stapt een moni mee af</span>
+                        </li>
+                    </ul>
+                </div>
+                <div id="paniek" class="vvgps_infoBlock">
+                    <h2>Paniek!</h2>
+                    <p>Is er iets gebeurd? Blijf in de eerste plaats kalm. Moet je naar het ziekenhuis? Hier vind je een
+                        handige checklist (link extra naar het ziekenhuis)</p>
+                    <p>Vergeet zeker geen contact op te nemen met Kazou. Indien er een coördinator is in jouw centrum,
+                        contacteer je hem eerst. Daarna neem je contact op met de noodpermanentie (link: extra:
+                        contactinfo).
+                        Contacteer nooit de ouders alvorens je een beroepskracht gesproken hebt.</p>
+                    <p>Neem volgende info bij de hand als je belt:</p>
+                    <ul id="checklist-11" class="vvgps_checklist">
+                        <li>
+                            <span data-id="54">Naam en gegeven van je vakantie</span>
+                        </li>
+                        <li>
+                            <span data-id="55">Gegevens van de getroffen deelnemer(s): voornaam, naam en woonplaats</span>
+                        </li>
+                        <li>
+                            <span data-id="56">Situatieschets: wat is er gebeurd? Waar bevindt de getroffene zich? Wat heb je al gedaan?</span>
+                        </li>
+                        <li>
+                            <span data-id="57">Extra info die belangrijk kan zijn (persgevoelig? familielid mee op vakantie?)</span>
+                        </li>
+                    </ul>
+                    <p><strong>De beroepskracht bekijkt samen met jou wat er verder gaat gebeuren!</strong></p>
+                </div>
+                <div id="laatste-dag" class="vvgps_infoBlock">
+                    <h2>Laatste dag</h2>
+                    <p>De vakantie is voorbij gevlogen. De laatste dag moet er nog veel gebeuren, voor een vlot verloop
+                        bereid je deze best goed voor.</p>
+                    <p>Checklist voor vertrek:</p>
+                    <ul id="checklist-12" class="vvgps_checklist">
+                        <li>
+                            <span data-id="58">Maak de voorlaatste dag een schema met de taken en overloop deze met de monoploeg</span>
+                        </li>
+                        <li>
+                            <span data-id="59">Ruim het monilokaal de laatste avond al op en pak het materiaal in</span>
+                        </li>
+                        <li>
+                            <span data-id="60">Moni’s hebben hun koffers al voor de gasten gemaakt zodat deze de deelnemers kunnen helpen
+                        </span>
+                        </li>
+                        <li>
+                            <span data-id="61">Verzamel verloren voorwerpen en zorg ervoor dat de deelnemers deze kunnen bekijken</span>
+                        </li>
+                        <li>
+                            <span data-id="62">Deel spullen zoals medicatie en knutselwerkjes terug uit
+                        </span>
+                        </li>
+                        <li>
+                            <span data-id="63">Waar verzamelen we de bagage? Denk aan de verschillende stopplaatsen!</span>
+                        </li>
+                    </ul>
+                </div>
+                <div id="terugreis" class="vvgps_infoBlock">
+                    <h2>Terugreis</h2>
+                    <p>Op de laatste vergadering op vakantie hebben jullie al afspraken gemaakt over de aankomst
+                        (link)</p>
+                    <p>Tijdens de terugreis is het volgende belangrijk:</p>
+                    <ul id="checklist-13" class="vvgps_checklist">
+                        <li>
+                            <span data-id="">Laat op tijd aan Kazou weten als je vroeger of later toekomt, zo kan Kazou de ouders tijdig
+                            informeren. Vanaf 30 minuten vertraging sturen we een SMS naar de ouders, we moeten dit wel ten laatste
+                            1u voor de geplande aankomst weten. Je laat dit weten via het noodnummer (link naar extra: contact)</span>
+                        </li>
+                        <li>
+                            <span data-id="">Verloren voorwerpen laten zien, eventueel in de bus. De overige zet je het materiaal van Kazou.
+                            Opmerking: enkele kousen, washandjes en onderbroeken mag je direct weggooien, deze worden nooit
+                            opgehaald.</span>
+                        </li>
+                        <li>
+                            <span data-id="64">Maak tijd voor ouders met vragen</span>
+                        </li>
+                        <li>
+                            <span data-id="65">Zet het kazoumateriaal weg</span>
+                        </li>
+                        <li>
+                            <span data-id="66">leg de aankomsteveloppe in het bakje</span>
+                        </li>
+                        <li>
+                            <span data-id="67">Er blijft een moni bij de deelnemers tot iedereen is opgehaald</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}{% endblock %}

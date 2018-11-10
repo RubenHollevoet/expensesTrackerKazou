@@ -1,0 +1,100 @@
+{% extends "base.html.twig" %}
+
+{% block title 'VV-GPS | ' ~ 'vvgps.menu.beforeDeparture'|trans %}
+
+{% block header %}
+    {% include 'VvGps/header.html.twig' with {'title' : 'vvgps.menu.beforeDeparture'|trans  } %}
+{% endblock %}
+
+{% block body %}
+    <div id="top" class="container">
+        <a href="#top" class="fa fa-arrow-up fa-3x goToTop down"></a>
+    </div>
+    <div class="container vvgps_pageMenu">
+        <div class="vvgps_pageMenu_btns">
+            <a class="vvgps_menu_btn" href="#vergaderlocaties">Vergaderlocaties</a>
+            <a class="vvgps_menu_btn" href="#naar-het-ziekenhuis">Naar het ziekenhuis</a>
+        </div>
+    </div>
+    <div class="container vvgps_page">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="vergaderlocaties" class="vvgps_infoBlock" style="padding-top: 40px; margin-top: -40px">
+                    <h2>Vergaderlocaties</h2>
+                    <p>Onkosten worden voor onderstaande locaties enkel vergoed voor vergaderingen met je moniploeg of
+                        voor vergaderingen in subgroepen (thema, groot spel,…) en dus niet voor een overleg tussen twee
+                        moni’s.</p>
+                    <p>
+                        <span class="underline">Bij iemand thuis</span><br>
+                        Hier is er een budget voorzien van 3 euro per aanwezige persoon. Hier kan je een drankje of een
+                        snack van kopen. Wij vergoeden geen sterke drank.
+                    </p>
+                    <p>
+                        <span class="underline">Op café</span><br>
+                        Eén iemand betaalt de rekening, je mag maximaal één consumptie per uur per aanwezige
+                        doorrekenen. We betalen geen snacks of sterke drank. Je vult een onkostenformulier in en brengt
+                        dit samen met de rekening binnen bij Kazou.
+                    </p>
+                    <p>
+                        <span class="underline">CM locatie’s</span> (reserveren via <a href="mailto:kazou.rmt@cm.be">kazou.rmt@cm.be</a>)<br>
+                    </p>
+                    <ul>
+                        <li>
+                            <strong>Bar Volontär, Korte Begijnenstraat 22, Turnhout</strong><br>
+                            <span>Frisdrank is aanwezig. Er zijn 3 vergaderzalen beschikbaar.</span>
+                        </li>
+                        <li>
+                            <strong>De Rezzon, Antwerpsesteenweg 261, Mechelen</strong><br>
+                            <span>Frisdrank is aanwezig. Aangezien hier het materiaalmagazijn gelegen is, kan je hier perfect een knutselvergadering houden. Reserveer je materiaal tijdig!</span>
+                        </li>
+                        <li>
+                            <strong>CM Mechelen</strong><br>
+                            <span>Frisdrank is aanwezig. Hier mag je niet knutselen!</span>
+                        </li>
+                        <li>
+                            <strong>CM kantoren in Nijlen, Olen en Geel</strong><br>
+                            <span>Frisdrank is aanwezig. Enkel buiten de kantooruren. Hier mag je niet knutselen!</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="naar-het-ziekenhuis" class="vvgps_infoBlock" style="padding-top: 40px; margin-top: -40px">
+                    <h2>Naar het ziekenhuis</h2>
+                </div>
+                <p>Checklist:</p>
+                <ul id="checklist-5" class="vvgps_checklist">
+                    <li>
+                        <span data-id="68">Identiteitskaart</span>
+                    </li>
+                    <li>
+                        <span data-id="69">In het buitenland: de Europese ziekteverzekeringskaart</span>
+                    </li>
+                    <li>
+                        <span data-id="70">De medische fiche van de deelnemer</span>
+                    </li>
+                    <li>
+                        <span data-id="71">Medicatie van de deelnemer</span>
+                    </li>
+                    <li>
+                        <span data-id="72">Cash geld voor bijvoorbeeld een taxi, medische onkosten, een maaltijd bij het wachten, …</span>
+                    </li>
+                    <li>
+                        <span data-id="73">Ongevallenformulier DVV (enkel in geval van een ongeval, niet voor ziekte</span>
+                    </li>
+                    <li>
+                        <span data-id="74">Maak afspraken met de buschauffeur: wanneer inladen? Wanneer vertrekken?</span>
+                    </li>
+                    <li>
+                        <span data-id="75">Voor buitenlandse vakanties: Bij ziekenvervoer (Ambulance of helikopter), hospitalisatie, repatriëring
+                of ziekenhuisbezoek met kosten boven de 200 euro moet Mutas gecontacteerd worden op het nr. 0032 22 72
+                09 00. Vermeld dat je van Kazou bent, open een dossier en bezorg het dossiernummer aan Kazou.
+                        </span>
+                    </li>
+                </ul>
+                <p>Al contact opgenomen met Kazou? Doe het hier (link: paniek vanaf: ‘vergeet zeker geen contact…’)</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}{% endblock %}
