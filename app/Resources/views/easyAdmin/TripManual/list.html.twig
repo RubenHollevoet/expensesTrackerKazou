@@ -3,20 +3,27 @@
 {% block content_header %}{% endblock %}
 
 {% block main %}
-<h1>Handleiding</h1>
+    <h1>Handleiding</h1>
 
     <h2>Ingeven van vakanties en activiteiten</h2>
     <p>Sinds november 2018 geven verbonden zelf hun activiteiten in aan de hand van een Google Spreadsheet.</p>
+    <p class="alert alert-warning"><strong>LET OP: </strong>Wees zeer voorzichtig met het delen van deze links. Iedereen
+        die de link ooit toegestuurd krijgt, kan groepen en vakanties aanmaken, aanpassen en verwijderen. Deze pagina is
+        bij gevolg zichtbaar voor alle <a href="/admin?entity=Admins&action=list">admins</a>.</p>
 
-
-    <p></p>
-
+    <p>Hieronder kan je voor elk verbond de bijbehorende spreadsheet vinden.</p>
+    <p>Kazou SMB: <a href="#">TODO</a></p>
+    <p>Kazou Antwerpen: <a href="#">TODO</a></p>
+    <p>Kazou Leuven: <a href="#">TODO</a></p>
+    <p>Kazou RMT: <a target="_blank" href="https://docs.google.com/spreadsheets/d/1pNdH4wnOgo1dAq_BKXYFuN4B-xPXJrrasvY6TW5oE_k/edit?usp=sharing">open document</a></p>
 
     <h2>foutmeldingen</h2>
     <ul>
         <li>
             <div><strong>{{ 'trip.error.distance_vs_estimate_overflow'|trans }}</strong></div>
-            <div>als de opgegeven afstand meer dan 15% boven dan geschatte afstand ligt. De opgegeven opmerking moet minstens 5 tekens lang zijn spaties niet meegerekend</div>
+            <div>als de opgegeven afstand meer dan 15% boven dan geschatte afstand ligt. De opgegeven opmerking moet
+                minstens 5 tekens lang zijn spaties niet meegerekend
+            </div>
         </li>
     </ul>
 

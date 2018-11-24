@@ -94,7 +94,7 @@ class FacebookFormAuthenticator extends AbstractFormLoginAuthenticator
         $targetPath = $this->getTargetPath($request->getSession(), $providerKey);
 
         if (!$targetPath) {
-            $targetPath = $this->router->generate('homepage');
+            $targetPath = $this->router->generate('expenses');
         }
 
         return new RedirectResponse($targetPath);

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Moni's Kazou RMT{% endblock %}</title>
+    <title>{% block title %}Onkostentool Kazou{% endblock %}</title>
 
     {% block stylesheets %}
         <link rel="stylesheet" href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}">
@@ -17,66 +17,26 @@
 </head>
 <body>
 
-{% if regionId is not defined %}
-    {% set regionId = 0 %}
-{% endif %}
-
 {% block header %}
     <header class="main-header">
         <div class="container">
             <div class="row header-content">
-
-                {% if regionId == 0 %}
-                    <a href="{{ path('homepage') }}">
-                        <img class="logo" src="{{ asset('img/kazou-logo.png') }}" alt="logo Kazou" width="125"
-                             height="98">
-                    </a>
-                {% else %}
-                    <img class="logo" src="{{ asset('img/kazou-logo.png') }}" alt="logo Kazou" width="125"
-                         height="98">
-                {% endif %}
-
-                {% if regionId == 0 %}
-                    {#{% if app.request.server.get('HTTP_REFERER') == null or 'kazourmt' in app.request.server.get('HTTP_REFERER') %}#}
-                    <nav class="desktop-nav">
-                        <ul>
-                            {#<li>#}
-                                {#<a href="{{ path('expenses') }}">Onkosten</a>#}
-                            {#</li>#}
-                            {#<li>#}
-                                {#<a href="{{ path('amoniac') }}">Amoniac</a>#}
-                            {#</li>#}
-                            {#<li>#}
-                                {#<a href="{{ path('vacancies') }}">Open plaatsen</a>#}
-                            {#</li>#}
-                            {#<li>#}
-                                {#<a href="{{ path('vvgps') }}">VV-GPS</a>#}
-                            {#</li>#}
-                            {#<li>#}
-                                {#<a href="/">Agenda</a>#}
-                            {#</li>#}
-                        </ul>
-                    </nav>
-                {% endif %}
 
                 <div class="flex1"></div>
 
                 <div class="actions">
                     {% if is_granted('ROLE_USER') %}
                         <a href="">
-                            <a href="{{ path('user_profile', {'regionId': regionId}) }}">
+                            <a href="{{ path('user_profile') }}">
                                 <img src="{{ app.user.picture|default(asset('img/profile_placeholder.png')) }}"
                                      class="profilePicture"
                                      alt="profile picture" width="42" height="42">
                             </a>
                         </a>
-                        {% if regionId == 0 %}
-                            {#At the moment, non RMT users can not log out since this will regardless redirect you to the homepage without the ability of further tracking#}
-                            <a href="{{ path('security_logout') }}" class="btn btn-yellow">Logout</a>
-                        {% endif %}
+                        <a href="{{ path('security_logout') }}" class="btn btn-yellow">Logout</a>
                     {% else %}
-                        <a href="{{ path('security_login_region', {'regionId': regionId}) }}" class="btn btn-yellow">Login</a>
-                        <a href="{{ path('user_register_region', {'regionId': regionId}) }}" class="btn btn-yellow">Registreer</a>
+                        <a href="{{ path('security_login') }}" class="btn btn-yellow">Login</a>
+                        <a href="{{ path('user_register') }}" class="btn btn-yellow">Registreer</a>
                     {% endif %}
                     {% if is_granted('ROLE_ADMIN') %}
                         <a href="{{ path('easyadmin') }}" class="btn btn-yellow">Admin</a>

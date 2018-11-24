@@ -29,6 +29,89 @@
         .statusActions > span:last-child {
             border-right: 1px solid pink;
         }
+
+        .cell {
+            padding: 4px 8px 4px 0;
+            display: inline-block;
+        }
+
+        .cell.cell-50 {
+            width: 50px;
+        }
+
+        .cell.cell-100 {
+            width: 100px;
+        }
+
+        .cell.cell-150 {
+            width: 150px;
+        }
+
+        .cell.cell-500 {
+            width: 500px;
+        }
+
+        .lineTemplate {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .flex1 {
+            flex-grow: 1;
+        }
+
+        .from .to {
+            max-width: 40%;
+            display: inline-block;
+        }
+
+        .icon {
+            padding: 8px;
+        }
+
+        .fromToField {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tripValidatorRow {
+            display: flex;
+            align-items: center;
+        }
+
+        .priceAccurracy {
+            background-color: red;
+            padding: 4px 8px;
+            color: white;
+            font-weight: 700;
+            border-radius: 4px;
+            margin-left: 4px;
+        }
+
+        .priceAccurracy.green {
+            background-color: green;
+        }
+
+        .priceAccurracy.orange {
+            background-color: orange;
+        }
+
+        .priceAccurracy.red {
+            background-color: red;
+        }
+
+        .editTripDistance {
+            width: 100px;
+            font-weight: normal;
+        }
+
+        .editTripComment {
+            width: 700px;
+            font-weight: normal;
+        }
     </style>
 {% endblock %}
 
@@ -40,9 +123,109 @@
 
     <div>
         De eerste stap in het uitbetalen van de onkosten is het valideren van de onkosten. Je kan per groep onkosten
-        goed- of afkeuren. De vrijwilligers zullen daarna de nieuwe status van hun onkosten in hun onkosten overzicht
+        goed- of afkeuren. Via het tandwieltje kan je de onkosten aanpassen. De vrijwilligers zullen daarna de nieuwe status van hun onkosten in hun onkosten overzicht
         zien staan.
     </div>
+
+    <!-- item template -->
+    <script type="text/x-template" id="item-template">
+        <li>
+            <div
+                    :class="{bold: isFolder}">
+                {{ "{{ model.name  }}" }}
+                <span v-if="isFolder" @click="toggle" v-bind:class="[this.open ? 'fa-minus' : 'fa-plus']" class="btn btn-default fa"></span>
+                <span v-if="model.tripCount > 0 && !inChecklist" @click="fetchTrips" class="btn btn-primary">{{ "{{model.tripCount}}" }} onkost(en) valideren</span>
+                <span v-if="model.tripCount > 0 && inChecklist" class="btn btn-default">{{ "{{model.tripCount}}" }} onkost(en) toegevoegd aan lijst</span>
+            </div>
+            <ul v-show="this.open" v-if="isFolder">
+                <tree-item
+                        class="item"
+                        v-for="(model, index) in model.children"
+                        :key="index"
+                        :data-id="index"
+                        :model="model"
+                >
+                </tree-item>
+            </ul>
+        </li>
+    </script>
+
+    {#item template#}
+    <script type="text/x-template" id="trip-line-template">
+        <div>
+            <h2>{{ "{{ tripgroup.groupName }}" }}</h2>
+            <trip-item v-for="trip in tripgroup.trips" v-bind:trip="trip" v-bind:key="trip.id">
+
+            </trip-item>
+        </div>
+
+    </script>
+
+    {#item template#}
+    <script type="text/x-template" id="trip-item-template">
+        <div class="lineTemplate">
+            <div class="icon">
+                <span class="cell cell-50">
+                    <span v-show="trip.transportType==='car'" class="fa fa-car"></span>
+                    <span v-show="trip.transportType==='publicTransport'" class="fa fa-bus"></span>
+                    <span v-show="trip.transportType==='bike'" class="fa fa-bicycle"></span>
+                    <span v-show="trip.transportType==='scooter'" class="fa fa-motorcycle"></span>
+                </span>
+            </div>
+            <div class="tripInfo">
+                <div class="tripValidatorRow">
+                    <span class="cell cell-150">{{ "{{ trip.name }}" }}</span>
+                    <span class="cell cell-100">{{ "{{ trip.date }}" }}</span>
+                    <span class="cell cell-500">
+                        <div class="fromToField">
+                            <span class="from">{{ "{{ trip.from }}" }}</span>
+                            <span class="icon fa fa-arrow-right"></span>
+                            <span class="to">{{ "{{ trip.to }}" }}</span>
+                        </div>
+                    </span>
+                    <span class="cell cell-150">{{ "{{ trip.activity }}" }}</span>
+                    <span class="cell cell-150">{{ "{{ trip.distance }}" }} Km<span class="priceAccurracy" v-bind:title="tripDistanceAccurracyInfo" v-bind:class="[this.tripDistanceAccurracy <= 0 ? 'green' : this.tripDistanceAccurracy < 10 ? 'orange' : 'red']"><span v-if="tripDistanceAccurracy > 0">+</span>{{ "{{ tripDistanceAccurracy }}" }}%</span></span>
+                    <span class="cell cell-100">&euro; {{ "{{ calculatedPrice }}" }}</span>
+                </div>
+
+                <div class="tripValidatorRow" v-if="trip.comment">
+                    <strong>opmerking moni: </strong>
+                    <span>{{ "{{ trip.comment }}" }}</span>
+                </div>
+
+                <div v-if="this.editMode">
+                    <div>
+                        <label>
+                            afstand:
+                            <input class="editTripDistance" type="number" step="0.01" min="0" v-model="trip.distance"> Km
+                        </label>
+                    </div>
+                </div>
+                <div v-if="this.editMode || this.trip.status === 'denied'">
+                    <div>
+                        <label>opmerking beroepskracht:
+                            <input class="editTripComment" type="text" placeholder="Onkosten die werden aangepast of afgekeurd moeten verplicht een opmerking van een admin krijgen." v-model="trip.adminComment">
+                            <button class="btn btn-primary fa fa-save" @click="pushExpense()"> Opslaan</button>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <span class="flex1"></span>
+            <div class="controls">
+                <div class="btn-group">
+                    <button v-bind:class="[trip.status === 'denied' ? 'btn-primary' : 'btn-default']" v-on:click="updateStatus('denied')" class="btn btn-default btn-default">afgekeurd</button>
+                    <button v-bind:class="[trip.status === 'awaiting' ? 'btn-primary' : 'btn-default']" v-on:click="updateStatus('awaiting')" class="btn btn-default btn-default">in afwachting</button>
+                    <button v-bind:class="[trip.status === 'approved' ? 'btn-primary' : 'btn-default']" v-on:click="updateStatus('approved')" class="btn btn-default btn-default">goedgekeurd</button>
+                </div>
+                <button class="fa fa-cog btn" v-bind:class="[this.editMode ? 'btn-primary' : 'btn-default' ]" @click="toggleEditMode()"></button>
+
+                <span v-show="trip.status==='processed'"></span>
+            </div>
+
+        </div>
+
+
+    </script>
 
     <div id="validate_app" :json="setStartData(
             {
@@ -50,23 +233,50 @@
             }
          )">
 
-        <h3>activiteit</h3>
-        <ul id="groupStack" class="disableList">
-            <groupstack-item
-                    v-for="group in groupStack"
-                    v-bind:group="group"
-                    v-bind:key="group.id">
-            </groupstack-item>
-            <div class="btnGroup">
-                <groupsavaliable-item
-                        v-for="group in activeGroups"
-                        v-bind:group="group"
-                        v-bind:key="group.id">
-                </groupsavaliable-item>
-            </div>
+        <div class="btn-group">
+            <button class="btn btn-default" v-on:click="setRegionId(0)"
+                    v-bind:class="[regionId === 0 ? 'btn-primary' : 'btn-default']">RMT
+            </button>
+            <button class="btn btn-default" v-on:click="setRegionId(1)"
+                    v-bind:class="[regionId === 1 ? 'btn-primary' : 'btn-default']">SMB
+            </button>
+            <button class="btn btn-default" v-on:click="setRegionId(2)"
+                    v-bind:class="[regionId === 2 ? 'btn-primary' : 'btn-default']">Antwerpen
+            </button>
+            <button class="btn btn-default" v-on:click="setRegionId(3)"
+                    v-bind:class="[regionId === 3 ? 'btn-primary' : 'btn-default']">Leuven
+            </button>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-default" v-on:click="toggleStatusFilter(0)"
+                    v-bind:class="[statusFilter[0] ? 'btn-primary' : 'btn-default']">afkeuren
+            </button>
+            <button class="btn btn-default" v-on:click="toggleStatusFilter(1)"
+                    v-bind:class="[statusFilter[1] ? 'btn-primary' : 'btn-default']">in afwachting
+            </button>
+            <button class="btn btn-default" v-on:click="toggleStatusFilter(2)"
+                    v-bind:class="[statusFilter[2] ? 'btn-primary' : 'btn-default']">goedkeuren
+            </button>
+        </div>
+
+        <h3>activiteiten</h3>
+
+        <br>
+        <span v-if="this.groupStack.length === 0" class="alert alert-info">geen activiteiten om te tonen, selecteer een verbond</span>
+
+        <ul id="demo">
+            <tree-item
+                    class="item"
+                    :model="item"
+                    v-for="item in this.groupStack"
+                    v-bind:data-id="item.key">
+            </tree-item>
         </ul>
 
-        <span v-on:click="loadExpenses" class="btn btn-yellow">Onkosten ophalen</span>
+        <h3>onkosten</h3>
+        <br>
+        <span v-if="this.tripGroups.length === 0" class="alert alert-info">geen activiteiten om te tonen, selecteer onkosten in de 'activiteiten' sectie</span>
 
         <table>
             <tripgroup-item
@@ -83,6 +293,13 @@
 {% block body_javascript %}
     {{ parent() }}
 
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src={{ asset('/js/vue/expensesValidate.js?v=1') }}></script>
+
+    <script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
 {% endblock %}

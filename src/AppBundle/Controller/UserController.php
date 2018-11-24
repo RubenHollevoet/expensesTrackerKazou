@@ -21,9 +21,9 @@ use Symfony\Component\HttpFoundation\Response;
 class UserController extends Controller
 {
     /**
-     * @Route("{regionId}/profile", name="user_profile")
+     * @Route("/profile", name="user_profile")
      */
-    public function showUser($regionId, Request $request)
+    public function showUser(Request $request)
     {
         $form = $this->createForm(UserProfileForm::class, $this->getUser());
 
@@ -40,17 +40,11 @@ class UserController extends Controller
                 $em->persist($user);
                 $em->flush();
                 $this->addFlash('success', 'Je account wijzigingen zijn opgeslagen.');
-                if($regionId === 0) {
-                    return $this->redirectToRoute('homepage');
-                }
-                else {
-                    return $this->redirectToRoute('expenses_region', ['regionId' => $regionId]);
-                }
+                return $this->redirectToRoute('expenses');
             }
         }
 
         return $this->render('user/show.html.twig', [
-            'regionId' => $regionId,
             'form' => $form->createView(),
             'google_api_key' => $this->getParameter('google_api_key')
         ]);
@@ -91,7 +85,7 @@ class UserController extends Controller
                 $this->addFlash('success', 'Welkom '.$user->getEmail().'. Je kan vanaf nu inloggen.');
 
                 if($regionId > 0) return $this->redirectToRoute('expenses_region', ['regionId' => $regionId]);
-                return $this->redirectToRoute('homepage');
+                return $this->redirectToRoute('expenses');
             }
         }
 

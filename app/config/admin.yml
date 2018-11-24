@@ -11,16 +11,17 @@ easy_admin:
             - { label: 'Website' }
             - { entity: 'Link', icon: 'link'}
             - { label: 'Algemeen' }
-            - { entity: 'User', icon: 'user'}
-            - { entity: 'Vacancy', icon: 'question'}
+            - { entity: 'User', icon: 'users'}
             - { label: 'Onkosten' }
             - { entity: 'Trip', icon: 'car'}
             - { entity: 'TripGroup', icon: 'filter'}
             - { entity: 'TripActivity', icon: 'list'}
-            - { label: 'Onkosten verwerken', icon: 'paper-plane', children: [ { entity: 'TripValidate', icon: 'check' }, { entity: 'TripExport', icon: 'download'}] }
+            - { entity: 'TripValidate', icon: 'check' }
+            - { entity: 'TripExport', icon: 'download'}
             - { entity: 'TripManual', icon: 'book' }
             - { label: 'Overigen' }
             - { entity: 'Region', icon: 'map-marker'}
+            - { entity: 'Admins', icon: 'user'}
     list:
         max_results: 50
     entities:
@@ -144,16 +145,19 @@ easy_admin:
             label: 'Gebruikers'
             list:
                 title: '%%entity_label%%'
-        Vacancy:
-            class: AppBundle\Entity\Vacancy
-            label: 'Vacatures'
-            list:
-                title: '%%entity_label%%'
         Region:
             class: AppBundle\Entity\Region
             label: 'Verbonden'
             list:
                 title: '%%entity_label%%'
+        Admins:
+            class: AppBundle\Entity\User
+            label: 'Admins'
+            list:
+                title: '%%entity_label%%'
+                dql_filter: "entity.roles = '[\"ROLE_USER\",\"ROLE_ADMIN\"]'"
+                fields: ['firstName', 'lastName', 'email', 'region']
+            disabled_actions: ['show', 'new', 'delete', 'edit']
         Link:
             class: AppBundle\Entity\Link
             label: 'Knoppen hoofdpagina'

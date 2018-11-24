@@ -1,24 +1,83 @@
 Vue.component('groupstack-item', {
     props: ['group'],
-    template: '<li v-bind:data-id="group.id"><span class="btn btn-danger fa fa-remove" v-on:click="revertSelectors"></span> {{ group.text }}</li>',
+    template: `<li v-bind:data-id="group.id"><span class="btn btn-info fa fa-check" v-on:click="loadExpenses"></span> {{ group.name }} ({{ group.tripCount }})
+                    <groupstack-item
+                        v-for="group in this.$root.groupStack"
+                        v-bind:group="group"
+                        v-bind:key="group.id">
+                    </groupstack-item>
+                </li>`,
     methods: {
-        revertSelectors: function (evt) {
-            var newArrayLength = $(evt.currentTarget.parentElement).index();
-            this.$root.groupStack = this.$root.groupStack.slice(0, newArrayLength);
-
-            var prevParentId = this.$root.groupStack[newArrayLength - 1] ? this.$root.groupStack[newArrayLength - 1].id : 0;
-            this.$root.fetchGroups(prevParentId);
+        loadExpenses: function (evt) {
+            console.log('todo: load expenses');
+            // var newArrayLength = $(evt.currentTarget.parentElement).index();
+            // this.$root.groupStack = this.$root.groupStack.slice(0, newArrayLength);
+            //
+            // var prevParentId = this.$root.groupStack[newArrayLength - 1] ? this.$root.groupStack[newArrayLength - 1].id : 0;
+            // this.$root.fetchGroups(prevParentId);
         }
+    }
+});
+
+// define the item component
+Vue.component('tree-item', {
+    template: '#item-template',
+    props: {
+        model: Object,
+
+    },
+    data: function () {
+        return {
+            open: false,
+            inChecklist: false
+        }
+    },
+    computed: {
+        isFolder: function () {
+            return this.model.children;
+        },
+        getTripCount: function () {
+            return this.model.tripCount;
+        }
+    },
+    methods: {
+        toggle: function () {
+            if (this.model.children !== []) {
+                this.open = !this.open
+            }
+        },
+        fetchTrips: function () {
+            var groupId = this.model.id;
+            var self = this;
+            axios.get('/api/getExpenses?group=' + groupId)
+                .then(function (response) {
+                    if(response.data.status === 'ok') {
+                        self.inChecklist = true;
+                        self.$root.tripGroups.push(response.data.data);
+                        console.log('reques finished: ', self.$root.tripGroups);
+                    }
+                    else {
+                        alert('error fetching trips. Check console log');
+                        console.log(response.data.status);
+                    }
+                })
+                .catch(function (error) {
+                    self.fetchError = error;
+                })
+        }
+    },
+    mounted: function () {
+        // console.log(this.model);
     }
 });
 
 Vue.component('groupsavaliable-item', {
     props: ['group'],
-    template: '<span class="btn btn-default" v-bind:data-id="group.id" v-on:click="loadNewGroups">{{ getName() }}</span>',
+    template: '<span class="btn btn-default" v-bind:data-id="group.id" v-on:click="loadNewGroups" v-bind:class="[this.group.tripsAwaitingConfirmation === 0? \'btn-primary\' : \'btn-default\']">{{ getName() }} ({{ this.group.tripsAwaitingConfirmation }})</span>',
     methods: {
         loadNewGroups: function (evt) {
             this.$root.groupStack.push({id: this.group.id, text: this.group.name});
-            this.$root.fetchGroups(evt.currentTarget.dataset.id);
+            // this.$root.fetchGroups(evt.currentTarget.dataset.id);
             this.$root.activeGroups = [];
         },
         getName: function () {
@@ -33,53 +92,81 @@ Vue.component('tripgroup-item', {
     props: {
         tripgroup: Object
     },
-    template: '<table><tr><td><h2>{{ tripgroup.name }}</h2></td></tr><trip-item v-for="trip in tripgroup.trips" v-bind:trip="trip" v-bind:key="trip.id"></trip-item></div></tr></table>',
+    template: '#trip-line-template',
     methods: {}
 });
 
 Vue.component('trip-item', {
     props: {
-        trip: Object
+        trip: Object,
+        editMode: false
     },
-    template: `<tr>
-                    <td>
-                       <span v-show="trip.transportType==='car'" class="fa fa-car"></span>
-                       <span v-show="trip.transportType==='publicTransport'" class="fa fa-bus"></span>
-                       <span v-show="trip.transportType==='bike'" class="fa fa-bicycle"></span>
-                       <span v-show="trip.transportType==='scooter'" class="fa fa-motorcycle"></span>
-                    </td>
-                    <td>{{ trip.name }}</td>
-                    <td>{{ trip.date }}</td>
-                    <td>{{ trip.from }}</td>
-                    <td>{{ trip.to }}</td>
-                    <td>{{ trip.activity }}</td>
-                    <td>{{ trip.comment }}</td>
-                    <td>{{ trip.distance }}</td>
-                    <td>{{ trip.estimateDistance }}</td>
-                    <td>
-                        <span v-show="trip.status!=='processed'" class="statusActions">
-                            <span v-on:click="updateStatus('denied')">afgekeurd</span>
-                            <span v-on:click="updateStatus('awaiting')">in afwachting</span>
-                            <span v-on:click="updateStatus('approved')">goedgekeurd</span>
-                        </span>
-                        <span v-show="trip.status==='processed'">
-                        </span>
-                    </td>
-                </tr>`,
-    methods: {}
+    computed: {
+        tripDistanceAccurracy: function() {
+            return Math.round((this.trip.distance / this.trip.estimatedDistance) * 100) - 100;
+        },
+        tripDistanceAccurracyInfo: function() {
+            return 'schatting Google Distance Matrix: ' + this.trip.estimatedDistance + ' Km'
+        },
+        calculatedPrice: function() {
+            if(this.trip.transportType === 'car') {
+                return this.trip.distance * 0.25;
+            }
+            else {
+                return this.trip.price;
+            }
+        }
+    },
+    template: '#trip-item-template',
+    methods: {
+        toggleEditMode: function() {
+            this.editMode = !this.editMode;
+        },
+        updateStatus: function (status) {
+            console.log(status);
+            this.trip.status = status;
+
+            if(status === 'approved' || status === 'pending') {
+                this.pushExpense();
+            }
+
+        },
+        pushExpense() {
+
+            var tripData = {
+                id: this.trip.id,
+                status: this.trip.status,
+                adminComment: this.trip.adminComment,
+                distance: this.trip.distance
+            };
+
+            axios.post('/api/updateExpense', tripData)
+                .then(function (response) {
+                    if(response.data.status === 'error') {
+                        alert('Er liep iets mis bij het opslaan van de onkosten. Bekijk de console voor meer info.');
+                    }
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    alert('Er liep iets mis bij het opslaan van de onkosten. Bekijk de console voor meer info.');
+                    console.log('error', error);
+                });
+        }
+    }
 });
 
-Vue.component('')
 
 var app = new Vue({
-        delimiters: ['${', '}'],
+        // delimiters: ['${', '}'],
         el: '#validate_app',
         data: {
             startDataSet: false,
-            regionId: 5,
-            groupStack: [{"id":4,"text":"Jaarwerking"},{"id":1,"text":"Amoniac"}],
+            regionId: null,
+            // groupStack: [{"id":4,"text":"Jaarwerking"},{"id":1,"text":"Amoniac"}],
+            groupStack: [],
             activeGroups: [],
-            tripGroups: []
+            tripGroups: [],
+            statusFilter: [false, true, false]
         },
         computed: {
             submitStatusClass: function (transportType) {
@@ -91,49 +178,38 @@ var app = new Vue({
             }
         },
         methods: {
-            fetchGroups: function (id = 0) {
+            fetchGroups: function () {
                 var self = this;
-                axios.get('/expenses/api/getChildGroups?group=' + id.toString() + '&region=' + this.regionId)
-                    .then(function (response) {
-                        self.activeGroups = response.data.data;
-                        self.formErrors = [];
-                        if (response.data.data.length < 1) self.fetchActivity(self.groupStack.slice(-1)[0].id)
-                    })
-                    .catch(function (error) {
-                        self.fetchError = error;
-                    })
-            },
-            loadExpenses() {
-                var self = this;
-                var groupId = this.groupStack[this.groupStack.length - 1] ? this.groupStack[this.groupStack.length - 1].id.toString() : 'null';
-                axios.get('/app_dev.php/expenses/api/getExpenses?group=' + groupId + '&region=' + this.regionId)
+                axios.get('/api/getValidateTree?region=' + this.regionId)
                     .then(function (response) {
                         if(response.data.status === 'ok') {
-                            self.tripGroups = response.data.data;
-                            console.log(response.data.data);
+                            self.groupStack = response.data.data;
                         }
                         else {
-                            alert('error fetching trips. Check console log');
-                            console.log(response.data.status);
+                            alert('server returned following error when fetching trips: ' + response.data.error);
                         }
-
-
-                        // self.formErrors = [];
-                        // if (response.data.data.length < 1) self.fetchActivity(self.groupStack.slice(-1)[0].id)
                     })
                     .catch(function (error) {
                         self.fetchError = error;
+                        alert('error fetching trip');
                     })
             },
             setStartData(data) {
                 if (!this.startDataSet) {
-                    this.regionId = data.regionId;
                     this.startDataSet = true;
                 }
+            },
+            setRegionId: function (regionId) {
+                this.groupStack = [];
+                this.regionId = regionId;
+                this.fetchGroups();
+            },
+            toggleStatusFilter: function(statusId) {
+                this.statusFilter[statusId] = !this.statusFilter[statusId];
             }
         },
         mounted: function () {
-            this.fetchGroups(0);
+
         }
     })
 ;

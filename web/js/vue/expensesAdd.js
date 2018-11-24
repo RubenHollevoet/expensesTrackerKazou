@@ -107,7 +107,7 @@ var app = new Vue({
                 tripData: this.tripData,
                 regionId: this.regionId
             };
-            axios.post('/expenses/api/createTrip', tripData)
+            axios.post('/api/createTrip', tripData)
                 .then(function (response) {
                     if(response.data !== '') {
                         self.submitStatus = 200;
@@ -153,7 +153,7 @@ var app = new Vue({
         },
         fetchGroups: function (id = 0) {
             var self = this;
-            axios.get('/expenses/api/getChildGroups?group=' + id.toString() + '&region=' + this.regionId)
+            axios.get('/api/getChildGroups?group=' + id.toString() + '&region=' + this.regionId)
                 .then(function (response) {
                     self.activeGroups = response.data.data;
                     self.formErrors = [];
@@ -165,7 +165,7 @@ var app = new Vue({
         },
         fetchActivity: function (id) {
             var self = this;
-            axios.get('/expenses/api/getTripActivities?group=' + id.toString() + '&region=' + this.regionId)
+            axios.get('/api/getTripActivities?group=' + id.toString() + '&region=' + this.regionId)
                 .then(function (response) {
                     // console.log(response.data.status);
                     if (response.data.status === 'ok') {
@@ -253,7 +253,7 @@ var app = new Vue({
                     from: this.tripData.from,
                     to: this.tripData.to
                 };
-                axios.post('/expenses/api/getTripDistance', locationData)
+                axios.post('/api/getTripDistance', locationData)
                     .then(function (response) {
                         self.tripData.estimateDistance = (response.data.distance * 2) / 1000;
                         self.tripData.distance = self.tripData.estimateDistance;

@@ -1,7 +1,4 @@
 {% extends "base.html.twig" %}
-{% if regionId != 0 %}
-    {% set expenses_only = true %}
-{% endif %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/expenses.css') }}?v={{ random(999999) }}">
@@ -66,7 +63,7 @@
 
             <span class="flex1"></span>
             <div class="actions btnGroup">
-                <a href="{{ path('expenses_region', {'regionId': regionId}) }}" class="btn btn-yellow btn-zoom">Terug</a>
+                <a href="{{ path('expenses') }}" class="btn btn-yellow btn-zoom">Terug</a>
                 <span class="btn btn-yellow btn-zoom" v-on:click="nextStep">Akkoord!</span>
             </div>
         </div>
@@ -201,33 +198,36 @@
                 <div class="col-md-6">
                     <h3>plaats</h3>
                     <div class="form-group">
-                        {% if regionId == 0 %}
-                            <span class="btn btn-default" v-on:click="updateTo('CM Mechelen Noord')"
-                                  v-bind:class="[tripData.to === 'CM Mechelen Noord' ? 'btn-primary' : 'btn-default']">Rezzon</span>
-                            <span class="btn btn-default" v-on:click="updateTo('CM Turnhout')"
-                                  v-bind:class="[tripData.to === 'CM Turnhout' ? 'btn-primary' : 'btn-default']">Bar Volontar</span>
-                            <span class="btn btn-default" v-on:click="updateTo('')"
-                                  v-bind:class="[tripData.to !== 'CM Mechelen Noord' && tripData.to !== 'CM Turnhout' ? 'btn-primary' : 'btn-default']">Overige</span>
-                            <input id="meetingLocation" class="form-control"
-                                   v-show="tripData.to !== 'CM Mechelen Noord' && tripData.to !== 'CM Turnhout'"
-                                   v-model="tripData.to" placeholder="waar vond de activiteit plaats?"
-                                   type="text">
-                        {% elseif regionId == 1 %}
-                            <span class="btn btn-default" v-on:click="updateTo('Haachtsesteenweg 1805, 1130 Haren')"
-                                  v-bind:class="[tripData.to === 'Haachtsesteenweg 1805, 1130 Haren' ? 'btn-primary' : 'btn-default']">Verbondsgebouw</span>
-                            <span class="btn btn-default" v-on:click="updateTo('Wilgenlaan 1, 1861 Meise')"
-                                  v-bind:class="[tripData.to === 'Wilgenlaan 1, 1861 Meise' ? 'btn-primary' : 'btn-default']">CM Meise</span>
-                            <span class="btn btn-default" v-on:click="updateTo('Ninoofsesteenweg 176, 1700 Dilbeek')"
-                                  v-bind:class="[tripData.to === 'Ninoofsesteenweg 176, 1700 Dilbeek' ? 'btn-primary' : 'btn-default']">CM Dilbeek</span>
-                            <span class="btn btn-default" v-on:click="updateTo('Molenbos1, 1731 Asse')"
-                                  v-bind:class="[tripData.to === 'Molenbos1, 1731 Asse' ? 'btn-primary' : 'btn-default']">Vertrekplaats Asse</span>
-                            <span class="btn btn-default" v-on:click="updateTo('')"
-                                  v-bind:class="[tripData.to !== 'Haachtsesteenweg 1805, 1130 Haren' && tripData.to !== 'Wilgenlaan 1, 1861 Meise' && tripData.to !== 'Ninoofsesteenweg 176, 1700 Dilbeek' && tripData.to !== 'Molenbos1, 1731 Asse' ? 'btn-primary' : 'btn-default']">Overige</span>
-                            <input id="meetingLocation" class="form-control"
-                                   v-show="tripData.to !== 'Haachtsesteenweg 1805, 1130 Haren' && tripData.to !== 'Wilgenlaan 1, 1861 Meise' && tripData.to !== 'Ninoofsesteenweg 176, 1700 Dilbeek' && tripData.to !== 'Molenbos1, 1731 Asse'"
-                                   v-model="tripData.to" placeholder="waar vond de activiteit plaats?"
-                                   type="text">
-                        {% endif %}
+                        <h2>TODO: check region attached to KM</h2>
+
+                        {#DO NOT REMOVE!!!#}
+                        {#{% if regionId == 0 %}#}
+                            {#<span class="btn btn-default" v-on:click="updateTo('CM Mechelen Noord')"#}
+                                  {#v-bind:class="[tripData.to === 'CM Mechelen Noord' ? 'btn-primary' : 'btn-default']">Rezzon</span>#}
+                            {#<span class="btn btn-default" v-on:click="updateTo('CM Turnhout')"#}
+                                  {#v-bind:class="[tripData.to === 'CM Turnhout' ? 'btn-primary' : 'btn-default']">Bar Volontar</span>#}
+                            {#<span class="btn btn-default" v-on:click="updateTo('')"#}
+                                  {#v-bind:class="[tripData.to !== 'CM Mechelen Noord' && tripData.to !== 'CM Turnhout' ? 'btn-primary' : 'btn-default']">Overige</span>#}
+                            {#<input id="meetingLocation" class="form-control"#}
+                                   {#v-show="tripData.to !== 'CM Mechelen Noord' && tripData.to !== 'CM Turnhout'"#}
+                                   {#v-model="tripData.to" placeholder="waar vond de activiteit plaats?"#}
+                                   {#type="text">#}
+                        {#{% elseif regionId == 1 %}#}
+                            {#<span class="btn btn-default" v-on:click="updateTo('Haachtsesteenweg 1805, 1130 Haren')"#}
+                                  {#v-bind:class="[tripData.to === 'Haachtsesteenweg 1805, 1130 Haren' ? 'btn-primary' : 'btn-default']">Verbondsgebouw</span>#}
+                            {#<span class="btn btn-default" v-on:click="updateTo('Wilgenlaan 1, 1861 Meise')"#}
+                                  {#v-bind:class="[tripData.to === 'Wilgenlaan 1, 1861 Meise' ? 'btn-primary' : 'btn-default']">CM Meise</span>#}
+                            {#<span class="btn btn-default" v-on:click="updateTo('Ninoofsesteenweg 176, 1700 Dilbeek')"#}
+                                  {#v-bind:class="[tripData.to === 'Ninoofsesteenweg 176, 1700 Dilbeek' ? 'btn-primary' : 'btn-default']">CM Dilbeek</span>#}
+                            {#<span class="btn btn-default" v-on:click="updateTo('Molenbos1, 1731 Asse')"#}
+                                  {#v-bind:class="[tripData.to === 'Molenbos1, 1731 Asse' ? 'btn-primary' : 'btn-default']">Vertrekplaats Asse</span>#}
+                            {#<span class="btn btn-default" v-on:click="updateTo('')"#}
+                                  {#v-bind:class="[tripData.to !== 'Haachtsesteenweg 1805, 1130 Haren' && tripData.to !== 'Wilgenlaan 1, 1861 Meise' && tripData.to !== 'Ninoofsesteenweg 176, 1700 Dilbeek' && tripData.to !== 'Molenbos1, 1731 Asse' ? 'btn-primary' : 'btn-default']">Overige</span>#}
+                            {#<input id="meetingLocation" class="form-control"#}
+                                   {#v-show="tripData.to !== 'Haachtsesteenweg 1805, 1130 Haren' && tripData.to !== 'Wilgenlaan 1, 1861 Meise' && tripData.to !== 'Ninoofsesteenweg 176, 1700 Dilbeek' && tripData.to !== 'Molenbos1, 1731 Asse'"#}
+                                   {#v-model="tripData.to" placeholder="waar vond de activiteit plaats?"#}
+                                   {#type="text">#}
+                        {#{% endif %}#}
 
                     </div>
                 </div>
@@ -442,7 +442,7 @@
             <span class="flex1"></span>
             <div class="actions btnGroup">
                 <span class="btn btn-yellow btn-zoom" v-on:click="prevStep" v-show="submitStatus === 500">vorige</span>
-                <a class="btn btn-yellow btn-zoom" v-show="submitStatus === 200" href="{{ path('expenses_region', {'regionId': regionId}) }}">afronden</a>
+                <a class="btn btn-yellow btn-zoom" v-show="submitStatus === 200" href="{{ path('expenses') }}">afronden</a>
             </div>
         </div>
     </div>

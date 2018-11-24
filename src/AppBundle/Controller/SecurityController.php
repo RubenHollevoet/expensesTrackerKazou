@@ -17,7 +17,6 @@ class SecurityController extends Controller
 {
     /**
      * @Route("/login", name="security_login")
-     * @Route("{regionId}/login", name="security_login_region")
      */
     public function loginAction($regionId = 0)
     {

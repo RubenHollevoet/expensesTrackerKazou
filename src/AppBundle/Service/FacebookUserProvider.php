@@ -115,7 +115,7 @@ class FacebookUserProvider
 
         $this->session->set('fb_access_token', (string) $accessToken);
 
-        return new RedirectResponse($this->router->generate('homepage'));
+        return new RedirectResponse($this->router->generate('expenses'));
     }
 
     public function getCurrentUser()

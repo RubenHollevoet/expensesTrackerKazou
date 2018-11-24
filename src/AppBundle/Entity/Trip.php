@@ -100,6 +100,22 @@ class Trip
     private $comment;
 
     /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $adminCommand;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User")
+     */
+    private $handledBy;
+
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $handledAt;
+
+    /**
      * @ORM\Column(type="string")
      */
     private $status = 'awaiting';
@@ -354,6 +370,54 @@ class Trip
     public function setComment($comment)
     {
         $this->comment = $comment;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAdminCommand()
+    {
+        return $this->adminCommand;
+    }
+
+    /**
+     * @param mixed $adminCommand
+     */
+    public function setAdminCommand($adminCommand)
+    {
+        $this->adminCommand = $adminCommand;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHandledBy()
+    {
+        return $this->handledBy;
+    }
+
+    /**
+     * @param mixed $handledBy
+     */
+    public function setHandledBy($handledBy)
+    {
+        $this->handledBy = $handledBy;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHandledAt()
+    {
+        return $this->handledAt;
+    }
+
+    /**
+     * @param mixed $handledAt
+     */
+    public function setHandledAt($handledAt)
+    {
+        $this->handledAt = $handledAt;
     }
 
     /**

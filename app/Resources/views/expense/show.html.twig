@@ -1,9 +1,4 @@
 {% extends "base.html.twig" %}
-{#{% if regionId != 0 %}#}
-    {#{% set expenses_only = true %}#}
-    {#{% set regionId = regionId %}#}
-{#{% endif %}#}
-
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/expenses.css') }}?v={{ random(999999) }}">
@@ -18,18 +13,18 @@
             <div class="col-md-8 centerBox">
                 <h1>Welkom op de onkostentool</h1>
 
-                <span class="alert alert-info">
-                    <h4>De onkostentool staat nog maar in zijn kinderschoentjes en dus kan ik jouw hulp zeker goed gebruiken!</h4>
-                    <p>Heb je ergens een fout gevonden, is er iets niet duidelijk, staan er nog ergens schrijffouten, heb je nog een zot idee voor een uitbreiding of is er volgens jou nog een 'feature' die ontbreekt? Meld het dan hieronder zodat ik er verder mee aan de slag kan gaan :D</p>
-                    <a class="btn btn-yellow" target="_blank" href="https://goo.gl/forms/NkVAowEoqFXlvcaK2">Vul het feedback formulier in!</a>
-                </span>
+                {#<span class="alert alert-info">#}
+                    {#<h4>De onkostentool staat nog maar in zijn kinderschoentjes en dus kan ik jouw hulp zeker goed gebruiken!</h4>#}
+                    {#<p>Heb je ergens een fout gevonden, is er iets niet duidelijk, staan er nog ergens schrijffouten, heb je nog een zot idee voor een uitbreiding of is er volgens jou nog een 'feature' die ontbreekt? Meld het dan hieronder zodat ik er verder mee aan de slag kan gaan :D</p>#}
+                    {#<a class="btn btn-yellow" target="_blank" href="https://goo.gl/forms/NkVAowEoqFXlvcaK2">Vul het feedback formulier in!</a>#}
+                {#</span>#}
 
                 <p class="center">Hier kan je al je transport onkosten indienen. Je vindt verder ook een overzicht van je
                     eerder ingediende onkosten.
                     {#Voor meer info over waar je een killometervergoeding voor kan indienen, kan je de <a href="">onkostennota</a> raadplegen.#}
                 </p>
                 {% if app.user %}
-                    <a href="{{ path("expenses_add",{ 'regionId': regionId }) }}" class="btn btn-yellow btn-zoom">onkosten toevoegen</a>
+                    <a href="{{ path("expenses_add") }}" class="btn btn-yellow btn-zoom">onkosten toevoegen</a>
                 {% else %}
                     <div class="alert alert-info width100">
                         <span>Om onkosten in te dienen moet je ingelogd zijn.</span>
@@ -40,7 +35,7 @@
                             </div>
                         </div>
                         <span>of met je
-                                <a href="{{ path('security_login_region', {'regionId': regionId}) }}">email</a>.
+                                <a href="{{ path('security_login') }}">email</a>.
                         </span>
                     </div>
                 {% endif %}
@@ -88,9 +83,11 @@
                             {#<td><a href="{{ trip.tickets }}">ticketje</a></td>#}
                             {#{% endif %}#}
                             {#<td>{{ trip.price }} &euro;</td>#}
-                            <td>
+                            <td class="simpleFlex">
                                 <span class="expense-status nowrap {{ trip.status }}">{{ ('trip.status.'~trip.status)|trans }}</span>
-
+                                {% if trip.adminCommand %}
+                                    <span title="{{ trip.adminCommand }}" class="fa fa-exclamation"></span>
+                                {% endif %}
                             </td>
                             {#<td>{{ trip.status }}</td>#}
                             <td><a href="#" data-toggle="modal" data-target="#tripDetailModal{{ trip.id }}">details</a>
@@ -117,6 +114,10 @@
                 <div class="expenseStatusExplenation">
                     <span class="expense-status denied">afgekeurd</span>
                     <span> Kazou heeft besloten je deze onkost niet te vergoeden.</span>
+                </div>
+                <div class="expenseStatusExplenation">
+                    <span class="fa fa-exclamation"></span>
+                    <span>Een educatief medewerker heeft een opmerking toegevoegd aan je onkost en deze mogelijks aangepast.</span>
                 </div>
             </div>
         {% endif %}
@@ -154,8 +155,13 @@
                                 <p><strong>Afstand: </strong>{{ trip.distance }}</p>
                             {% endif %}
                             <p><strong>Bedrag: </strong>{{ trip.price }}</p>
-                            <p><strong>Comment: </strong>{{ trip.comment }}</p>
+                            <p><strong>Opmerking: </strong>{{ trip.comment }}</p>
                             <p><strong>Aangemaakt op: </strong>{{ trip.createdAt|date('j-n-Y H:i:s') }}</p>
+                            <p><strong>Laatste status wijziging door: </strong>{{ trip.handledBy }}</p>
+                            <p><strong>Laatste status wijziging op: </strong>{{ trip.handledAt|date('j-n-Y H:i:s') }}</p>
+                            {% if trip.adminCommand %}
+                                <p><strong>Opmerking van educatief medewerker: </strong>{{ trip.adminCommand }}</p>
+                            {% endif %}
                             {% if trip.tickets %}
                                 {#todo: loop over tickets#}
                                 <p><strong>Ticketjes: </strong></p>

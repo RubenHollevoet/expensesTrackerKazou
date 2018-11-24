@@ -176,3 +176,14 @@
     white-space: nowrap;
     font-weight: bold;
 }
+
+.fa.fa-exclamation {
+    color: red;
+    font-size: 24px;
+    padding-left: 5px;
+}
+
+.simpleFlex {
+    display: flex;
+    align-items: center;
+}
