@@ -49,7 +49,7 @@ Vue.component('tree-item', {
         fetchTrips: function () {
             var groupId = this.model.id;
             var self = this;
-            axios.get('/api/getExpenses?group=' + groupId)
+            axios.get('/api/getExpenses?group=' + groupId + '&denied=' + this.$root.tripStatusFilter[0] + '&awaiting=' + this.$root.tripStatusFilter[1] + '&approved=' + this.$root.tripStatusFilter[2] + '&sorting=' + this.$root.sorting)
                 .then(function (response) {
                     if(response.data.status === 'ok') {
                         self.inChecklist = true;
@@ -99,7 +99,7 @@ Vue.component('tripgroup-item', {
 Vue.component('trip-item', {
     props: {
         trip: Object,
-        editMode: false
+        pushStatus: 'unchanged'
     },
     computed: {
         tripDistanceAccurracy: function() {
@@ -119,37 +119,38 @@ Vue.component('trip-item', {
     },
     template: '#trip-item-template',
     methods: {
-        toggleEditMode: function() {
-            this.editMode = !this.editMode;
-        },
         updateStatus: function (status) {
-            console.log(status);
-            this.trip.status = status;
-
-            if(status === 'approved' || status === 'pending') {
-                this.pushExpense();
-            }
-
+            this.pushExpense(status);
         },
-        pushExpense() {
+        pushExpense(status) {
+
+            this.trip.originalStatus = this.trip.status;
+            console.log('hello',this.trip);
+            this.trip.status = 'pending';
 
             var tripData = {
                 id: this.trip.id,
-                status: this.trip.status,
+                status: status,
                 adminComment: this.trip.adminComment,
                 distance: this.trip.distance
             };
 
+            var self = this;
             axios.post('/api/updateExpense', tripData)
                 .then(function (response) {
                     if(response.data.status === 'error') {
-                        alert('Er liep iets mis bij het opslaan van de onkosten. Bekijk de console voor meer info.');
+                        alert('Er liep iets mis bij het opslaan van de onkosten. De status is niet geweizigd. Bekijk de console voor meer info.');
+                        self.trip.status = self.trip.originalStatus;
                     }
-                    console.log(response.data);
+                    else {
+                        self.trip.status = response.data.data.tripStatus;
+                    }
                 })
                 .catch(function (error) {
                     alert('Er liep iets mis bij het opslaan van de onkosten. Bekijk de console voor meer info.');
                     console.log('error', error);
+                        console.log('hello',self.trip);
+                    self.pushStatus = self.trip.originalStatus;
                 });
         }
     }
@@ -166,7 +167,9 @@ var app = new Vue({
             groupStack: [],
             activeGroups: [],
             tripGroups: [],
-            statusFilter: [false, true, false]
+            tripStatusFilter: [false, true, false],
+            sorting: 'date',
+            tripCount: 0
         },
         computed: {
             submitStatusClass: function (transportType) {
@@ -179,11 +182,14 @@ var app = new Vue({
         },
         methods: {
             fetchGroups: function () {
+                this.groupStack = [];
+                this.tripGroups = [];
                 var self = this;
-                axios.get('/api/getValidateTree?region=' + this.regionId)
+                axios.get('/api/getValidateTree?region=' + this.regionId + '&denied=' + this.tripStatusFilter[0] + '&awaiting=' + this.tripStatusFilter[1] + '&approved=' + this.tripStatusFilter[2] + '&sorting=' + this.sorting)
                     .then(function (response) {
                         if(response.data.status === 'ok') {
                             self.groupStack = response.data.data;
+                            self.tripCount = response.data.count;
                         }
                         else {
                             alert('server returned following error when fetching trips: ' + response.data.error);
@@ -200,12 +206,25 @@ var app = new Vue({
                 }
             },
             setRegionId: function (regionId) {
-                this.groupStack = [];
                 this.regionId = regionId;
+                console.log(this.regionId);
                 this.fetchGroups();
             },
-            toggleStatusFilter: function(statusId) {
-                this.statusFilter[statusId] = !this.statusFilter[statusId];
+            toggleTripStatusFilter: function(statusId) {
+                this.tripStatusFilter[statusId] = !this.tripStatusFilter[statusId];
+                this.$forceUpdate();
+
+                console.log('kk', this.regionId);
+                if(this.regionId !== null) {
+                    this.fetchGroups();
+                }
+            },
+            setSortingValue: function(sortingOrder) {
+                this.sorting = sortingOrder;
+
+                if(this.regionId !== null) {
+                    this.fetchGroups();
+                }
             }
         },
         mounted: function () {

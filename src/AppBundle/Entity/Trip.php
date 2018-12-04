@@ -102,7 +102,7 @@ class Trip
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $adminCommand;
+    private $commentAdmin;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
@@ -375,17 +375,17 @@ class Trip
     /**
      * @return mixed
      */
-    public function getAdminCommand()
+    public function getCommentAdmin()
     {
-        return $this->adminCommand;
+        return $this->commentAdmin;
     }
 
     /**
-     * @param mixed $adminCommand
+     * @param mixed $commentAdmin
      */
-    public function setAdminCommand($adminCommand)
+    public function setCommentAdmin($commentAdmin)
     {
-        $this->adminCommand = $adminCommand;
+        $this->commentAdmin = $commentAdmin;
     }
 
     /**

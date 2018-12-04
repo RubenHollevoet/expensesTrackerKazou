@@ -6,7 +6,11 @@ parameters:
         goedgekeurd: approved
         behandeld: processed
         afgekeurd: denied
-
+   transport_types:
+        auto: car
+        openbaar vervoer: publicTransport
+        brommer: scooter
+        bike: fiets
 services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName

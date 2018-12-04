@@ -85,8 +85,8 @@
                             {#<td>{{ trip.price }} &euro;</td>#}
                             <td class="simpleFlex">
                                 <span class="expense-status nowrap {{ trip.status }}">{{ ('trip.status.'~trip.status)|trans }}</span>
-                                {% if trip.adminCommand %}
-                                    <span title="{{ trip.adminCommand }}" class="fa fa-exclamation"></span>
+                                {% if trip.commentAdmin %}
+                                    <span title="{{ trip.commentAdmin }}" class="fa fa-exclamation"></span>
                                 {% endif %}
                             </td>
                             {#<td>{{ trip.status }}</td>#}
@@ -159,8 +159,8 @@
                             <p><strong>Aangemaakt op: </strong>{{ trip.createdAt|date('j-n-Y H:i:s') }}</p>
                             <p><strong>Laatste status wijziging door: </strong>{{ trip.handledBy }}</p>
                             <p><strong>Laatste status wijziging op: </strong>{{ trip.handledAt|date('j-n-Y H:i:s') }}</p>
-                            {% if trip.adminCommand %}
-                                <p><strong>Opmerking van educatief medewerker: </strong>{{ trip.adminCommand }}</p>
+                            {% if trip.commentAdmin %}
+                                <p><strong>Opmerking van educatief medewerker: </strong>{{ trip.commentAdmin }}</p>
                             {% endif %}
                             {% if trip.tickets %}
                                 {#todo: loop over tickets#}

@@ -47,14 +47,23 @@
             width: 150px;
         }
 
+        .cell.cell-300 {
+            width: 300px;
+        }
+
         .cell.cell-500 {
             width: 500px;
+        }
+
+        .lineTemplate:nth-child(even) {
+            background-color: white;
         }
 
         .lineTemplate {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 12px 10px 12px 0;
         }
 
         .flex1 {
@@ -72,14 +81,14 @@
 
         .fromToField {
             display: flex;
-            flex-direction: row;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
         }
 
         .tripValidatorRow {
             display: flex;
             align-items: center;
+            padding: 8px 0;
         }
 
         .priceAccurracy {
@@ -111,6 +120,10 @@
         .editTripComment {
             width: 700px;
             font-weight: normal;
+        }
+
+        .alert-info {
+            margin-top: 20px;
         }
     </style>
 {% endblock %}
@@ -176,10 +189,10 @@
                 <div class="tripValidatorRow">
                     <span class="cell cell-150">{{ "{{ trip.name }}" }}</span>
                     <span class="cell cell-100">{{ "{{ trip.date }}" }}</span>
-                    <span class="cell cell-500">
+                    <span class="cell cell-300">
                         <div class="fromToField">
                             <span class="from">{{ "{{ trip.from }}" }}</span>
-                            <span class="icon fa fa-arrow-right"></span>
+                            <span class="icon fa fa-arrow-down"></span>
                             <span class="to">{{ "{{ trip.to }}" }}</span>
                         </div>
                     </span>
@@ -190,40 +203,38 @@
 
                 <div class="tripValidatorRow" v-if="trip.comment">
                     <strong>opmerking moni: </strong>
-                    <span>{{ "{{ trip.comment }}" }}</span>
+                    <span>{{ " {{ trip.comment }}" }}</span>
                 </div>
 
-                <div v-if="this.editMode">
-                    <div>
-                        <label>
-                            afstand:
-                            <input class="editTripDistance" type="number" step="0.01" min="0" v-model="trip.distance"> Km
-                        </label>
-                    </div>
-                </div>
-                <div v-if="this.editMode || this.trip.status === 'denied'">
-                    <div>
-                        <label>opmerking beroepskracht:
-                            <input class="editTripComment" type="text" placeholder="Onkosten die werden aangepast of afgekeurd moeten verplicht een opmerking van een admin krijgen." v-model="trip.adminComment">
-                            <button class="btn btn-primary fa fa-save" @click="pushExpense()"> Opslaan</button>
-                        </label>
-                    </div>
-                </div>
+                {#<div v-if="this.editMode">#}
+                    {#<div>#}
+                        {#<label>#}
+                            {#afstand:#}
+                            {#<input class="editTripDistance" type="number" step="0.01" min="0" v-model="trip.distance"> Km#}
+                        {#</label>#}
+                    {#</div>#}
+                {#</div>#}
+                {#<div v-if="this.editMode || this.trip.status === 'denied'">#}
+                    {#<div>#}
+                        {#<label>opmerking beroepskracht:#}
+                            {#<input class="editTripComment" type="text" placeholder="Onkosten die werden aangepast of afgekeurd moeten verplicht een opmerking van een admin krijgen." v-model="trip.adminComment">#}
+                            {#<button class="btn btn-primary fa fa-save" @click="pushExpense()"> Opslaan</button>#}
+                        {#</label>#}
+                    {#</div>#}
+                {#</div>#}
             </div>
             <span class="flex1"></span>
             <div class="controls">
+                <span  class="fa fa-spin" v-bind:class="[trip.status === 'pending' ? 'fa-refresh' : '' ]"></span>
                 <div class="btn-group">
                     <button v-bind:class="[trip.status === 'denied' ? 'btn-primary' : 'btn-default']" v-on:click="updateStatus('denied')" class="btn btn-default btn-default">afgekeurd</button>
                     <button v-bind:class="[trip.status === 'awaiting' ? 'btn-primary' : 'btn-default']" v-on:click="updateStatus('awaiting')" class="btn btn-default btn-default">in afwachting</button>
                     <button v-bind:class="[trip.status === 'approved' ? 'btn-primary' : 'btn-default']" v-on:click="updateStatus('approved')" class="btn btn-default btn-default">goedgekeurd</button>
                 </div>
-                <button class="fa fa-cog btn" v-bind:class="[this.editMode ? 'btn-primary' : 'btn-default' ]" @click="toggleEditMode()"></button>
+                <a :href="'/admin?action=edit&entity=Trip&id=' + trip.id" class="fa fa-cog btn" target="_blank"></a>
 
-                <span v-show="trip.status==='processed'"></span>
             </div>
-
         </div>
-
 
     </script>
 
@@ -249,21 +260,34 @@
         </div>
 
         <div class="btn-group">
-            <button class="btn btn-default" v-on:click="toggleStatusFilter(0)"
-                    v-bind:class="[statusFilter[0] ? 'btn-primary' : 'btn-default']">afkeuren
+            <button class="btn btn-default" v-on:click="toggleTripStatusFilter(0)"
+                    v-bind:class="[tripStatusFilter[0] ? 'btn-primary' : 'btn-default']">afgekeurd
             </button>
-            <button class="btn btn-default" v-on:click="toggleStatusFilter(1)"
-                    v-bind:class="[statusFilter[1] ? 'btn-primary' : 'btn-default']">in afwachting
+            <button class="btn btn-default" v-on:click="toggleTripStatusFilter(1)"
+                    v-bind:class="[tripStatusFilter[1] ? 'btn-primary' : 'btn-default']">in afwachting
             </button>
-            <button class="btn btn-default" v-on:click="toggleStatusFilter(2)"
-                    v-bind:class="[statusFilter[2] ? 'btn-primary' : 'btn-default']">goedkeuren
+            <button class="btn btn-default" v-on:click="toggleTripStatusFilter(2)"
+                    v-bind:class="[tripStatusFilter[2] ? 'btn-primary' : 'btn-default']">goedgekeurd
             </button>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-default" v-on:click="setSortingValue('date')"
+                    v-bind:class="[sorting === 'date' ? 'btn-primary' : 'btn-default']">sorteer op datum
+            </button>
+            <button class="btn btn-default" v-on:click="setSortingValue('name')"
+                    v-bind:class="[sorting === 'name' ? 'btn-primary' : 'btn-default']">sorteer op naam
+            </button>
+        </div>
+
+        <div v-if="this.regionId !== null">
+            <h3>Overzicht</h3>
+            <p>{{ "{{ tripCount }}" }} onkosten opgehaald</p>
         </div>
 
         <h3>activiteiten</h3>
 
-        <br>
-        <span v-if="this.groupStack.length === 0" class="alert alert-info">geen activiteiten om te tonen, selecteer een verbond</span>
+        <div v-if="this.groupStack.length === 0" class="alert alert-info">geen activiteiten om te tonen, selecteer een verbond</div>
 
         <ul id="demo">
             <tree-item
@@ -275,8 +299,7 @@
         </ul>
 
         <h3>onkosten</h3>
-        <br>
-        <span v-if="this.tripGroups.length === 0" class="alert alert-info">geen activiteiten om te tonen, selecteer onkosten in de 'activiteiten' sectie</span>
+        <div v-if="this.tripGroups.length === 0" class="alert alert-info">geen activiteiten om te tonen, selecteer onkosten in de 'activiteiten' sectie</div>
 
         <table>
             <tripgroup-item

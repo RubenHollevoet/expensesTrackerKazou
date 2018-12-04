@@ -181,13 +181,12 @@ class ApplicationController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $group = $em->getRepository(TripGroup::class)->find((int)$request->query->get('group'));
+        $denied = $request->query->get('denied') !== 'false';
+        $awaiting = $request->query->get('awaiting') !== 'false';
+        $approved = $request->query->get('approved') !== 'false';
+        $sorting = $request->query->get('sorting') ?: '';
 
-//        $region = $this->getDoctrine()->getRepository(Region::class)->findBy(['id' => $request->query->get('region')]);
-//        $children = $this->_getChildGroups($group, null, true);
-
-//        $groups = array_merge($children, [$group]);
-
-        $trips = $em->getRepository(Trip::class)->findBy(['group' => $group]);
+        $trips = $this->getDoctrine()->getRepository(Trip::class)->findAllValidTripsSorted($group->getRegion()->getId(), $group, $denied, $awaiting, $approved, $sorting);
 
         $result = [
             'groupName' => $group->getName(),
@@ -203,7 +202,7 @@ class ApplicationController extends Controller
                 'to' => $trip->getTo(),
                 'activity' => $trip->getActivity()->getName(),
                 'comment' => $trip->getComment(),
-                'adminComment' => $trip->getAdminCommand(),
+                'adminComment' => $trip->getCommentAdmin(),
                 'transportType' => $trip->getTransportType(),
                 'tickets' => $trip->getTickets(),
                 'distance' => $trip->getDistance(),
@@ -231,15 +230,9 @@ class ApplicationController extends Controller
 
         $trip = $this->getDoctrine()->getRepository(Trip::class)->find($tripData->id);
 
-        if($tripData->status === 'denied' || $tripData->distance < $trip->getDistance()) {
-            if(!$tripData->adminComment) {
-                $error[] = 'Een comment van een admin is verplicht bij het afkeuren van een onkost.';
-            }
-        }
-
         if(count($error) === 0) {
             $trip->setStatus($tripData->status);
-            $trip->setAdminCommand($tripData->adminComment);
+            $trip->setCommentAdmin($tripData->adminComment);
             $trip->setHandledBy($this->getUser());
             $trip->setHandledAt(new \DateTime());
             if($trip->getTransportType() === 'car') {
@@ -252,7 +245,9 @@ class ApplicationController extends Controller
 
         return $this->json([
             'status' => $error ? 'error' : 'ok',
-            'tripStatus' => $trip->getStatus(),
+            'data' => [
+                'tripStatus' => $trip->getStatus()
+            ],
             'request' => $tripData,
         ]);
     }
@@ -263,15 +258,21 @@ class ApplicationController extends Controller
      */
     public function getValidateTree(Request $request)
     {
+
         $error = [];
         $regionId = $request->query->get('region');
         if($regionId === null) $error[] = 'GET parameter \'region\' is missing.';
+        $denied = $request->query->get('denied') !== 'false';
+        $awaiting = $request->query->get('awaiting') !== 'false';
+        $approved = $request->query->get('approved') !== 'false';
+        $sorting = $request->query->get('sorting') ?: '';
 
         $tree = [];
 
         $region = $this->getDoctrine()->getRepository(Region::class)->findBy(['id' => $regionId]);
         $groups = $this->getDoctrine()->getRepository(TripGroup::class)->findBy(['region' => $region]);
-        $trips = $this->getDoctrine()->getRepository(Trip::class)->findBy(['region' => $region, 'status' => 'awaiting']);
+
+        $trips = $this->getDoctrine()->getRepository(Trip::class)->findAllValidTripsSorted($region, null, $denied, $awaiting, $approved, $sorting);
 
         foreach($groups as $group) {
             $group->tripCount = 0;
@@ -323,7 +324,8 @@ class ApplicationController extends Controller
 
         return $this->json([
             'status' => $error ? 'error' : 'ok',
-            'data' => $error ?: $tree
+            'data' => $error ?: $tree,
+            'count' => count($trips)
         ]);
     }
 

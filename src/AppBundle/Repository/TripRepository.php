@@ -24,4 +24,40 @@ class TripRepository extends EntityRepository
             ->getQuery()
             ->execute();
     }
+
+    public function findAllValidTripsSorted($regionId, $group, $denied, $awaiting, $approved, $sorting) {
+
+
+        $qb = $this->createQueryBuilder('trip')
+            ->orderBy('trip.user', 'DESC')
+            ->where('trip.region = :regionId')->setParameter(':regionId', $regionId);
+
+        if($group) {
+            $qb->andWhere('trip.group = :group')->setParameter(':group', $group);
+        }
+
+        //filter
+        $filters = [];
+        if($denied) $filters[] = 'trip.status = \'denied\'';
+        if($awaiting) $filters[] = 'trip.status = \'awaiting\'';
+        if($approved) $filters[] = 'trip.status = \'approved\'';
+        $orStatement = implode(' OR ', $filters);
+
+        if($orStatement) {
+            $qb->andWhere($orStatement);
+        }
+        else {
+            return [];
+        }
+
+        //sorting
+        if($sorting === 'name') {
+            $qb->orderBy('trip.user', 'ASC');
+        }
+        elseif($sorting === 'date') {
+            $qb->orderBy('trip.date', 'ASC');
+        }
+
+        return $qb->getQuery()->execute();
+    }
 }

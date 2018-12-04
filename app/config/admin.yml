@@ -45,12 +45,13 @@ easy_admin:
                     - { property: 'from', type: 'text'}
                     - { property: 'to', type: 'text'}
                     - { property: 'date'}
-                    - { property: 'transportType', type: 'text'}
+                    - { property: 'transportType', type: 'choice', type_options: { choices: '%transport_types%' }}
                     - { property: 'distance', type: 'text'}
                     - { property: 'distance', type: 'text'}
-                    - { property: 'comment', type: 'textarea'}
                     - { property: 'price'}
-                    - { property: 'status', type: 'choice', type_options: { choices: '%trip_status%' }, help: 'Weet waar je mee bezig bent als je de status hier weizigd. De status zou automatisch aangepast moeten worden door onkosten te verwerken of te exporteren.</br> Deze waarde manueel aanpassen kan tot gevolg hebben dat onkosten niet bij de boekhouding geraken.'}
+                    - { property: 'status', type: 'choice', type_options: { choices: '%trip_status%' }, help: 'Zet nooit een onkost met de status "behandeld" op "in afwachting" of "goedgekeurd". Anders zal deze opnieuw uitbetaald kunnen worden.'}
+                    - { property: 'comment', type: 'textarea'}
+                    - { property: 'commentAdmin', type: 'textarea'}
             show:
                 fields:
                     - user
@@ -64,9 +65,11 @@ easy_admin:
                     - estimateDistance
                     - company
                     - { property: 'tickets', template: 'easyAdmin/typeTemplates/imageArray.html.twig' }
-                    - comment
                     - price
                     - status
+                    - comment
+                    - commentAdmin
+
         TripGroup:
             class: AppBundle\Entity\TripGroup
             label: 'Groepen'
