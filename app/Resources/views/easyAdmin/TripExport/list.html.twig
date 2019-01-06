@@ -1,7 +1,171 @@
 {% extends '@EasyAdmin/default/list.html.twig' %}
 
-{% block content_header %}{% endblock %}
+{% block content_header %}
+    {{ parent() }}
+
+    <style>
+        .region > .inner {
+            margin: 12px;
+            padding: 12px;
+            background-color: #CCC;
+        }
+
+        .region > .inner > h2 {
+            margin-top: 0;
+        }
+
+        p {
+            padding-top: 12px;
+            font-size: 16px;
+        }
+
+        .center {
+            text-align: center;
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+        .btn-container > .btn {
+            font-size: 18px;
+        }
+    </style>
+{% endblock %}
 
 {% block main %}
-<h1>todo: onkosten exporteren</h1>
+    {#TODO: move line to JS block when development is finished and there are no more dump functions#}
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <div id="export_app">
+        <region
+                class="region"
+                v-for="region in regions"
+                :key="region.id"
+                :data="region.data"
+        >
+        </region>
+    </div>
+
+    <!-- region template -->
+    <script type="text/x-template" id="region-template">
+        <div class="col-md-4">
+            <div class="inner">
+                <h2>{{ "{{ data.name }}" }}</h2>
+                <div>
+                    <p class="center">
+                        Er staan <strong>{{ "{{ data.count }}" }}</strong> onkosten te wachten om geexporteerd te worden voor een bedrag van <strong>&euro;{{ "{{ getPrice }}" }}</strong>.
+                    </p>
+                    <p class="center">
+                        {#Deze onkosten dateren van {{ "{{ data.start }}" }} tot {{ "{{ data.end }}" }}.#}
+                    </p>
+                </div>
+                <div v-if="data.exports.length">
+                    <p>Verleden finale exports kan je hier vinden:</p>
+                    <ul>
+                        <export
+                                v-for="file in data.exports"
+                                :name="file"
+                        >
+                        </export>
+                    </ul>
+                </div>
+                <div class="btn-container">
+                    <a :href="'/admin/generateExportFile/' + data.id + '/test'" class="btn btn-primary">test export maken</a>
+                    <a :href="'/admin/generateExportFile/' + data.id + '/final'" class="btn btn-primary">finale export maken</a>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/x-template" id="export-template">
+        <li>
+            <a v-bind:href="getDownloadLink">{{ "{{ getDisplayName }}" }}</a>
+        </li>
+    </script>
+{% endblock %}
+
+
+{% block body_javascript %}
+    {{ parent() }}
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+    <script>
+        Vue.component('region', {
+            props: {
+                data: Object
+            },
+            computed: {
+                getPrice: function ()
+                {
+                    var price = (Math.round(this.data.price * 100)/100).toFixed(2); //round
+                    price = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "-");
+
+                    price = price.replace('.',',');
+                    price = price.replace('-','.');
+
+                    return price;
+                }
+            },
+            template: '#region-template',
+            methods: {}
+        });
+
+        Vue.component('export', {
+            props: {
+                name: ''
+            },
+            computed: {
+                getDisplayName: function () {
+                   var parts = this.name.split('_');
+                   console.log(parts);
+
+                   var name = parts[3].split('.')[0];
+                   var dateParts = parts[1].split('-');
+                   var date = dateParts[2] + '-' + dateParts[3] + '-' +dateParts[4];
+
+                   return 'export van ' + date + ' | ' + parts[2] + ' onkosten | gemaakt door ' + name;
+                },
+                getDownloadLink: function () {
+                    return '/admin/downloadExport/' + this.$parent.data.id + '/' + this.name;
+                }
+            },
+            template: '#export-template',
+            mathods: {}
+        });
+
+        var app = new Vue({
+                el: '#export_app',
+                data: {
+                    regions: []
+                },
+                methods: {
+                    fetchGroups: function () {
+                        var self = this;
+                        axios.get('/api/getRegionsForExport')
+                            .then(function (response) {
+                                if(response.data.status === 'ok') {
+                                    console.log(response.data.data);
+                                    self.regions = response.data.data;
+                                    // self.groupStack = response.data.data;
+                                    // self.tripCount = response.data.count;
+                                }
+                                else {
+                                    alert('server returned following error when fetching trips: ' + response.data.error);
+                                }
+                            })
+                            .catch(function (error) {
+                                alert('error fetching trip');
+                                console.log(error);
+                            })
+                    }
+                },
+                mounted: function () {
+                    this.fetchGroups();
+                }
+            })
+        ;
+    </script>
 {% endblock %}

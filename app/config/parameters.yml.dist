@@ -23,3 +23,6 @@ parameters:
 
     upload_directory: '%kernel.project_dir%/web'
     google_api_key: XXX
+
+    export_path: '/var/www/onkostentool/app/exports'
+

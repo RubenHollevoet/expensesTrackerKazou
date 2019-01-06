@@ -1,0 +1,92 @@
+{#<link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/font-awesome.min.css') }}">#}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+    * {
+        font-family: sans-serif;
+    }
+
+    .group {
+        border-left: 3px solid lightgray;
+        padding-left: 12px;
+        margin-left: 12px;
+    }
+
+    .user {
+        background-color: #c8e2eb;
+        border: 1px solid dodgerblue;
+        padding: 12px 6px;
+        border-radius: 4px;
+    }
+
+    .user > span {
+        padding-left: 12px;
+    }
+
+    .user > span > .fa {
+        padding-right: 4px;
+    }
+
+    .warning {
+        background-color: lightcoral;
+        padding: 6px 3px;
+        border-radius: 4px;
+    }
+
+    td {
+        padding: 4px 6px;
+    }
+</style>
+{% if isFinal %}
+    <h1>Finale export</h1>
+    <h2>Deze export dient uitbetaald te worden</h2>
+{% else %}
+    <h1>Test export</h1>
+    <h2>Deze export dient NIET uitbetaald te worden en is lauter een voorbeeld van hoe de finale export er uit zal zien.</h2>
+{% endif %}
+
+{% for trip in trips %}
+    <h3>{{ trip.code }} | {{ trip.group }}</h3>
+
+    {% for user in trip.users %}
+        <div class="group">
+            <div class="user">
+                <span><span class="fa fa-user"></span>{{ user.name }}</span>
+                <span><span class="fa fa-id-card-o"></span>{{ user.personId }}</span>
+                <span><span class="fa fa-home"></span>{{ user.address }}</span>
+                <span><span class="fa fa-credit-card"></span>{{ user.iban }}</span>
+                <span><span class="fa fa-euro"></span>{{ user.price }}</span>
+                {% if not isFinal %}
+                    <span class="warning"><span class="fa fa-warning"></span>Deze export dient NIET uitbetaald te worden en is lauter een voorbeeld van hoe de finale export er uit zal zien.</span>
+                {% endif %}
+            </div>
+
+            <table>
+                <tr>
+                    <th>van</th>
+                    <th>naar</th>
+                    <th>afstand</th>
+                    <th>bedrag</th>
+                    <th>groep</th>
+                    <th>activiteit</th>
+                    <th>opmerking</th>
+                    <th>opmerking edu</th>
+                </tr>
+                {% for trip in user.trips %}
+                    <tr>
+                        <td>{{ trip.from }}</td>
+                        <td>{{ trip.to }}</td>
+                        <td>{{ trip.distance }}</td>
+                        <td>{{ trip.price }}</td>
+                        <td>{{ trip.group }}</td>
+                        <td>{{ trip.activity }}</td>
+                        <td>{{ trip.comment }}</td>
+                        <td>{{ trip.adminComment }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+    {% endfor %}
+
+{% endfor %}
