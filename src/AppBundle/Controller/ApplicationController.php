@@ -8,6 +8,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Payment;
 use AppBundle\Entity\Region;
 use AppBundle\Entity\Trip;
 use AppBundle\Entity\TripActivity;
@@ -506,6 +507,17 @@ class ApplicationController extends Controller
 
         $trips = $em->getRepository(Trip::class)->findBy(['status' => 'approved', 'region' => $region]);
 
+        if(!$trips) {
+            $this->addFlash('warning','Er zijn geen ritten om een export van te nemen.');
+            return $this->redirect('/admin?action=list&entity=TripExport');
+        }
+
+        if($type === 'final') {
+            $payment = new Payment();
+            $payment->setCreatedBy($this->getUser());
+            $payment->setCreatedAt(new \DateTime());
+        }
+
         $tripGroups = [];
 
         foreach ($trips as $trip) {
@@ -552,10 +564,11 @@ class ApplicationController extends Controller
                 'to' => $trip->getTo()
             ];
 
-//            if($type === 'final') {
-//                $trip->setStatus('processed');
-//                $em->persist($trip);
-//            }
+            if($type === 'final') {
+                $trip->setStatus('processed');
+                $trip->setPayment($payment);
+                $em->persist($trip);
+            }
         }
 
         ksort($tripGroups);
@@ -566,9 +579,12 @@ class ApplicationController extends Controller
         ]);
 
         if($type === 'final') {
-//            $em->flush();
-
             $fileName = 'export_'.date("i-s-j-n-Y").'_'.count($trips).'_'.$this->getUser()->getFirstName().'.html';
+            $payment->setExportFile($fileName);
+
+            $em->persist($payment);
+            $em->flush();
+
             $dir = $this->getParameter('export_path').'/'.$region->getId();
             if (!file_exists($dir)) {
                 mkdir($dir, 0777, true);

@@ -120,6 +120,12 @@ class Trip
      */
     private $status = 'awaiting';
 
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Payment")
+     */
+    private $payment;
+
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -386,6 +392,22 @@ class Trip
     public function setCommentAdmin($commentAdmin)
     {
         $this->commentAdmin = $commentAdmin;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPayment()
+    {
+        return $this->payment;
+    }
+
+    /**
+     * @param mixed $payment
+     */
+    public function setPayment($payment)
+    {
+        $this->payment = $payment;
     }
 
     /**

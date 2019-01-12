@@ -22,7 +22,11 @@ class AdminController extends BaseAdminController
 
     protected function listAction() {
         if(array_key_exists('region', $this->entity['properties'])) {
-            $this->entity['list']['dql_filter'] = 'entity.region = '.(string)$this->getUser()->getRegion()->getId();
+            if($this->entity['list']['dql_filter']) {
+                $this->entity['list']['dql_filter'] .= ' AND ';
+            }
+
+            $this->entity['list']['dql_filter'] .= 'entity.region = '.(string)$this->getUser()->getRegion()->getId();
         }
 
         return parent::listAction();

@@ -31,6 +31,7 @@ easy_admin:
             disabled_actions: ['new']
             list:
                 title: '%%entity_label%%'
+                dql_filter: "entity.status != 'processed'"
                 fields: ['user', 'activity', 'from', 'to', 'date']
                 sort: 'createdAt'
                 actions:
