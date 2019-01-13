@@ -20,6 +20,7 @@
                 {{ form_start(form) }}
                 {{ form_row(form._username) }}
                 {{ form_row(form._password) }}
+                {{ form_row(form.remember_me_parameter) }}
                 <div>
                     <button type="submit" class="btn btn-yellow">Aanmelden</button>
                     <span>Nog geen account? <a href="{{ path('user_register') }}">Registreren je hier</a></span>

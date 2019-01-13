@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,6 +19,10 @@ class LoginForm extends AbstractType
             ])
             ->add('_password', PasswordType::class, [
                 'label' => 'Wachtwoord'
+            ])
+            ->add('remember_me_parameter', CheckboxType::class, [
+                'label'    => 'Ingelogd blijven',
+                'required' => false,
             ])
             ;
     }

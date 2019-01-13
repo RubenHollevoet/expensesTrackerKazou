@@ -154,6 +154,21 @@ easy_admin:
             label: 'Verbonden'
             list:
                 title: '%%entity_label%%'
+                fields:
+                    - { property: 'name', label: 'admin.name' }
+                    - { property: 'googleSheetsKey', label: 'admin.googleSheetsKey' }
+                    - { property: 'createdAt' }
+                    - { property: 'updatedAt' }
+            new:
+                title: '%%entity_label%%'
+                fields:
+                    - { property: 'name', label: 'admin.name' }
+                    - { property: 'googleSheetsKey', label: 'admin.googleSheetsKey' }
+            edit:
+                title: '%%entity_label%%'
+                fields:
+                    - { property: 'name', label: 'admin.name' }
+                    - { property: 'googleSheetsKey', label: 'admin.googleSheetsKey' }
         Admins:
             class: AppBundle\Entity\User
             label: 'Admins'
