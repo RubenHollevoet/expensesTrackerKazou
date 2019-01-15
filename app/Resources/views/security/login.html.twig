@@ -18,13 +18,15 @@
                 {% endif %}
 
                 {{ form_start(form) }}
-                {{ form_row(form._username) }}
-                {{ form_row(form._password) }}
-                {{ form_row(form.remember_me_parameter) }}
-                <div>
-                    <button type="submit" class="btn btn-yellow">Aanmelden</button>
-                    <span>Nog geen account? <a href="{{ path('user_register') }}">Registreren je hier</a></span>
-                </div>
+                    {{ form_row(form._username) }}
+                    {{ form_row(form._password) }}
+                    <label for="login_form__remember_me">
+                        <input type="checkbox" id="_remember_me" name="_remember_me" value="1"> Ingelogd blijven
+                    </label>
+                    <div>
+                        <button type="submit" class="btn btn-yellow">Aanmelden</button>
+                        <span>Nog geen account? <a href="{{ path('user_register') }}">Registreren je hier</a></span>
+                    </div>
 
                 {{ form_end(form) }}
             </div>

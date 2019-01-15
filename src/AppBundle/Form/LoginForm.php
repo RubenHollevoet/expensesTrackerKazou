@@ -20,10 +20,6 @@ class LoginForm extends AbstractType
             ->add('_password', PasswordType::class, [
                 'label' => 'Wachtwoord'
             ])
-            ->add('remember_me_parameter', CheckboxType::class, [
-                'label'    => 'Ingelogd blijven',
-                'required' => false,
-            ])
             ;
     }
 }
