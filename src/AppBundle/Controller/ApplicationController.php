@@ -59,6 +59,11 @@ class ApplicationController extends Controller
      */
     public function addExpense(Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
+
+        $regions = $em->getRepository(Region::class)->findAll();
+        $userRegion = $this->getUser()->getRegion();
+
         $trip = new Trip();
 
         $form = $this->createFormBuilder($trip)
@@ -76,7 +81,8 @@ class ApplicationController extends Controller
 
         return $this->render('expense/add.html.twig', [
             //todo: set region ID
-            'regionId' => 0,
+            'regions' => $regions,
+            'userRegion' => $userRegion,
             'form' => $form->createView(),
             'google_api_key' => $this->getParameter('google_api_key')
         ]);

@@ -30,6 +30,11 @@ class Region
     private $name;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $googleSheetsKey;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     protected $createdAt;
@@ -61,6 +66,22 @@ class Region
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGoogleSheetsKey()
+    {
+        return $this->googleSheetsKey;
+    }
+
+    /**
+     * @param mixed $googleSheetsKey
+     */
+    public function setGoogleSheetsKey($googleSheetsKey)
+    {
+        $this->googleSheetsKey = $googleSheetsKey;
     }
 
     /**
@@ -99,5 +120,20 @@ class Region
     public function __toString()
     {
         return $this->name;
+    }
+
+
+
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updatedTimestamps()
+    {
+        $this->setUpdatedAt(new \DateTime('now'));
+        if ($this->getCreatedAt() == null) {
+            $this->setCreatedAt(new \DateTime('now'));
+    }
     }
 }

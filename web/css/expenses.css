@@ -11,9 +11,9 @@
     /* left: 50%; */
 }
 
-#expenses_app > div > div {
-    padding: 10px 30px;
-}
+/*#expenses_app > div > div {*/
+    /*padding: 10px 30px;*/
+/*}*/
 
 #expenses_app > div > h2 {
     text-align: center;
@@ -23,20 +23,21 @@
 
 }
 
-#expenses_app > div {
-    display: flex;
-    /* height: 100%; */
-    width: 100%;
-    min-height: 100%;
-    flex-direction: column;
-    /* background-color: rgba(255,255,255,0.9); */
-    position: absolute;
-    left: 0;
-    top: 0;
-}
+/*#expenses_app > div {*/
+    /*display: flex;*/
+    /*!* height: 100%; *!*/
+    /*width: 100%;*/
+    /*min-height: 100%;*/
+    /*flex-direction: column;*/
+    /*!* background-color: rgba(255,255,255,0.9); *!*/
+    /*position: absolute;*/
+    /*left: 0;*/
+    /*top: 0;*/
+/*}*/
 
 .flex1 {
     flex-grow: 1;
+    width: auto !important;
 }
 
 .btnGroup {
@@ -50,7 +51,6 @@
     margin: 0 5px;
 }
 
-/*}*/
 
 #groupStack > li {
     padding: 5px 0;
@@ -61,11 +61,6 @@
     align-items: center;
     flex-direction: column;
     text-align: center;
-}
-
-.submitIconContainer {
-    margin: 0 auto;
-    font-size: 60px;
 }
 
 .expensesProfilePic {
@@ -186,4 +181,100 @@
 .simpleFlex {
     display: flex;
     align-items: center;
+}
+
+.flex-left {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+.flex-left > * {
+    padding: 0 12px 0 0;
+    margin: 0 !important;
+}
+
+.flex-left > * .btn {
+    margin: 0 !important;
+}
+
+
+.gray {
+    color: gray;
+}
+
+
+.link {
+    color: #337ab7;
+    cursor: pointer;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+.crumb::after {
+    content: '';
+    border-radius: 3px;
+    border-left: solid 12px #337ab7;
+    border-bottom: solid 6px transparent;
+    border-top: solid 6px transparent;
+    display: inline-block;
+    margin: 0 8px 8px 8px;
+    vertical-align: middle;
+}
+
+.crumb:last-child::after {
+    content: none;
+}
+
+.validator {
+    padding-left: 8px;
+    border-radius: 1px;
+    margin-bottom: 18px;
+}
+
+.validator-ok {
+    border-left: 2px solid #82E68266;
+}
+
+.validator-nok {
+    border-left: 2px solid #e8545466;
+}
+
+.validator-to-finish {
+    border-left: 2px solid #cccccc66;
+}
+
+.validator > h3::after {
+    font: 1em FontAwesome;
+    top: 0;
+    right: 10px;
+    padding-left: 8px;
+}
+
+.validator-ok > h3::after {
+     color: #82E682;
+     content: "\f00c";
+}
+
+.validator-nok > h3::after {
+    color: #e85454;
+    content: "\f00d";
+}
+
+.validator-to-finish > h3::after {
+    color: #ccc;
+    content: "\f040";
+}
+
+.center-flex {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.disableClick {
+    cursor: default !important;
 }

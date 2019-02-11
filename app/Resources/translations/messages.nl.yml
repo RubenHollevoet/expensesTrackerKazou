@@ -17,6 +17,7 @@ admin:
     forHolidays: voor vakanties
     enabled: actief
     link: link
+    googleSheetsKey: gekoppelde Google sheets code
 
 trip:
     status:
