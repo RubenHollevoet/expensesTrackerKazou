@@ -125,6 +125,16 @@
         .alert-info {
             margin-top: 20px;
         }
+
+
+
+        .group_container {
+            padding: 12px 0;
+            border-bottom: 1px solid #ccc;
+        }
+        .group_container > * {
+            margin: 4px;
+        }
     </style>
 {% endblock %}
 
@@ -140,28 +150,28 @@
         zien staan.
     </div>
 
-    <!-- item template -->
-    <script type="text/x-template" id="item-template">
-        <li>
-            <div
-                    :class="{bold: isFolder}">
-                {{ "{{ model.name  }}" }}
-                <span v-if="isFolder" @click="toggle" v-bind:class="[this.open ? 'fa-minus' : 'fa-plus']" class="btn btn-default fa"></span>
-                <span v-if="model.tripCount > 0 && !inChecklist" @click="fetchTrips" class="btn btn-primary">{{ "{{model.tripCount}}" }} onkost(en) valideren</span>
-                <span v-if="model.tripCount > 0 && inChecklist" class="btn btn-default">{{ "{{model.tripCount}}" }} onkost(en) toegevoegd aan lijst</span>
-            </div>
-            <ul v-show="this.open" v-if="isFolder">
-                <tree-item
-                        class="item"
-                        v-for="(model, index) in model.children"
-                        :key="index"
-                        :data-id="index"
-                        :model="model"
-                >
-                </tree-item>
-            </ul>
-        </li>
-    </script>
+    {#<!-- item template -->#}
+    {#<script type="text/x-template" id="item-template">#}
+        {#<li>#}
+            {#<div#}
+                    {#:class="{bold: isFolder}">#}
+                {#{{ "{{ model.name  }}" }}#}
+                {#<span v-if="isFolder" @click="toggle" v-bind:class="[this.open ? 'fa-minus' : 'fa-plus']" class="btn btn-default fa"></span>#}
+                {#<span v-if="model.tripCount > 0 && !inChecklist" @click="fetchTrips" class="btn btn-primary">{{ "{{model.tripCount}}" }} onkost(en) valideren</span>#}
+                {#<span v-if="model.tripCount > 0 && inChecklist" class="btn btn-default">{{ "{{model.tripCount}}" }} onkost(en) toegevoegd aan lijst</span>#}
+            {#</div>#}
+            {#<ul v-show="this.open" v-if="isFolder">#}
+                {#<tree-item#}
+                        {#class="item"#}
+                        {#v-for="(model, index) in model.children"#}
+                        {#:key="index"#}
+                        {#:data-id="index"#}
+                        {#:model="model"#}
+                {#>#}
+                {#</tree-item>#}
+            {#</ul>#}
+        {#</li>#}
+    {#</script>#}
 
     {#item template#}
     <script type="text/x-template" id="trip-line-template">
@@ -287,16 +297,26 @@
 
         <h3>activiteiten</h3>
 
+        <div>
+            <group-container-item
+                    class="group_container"
+                    v-for="(groups, index) in levels"
+                    :key="index"
+                    :groups="groups"
+            ></group-container-item>
+        </div>
+
         <div v-if="this.groupStack.length === 0" class="alert alert-info">geen activiteiten om te tonen, selecteer een verbond</div>
 
-        <ul id="demo">
-            <tree-item
-                    class="item"
-                    :model="item"
-                    v-for="item in this.groupStack"
-                    v-bind:data-id="item.key">
-            </tree-item>
-        </ul>
+
+        {#<ul id="demo">#}
+            {#<tree-item#}
+                    {#class="item"#}
+                    {#:model="item"#}
+                    {#v-for="item in this.groupStack"#}
+                    {#v-bind:data-id="item.key">#}
+            {#</tree-item>#}
+        {#</ul>#}
 
         <h3>onkosten</h3>
         <div v-if="this.tripGroups.length === 0" class="alert alert-info">geen activiteiten om te tonen, selecteer onkosten in de 'activiteiten' sectie</div>

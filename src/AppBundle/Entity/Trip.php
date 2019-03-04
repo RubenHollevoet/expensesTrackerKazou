@@ -38,10 +38,25 @@ class Trip
     private $group;
 
     /**
+     * @ORM\Column(type="json_array")
+     */
+    private $groupStack;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $groupCode;
+
+    /**
      * @ORM\ManyToOne(targetEntity="TripActivity", inversedBy="trips")
      * @ORM\JoinColumn()
      */
     private $activity;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $activityName;
 
     /**
      * @ORM\ManyToOne(targetEntity="Region", inversedBy="trips")
@@ -137,6 +152,11 @@ class Trip
     protected $updatedAt;
 
     /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $deletedAt;
+
+    /**
      * @ORM\ManyToOne(targetEntity="User")
      */
     private $createdBy;
@@ -173,6 +193,38 @@ class Trip
     /**
      * @return mixed
      */
+    public function getGroupStack()
+    {
+        return $this->groupStack;
+    }
+
+    /**
+     * @param mixed $groupStack
+     */
+    public function setGroupStack($groupStack)
+    {
+        $this->groupStack = $groupStack;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGroupCode()
+    {
+        return $this->groupCode;
+    }
+
+    /**
+     * @param mixed $groupCode
+     */
+    public function setGroupCode($groupCode)
+    {
+        $this->groupCode = $groupCode;
+    }
+
+    /**
+     * @return TripGroup
+     */
     public function getGroup()
     {
         return $this->group;
@@ -184,6 +236,22 @@ class Trip
     public function setGroup($group)
     {
         $this->group = $group;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getActivityName()
+    {
+        return $this->activityName;
+    }
+
+    /**
+     * @param mixed $activityName
+     */
+    public function setActivityName($activityName)
+    {
+        $this->activityName = $activityName;
     }
 
     /**
@@ -203,7 +271,7 @@ class Trip
     }
 
     /**
-     * @return mixed
+     * @return TripActivity
      */
     public function getActivity()
     {
@@ -489,6 +557,22 @@ class Trip
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeletedAt()
+    {
+        return $this->deletedAt;
+    }
+
+    /**
+     * @param mixed $deletedAt
+     */
+    public function setDeletedAt($deletedAt)
+    {
+        $this->deletedAt = $deletedAt;
     }
 
     /**

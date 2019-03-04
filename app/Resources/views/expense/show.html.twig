@@ -2,7 +2,14 @@
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/expenses.css') }}?v={{ random(999999) }}">
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
     {{ parent() }}
+
+
 {% endblock %}
 
 {% block body %}
@@ -73,7 +80,9 @@
                         <tr>
                             <td>{{ tripCount }}</td>
                             <td class="nowrap">{{ trip.date|date('j-n-Y') }}</td>
-                            <td>{{ trip.group.name }} - {{ trip.activity.name }}</td>
+                            {#<td>{{ trip.group.name }} - {{ trip.activity.name }}</td>#}
+                            <td title="{{ trip.groupStack|join(' - ') }}">{{ trip.groupStack|last }}</td>
+                            <td>{{ trip.activityName }}</td>
                             <td>{{ trip.from }}</td>
                             <td>{{ trip.to }}</td>
                             {#{% if trip.distance %}#}
@@ -90,7 +99,8 @@
                                 {% endif %}
                             </td>
                             {#<td>{{ trip.status }}</td>#}
-                            <td><a href="#" data-toggle="modal" data-target="#tripDetailModal{{ trip.id }}">details</a>
+                            <td>
+                                <a href="#" data-toggle="modal" data-target="#tripDetailModal{{ trip.id }}">details</a>
                             </td>
                         </tr>
 
@@ -130,14 +140,14 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
+                            <h4 class="modal-title">Mijn rit van {{ trip.date|date('j-n-Y') }}</h4>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                         aria-hidden="true">&times;</span>
                             </button>
-                            <h4 class="modal-title">Mijn rit van {{ trip.date|date('j-n-Y') }}</h4>
                         </div>
                         <div class="modal-body">
-                            <p><strong>Groep: </strong>{{ trip.group.name }}</p>
-                            <p><strong>Activiteit: </strong>{{ trip.activity }}</p>
+                            <p><strong>Groep: </strong><td>{{ trip.groupStack|join(' - ') }}</td></p>
+                            <p><strong>Activiteit: </strong>{{ trip.activityName }}</p>
                             <p><strong>Status: </strong><span
                                         class="expense-status nowrap {{ trip.status }}">{{ ('trip.status.'~trip.status)|trans }}</span>
                             </p>
@@ -162,23 +172,58 @@
                             {% if trip.commentAdmin %}
                                 <p><strong>Opmerking van educatief medewerker: </strong>{{ trip.commentAdmin }}</p>
                             {% endif %}
-                            {% if trip.tickets %}
-                                {#todo: loop over tickets#}
-                                <p><strong>Ticketjes: </strong></p>
-                                <p class="modalTicketContainer">
-                                    {% for ticket in trip.tickets %}
-                                        <img class="modalTicketImage" src="{{ asset(ticket) }}" alt="">
-                                    {% endfor %}
-                                </p>
-
-                            {% endif %}
+                            {#{% if trip.tickets %}#}
+                                {#<p><strong>Ticketjes: </strong></p>#}
+                                {#<p class="modalTicketContainer">#}
+                                    {#{% for ticket in trip.tickets %}#}
+                                        {#<img class="modalTicketImage" src="{{ asset(ticket) }}" alt="">#}
+                                    {#{% endfor %}#}
+                                {#</p>#}
+                            {#{% endif %}#}
+                            <span class="btn btn-danger js-remove-intro">Onkost verwijderen</span>
+                            <div class="js-remove-confirm-box hidden">
+                                <p>Ben je zeker dat je deze onkost definitief wilt verwijderen?</p>
+                                <span class="js-remove-cancel btn btn-success">Nee</span>
+                                <a href="{{ path('expenses_delete', {'tripId': trip.id}) }}"><span class="btn btn-danger">Ja</span></a>
+                            </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
                         </div>
                     </div>
                 </div>
             </div>
         {% endfor %}
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var $removeConfirmBox = document.querySelectorAll('.js-remove-confirm-box');
+
+
+        $removeIntros = document.querySelectorAll('.js-remove-intro');
+        console.log($removeIntros);
+        for (var i = 0; i < $removeIntros.length; i++) {
+            $removeIntros[i].addEventListener('click', function(evt) {
+                evt.currentTarget.parentElement.querySelector('.js-remove-confirm-box').classList.remove('hidden');
+            });
+        }
+
+        $removeCancel = document.querySelectorAll('.js-remove-cancel');
+        for (var i = 0; i < $removeCancel.length; i++) {
+            $removeCancel[i].addEventListener('click', function(evt) {
+                evt.currentTarget.parentElement.parentElement.querySelector('.js-remove-confirm-box').classList.add('hidden');
+            });
+        }
+
+        // document.querySelector('#js-remove-intro').addEventListener('click', function() {
+        //     $removeConfirmBox.classList.remove('hidden');
+        // });
+        //
+        // document.querySelector('#js-remove-cancel').addEventListener('click', function() {
+        //     $removeConfirmBox.classList.add('hidden');
+        // })
+    </script>
 {% endblock %}

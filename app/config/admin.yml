@@ -14,8 +14,8 @@ easy_admin:
             - { entity: 'User', icon: 'users'}
             - { label: 'Onkosten' }
             - { entity: 'Trip', icon: 'car'}
-            - { entity: 'TripGroup', icon: 'filter'}
-            - { entity: 'TripActivity', icon: 'list'}
+#            - { entity: 'TripGroup', icon: 'filter'}
+#            - { entity: 'TripActivity', icon: 'list'}
             - { entity: 'TripValidate', icon: 'check' }
             - { entity: 'TripExport', icon: 'download'}
             - { entity: 'TripManual', icon: 'book' }
@@ -41,8 +41,6 @@ easy_admin:
             edit:
                 fields:
                     - { property: 'user'}
-                    - { property: 'group'}
-                    - { property: 'activity'}
                     - { property: 'from', type: 'text'}
                     - { property: 'to', type: 'text'}
                     - { property: 'date'}
@@ -56,8 +54,9 @@ easy_admin:
             show:
                 fields:
                     - user
-                    - group
-                    - activity
+                    - groupCode
+                    - groupStack
+                    - activityName
                     - from
                     - to
                     - date
@@ -71,58 +70,58 @@ easy_admin:
                     - comment
                     - commentAdmin
 
-        TripGroup:
-            class: AppBundle\Entity\TripGroup
-            label: 'Groepen'
-            list:
-                title: '%%entity_label%%'
-                sort: ['order', 'ASC']
-                fields:
-                    - { property: 'order' }
-                    - { property: 'code' }
-                    - { property: 'nameHierarchy', label: 'Naam', template: 'easyAdmin/typeTemplates/hierarchyType.html.twig' }
-                    - { property: 'startDate' }
-                    - { property: 'endDate' }
-                    - { property: 'location' }
-            new:
-                title: '%%entity_label%%'
-                fields:
-                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.general' }
-                    - { property: 'code', label: 'admin.code' }
-                    - { property: 'name', label: 'admin.name' }
-                    - { property: 'parent', type_options: { expanded: false, multiple: false }, label: 'admin.parent' }
-                    - { property: 'tripActivity', label: 'admin.tripActivity' }
-                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.forHolidays' }
-                    - { property: 'startDate', label: 'admin.startDate', type_options: { widget: 'single_text' }  }
-                    - { property: 'endDate', label: 'admin.endDate', type_options: { widget: 'single_text' } }
-                    - { property: 'location', label: 'admin.location' }
-            edit:
-                title: '%%entity_label%%'
-                fields:
-                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.general' }
-                    - { property: 'code', label: 'admin.code' }
-                    - { property: 'name', label: 'admin.name' }
-                    - { property: 'parent', label: 'admin.parent' }
-                    - { property: 'tripActivity', label: 'admin.tripActivity' }
-                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.forHolidays' }
-                    - { property: 'startDate', label: 'admin.startDate' }
-                    - { property: 'endDate', label: 'admin.endDate', type: 'datetime' ,type_options: { widget: 'single_text' } }
-                    - { property: 'location', label: 'admin.location', type: 'datetime', type_options: { widget: 'single_text' } }
-        TripActivity:
-            class: AppBundle\Entity\TripActivity
-            label: 'Activiteiten'
-            list:
-                title: '%%entity_label%%'
-            new:
-                title: '%%entity_label%%'
-                fields:
-                    - { property: 'code', label: 'admin.code' }
-                    - { property: 'name', label: 'admin.name' }
-            edit:
-                title: '%%entity_label%%'
-                fields:
-                    - { property: 'code', label: 'admin.code' }
-                    - { property: 'name', label: 'admin.name' }
+#        TripGroup:
+#            class: AppBundle\Entity\TripGroup
+#            label: 'Groepen'
+#            list:
+#                title: '%%entity_label%%'
+#                sort: ['order', 'ASC']
+#                fields:
+#                    - { property: 'order' }
+#                    - { property: 'code' }
+#                    - { property: 'nameHierarchy', label: 'Naam', template: 'easyAdmin/typeTemplates/hierarchyType.html.twig' }
+#                    - { property: 'startDate' }
+#                    - { property: 'endDate' }
+#                    - { property: 'location' }
+#            new:
+#                title: '%%entity_label%%'
+#                fields:
+#                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.general' }
+#                    - { property: 'code', label: 'admin.code' }
+#                    - { property: 'name', label: 'admin.name' }
+#                    - { property: 'parent', type_options: { expanded: false, multiple: false }, label: 'admin.parent' }
+#                    - { property: 'tripActivity', label: 'admin.tripActivity' }
+#                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.forHolidays' }
+#                    - { property: 'startDate', label: 'admin.startDate', type_options: { widget: 'single_text' }  }
+#                    - { property: 'endDate', label: 'admin.endDate', type_options: { widget: 'single_text' } }
+#                    - { property: 'location', label: 'admin.location' }
+#            edit:
+#                title: '%%entity_label%%'
+#                fields:
+#                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.general' }
+#                    - { property: 'code', label: 'admin.code' }
+#                    - { property: 'name', label: 'admin.name' }
+#                    - { property: 'parent', label: 'admin.parent' }
+#                    - { property: 'tripActivity', label: 'admin.tripActivity' }
+#                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.forHolidays' }
+#                    - { property: 'startDate', label: 'admin.startDate' }
+#                    - { property: 'endDate', label: 'admin.endDate', type: 'datetime' ,type_options: { widget: 'single_text' } }
+#                    - { property: 'location', label: 'admin.location', type: 'datetime', type_options: { widget: 'single_text' } }
+#        TripActivity:
+#            class: AppBundle\Entity\TripActivity
+#            label: 'Activiteiten'
+#            list:
+#                title: '%%entity_label%%'
+#            new:
+#                title: '%%entity_label%%'
+#                fields:
+#                    - { property: 'code', label: 'admin.code' }
+#                    - { property: 'name', label: 'admin.name' }
+#            edit:
+#                title: '%%entity_label%%'
+#                fields:
+#                    - { property: 'code', label: 'admin.code' }
+#                    - { property: 'name', label: 'admin.name' }
         TripValidate:
             class: AppBundle\Entity\Trip
             label: 'Onkosten valideren'

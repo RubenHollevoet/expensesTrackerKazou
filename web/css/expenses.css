@@ -198,6 +198,17 @@
     margin: 0 !important;
 }
 
+.flex-center-h {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.flex-center-h > div > .btn {
+    margin-bottom: 0;
+    margin-right: 6px;
+}
 
 .gray {
     color: gray;
@@ -220,7 +231,7 @@
     border-bottom: solid 6px transparent;
     border-top: solid 6px transparent;
     display: inline-block;
-    margin: 0 8px 8px 8px;
+    margin: 0 8px 2px 8px;
     vertical-align: middle;
 }
 
@@ -263,10 +274,10 @@
     content: "\f00d";
 }
 
-.validator-to-finish > h3::after {
-    color: #ccc;
-    content: "\f040";
-}
+/*.validator-to-finish > h3::after {*/
+    /*color: #ccc;*/
+    /*content: "\f040";*/
+/*}*/
 
 .center-flex {
     display: flex;

@@ -45,7 +45,8 @@ class ApplicationController extends Controller
             $_SESSION['_sf2_attributes']['_security.main.target_path'] = $this->generateUrl('expenses');
         }
 
-        $trips = $em->getRepository(Trip::class)->findBy(['user' => $user]);
+//        $trips = $em->getRepository(Trip::class)->findBy(['user' => $user]);
+        $trips = $em->getRepository(Trip::class)->findAllOpenTripsForUser($user);
 
         return $this->render('expense/show.html.twig', [
             'regionId' => $regionId,
@@ -86,6 +87,29 @@ class ApplicationController extends Controller
             'form' => $form->createView(),
             'google_api_key' => $this->getParameter('google_api_key')
         ]);
+    }
+
+    /**
+     * @Route("/delete/{tripId}", name="expenses_delete")
+     */
+    public function deleteExpense(Request $request, $tripId)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        /**
+         * @var $trip Trip
+         */
+        $trip = $em->getRepository(Trip::class)->find($tripId);
+        if($this->getUser() === $trip->getUser()) {
+            $trip->setDeletedAt(new \DateTime());
+            $em->flush();
+            $this->get('session')->getFlashBag()->add('success', 'Onkost succesvol verwijderd');
+        }
+        else {
+            $this->get('session')->getFlashBag()->add('error', 'Onkost kon niet worden verwijderd.');
+        }
+
+        return $this->redirectToRoute('expenses');
     }
 
     /* --- API --- */
@@ -372,66 +396,127 @@ class ApplicationController extends Controller
         //update user
         $user = $this->getUser();
         if (!$user) {
-//            $user = $this->getDoctrine()->getRepository(User::class)->findOneByEmail($formData->userData->email);
-//            if ($user === null) {
-//                //create new user
-//                $user = new User();
-//                $user->setRegion($em->getRepository(Region::class)->find(1));
-//            }
-            //TODO: throw exception
-
             return $this->json([
-                'status' => '500',
-                'data' => 'user not signed in'
+                'status' => 'error',
+                'errors' => ['user not signed in']
             ]);
         }
 
         //update user info
-        $nameArr = explode(' ', $formData->userData->name);
-        $user->setFirstName($nameArr[0]);
-        array_shift($nameArr);
-        $user->setLastName(implode($nameArr, ' '));
-        $user->setEmail($formData->userData->email);
-        $user->setIban($formData->userData->iban);
-        $user->setPersonId($formData->userData->personId);
-        $user->setAddress($formData->userData->address);
         $user->setRegion($em->getRepository(Region::class)->find($formData->regionId)); //TO BE MOVED TO USER REGISTRATION
 
-
-        //handle tripGroup
-        $tripGroup = $this->getDoctrine()->getRepository(TripGroup::class)->find($formData->tripData->groupId);
-
-        //handle tripActivity
-        $tripActivity = $this->getDoctrine()->getRepository(TripActivity::class)->find($formData->tripData->activityId);
-
-        $tripDate = new \DateTime($formData->tripData->date);
-
         $trip = new Trip();
-        $trip->setRegion($em->getRepository(Region::class)->find($formData->regionId));
-        $trip->setUser($user);
-        $trip->setFrom($formData->tripData->from);
-        $trip->setTo($formData->tripData->to);
-        $trip->setDate($tripDate);
-        $trip->setGroup($tripGroup);
-        $trip->setActivity($tripActivity);
-        $trip->setTransportType($formData->tripData->transportType);
-        if ($formData->tripData->transportType === 'publicTransport') {
-            $trip->setPrice($formData->tripData->price);
-        } else {
-            $trip->setPrice($formData->tripData->distance * 0.25);
+        $errors = [];
+
+        if($formData->tripData->date) {
+            $tripDate = new \DateTime($formData->tripData->date);
+            $trip->setDate($tripDate);
         }
-        if ($ticketsArr) $trip->setTickets($ticketsArr);
-        if ($formData->tripData->company) $trip->setCompany($formData->tripData->company);
-        if ($formData->tripData->distance) $trip->setDistance($formData->tripData->distance);
+        else {
+            $errors[] = 'Datum is incorrect';
+        }
+
+        if($formData->regionId || $formData->regionId === 0) {
+            $region = $em->getRepository(Region::class)->find($formData->regionId);
+            $trip->setRegion($region);
+            $user->setRegion($region);
+
+            $em->persist($user);
+        }
+        else {
+            $errors[] = 'Regio ontbreekt';
+        }
+
+        if($user) {
+            $trip->setUser($user);
+        }
+        else {
+            $errors[] = 'Huidige gebruiker niet gevonden';
+        }
+
+        if($formData->tripData->from) {
+            $trip->setFrom($formData->tripData->from);
+        }
+        else {
+            $errors[] = 'Vertreklocatie incorrect';
+        }
+
+        if($formData->tripData->to) {
+            $trip->setTo($formData->tripData->to);
+        }
+        else {
+            $errors[] = 'Vergaderlocatie incorrect';
+        }
+
+        if(isset($formData->tripData->groupCode) && $formData->tripData->groupCode) {
+            $trip->setGroupCode($formData->tripData->groupCode);
+        }
+        else {
+            $errors[] = 'Groep code incorrect';
+        }
+
+        if($formData->tripData->groupStack) {
+            $trip->setGroupStack($formData->tripData->groupStack);
+        }
+        else {
+            $errors[] = 'Groepen incorrect';
+        }
+
+        if($formData->tripData->activity) {
+            $trip->setActivityName($formData->tripData->activity);
+        }
+        else {
+            $errors[] = 'Activiteit incorrect';
+        }
+
+        if($formData->tripData->transportType) {
+            $trip->setTransportType($formData->tripData->transportType);
+
+            if ($formData->tripData->transportType === 'publicTransport') {
+                if($formData->tripData->price) {
+                    $trip->setPrice($formData->tripData->price);
+                }
+                else {
+                    $errors[] = 'Prijs niet opgegeven';
+                }
+
+                if($ticketsArr) {
+                    $trip->setTickets($ticketsArr);
+                }
+                else {
+                    $errors[] = 'Geen ticketjes geupload';
+                }
+            } elseif($formData->tripData->transportType === 'car') {
+                if($formData->tripData->distance) {
+                    if ($formData->tripData->distance) $trip->setDistance($formData->tripData->distance);
+                    if ($formData->tripData->company) $trip->setCompany($formData->tripData->company);
+                    $trip->setPrice($formData->tripData->distance * 0.25);
+                }
+                else {
+                    $errors[] = 'Probleem bij het berekenen van de prijs. Geen afstand gevonden.';
+                }
+            }
+        }
+        else {
+            $errors[] = 'Transport type incorrect';
+        }
+
         if ($formData->tripData->estimateDistance) $trip->setEstimateDistance($formData->tripData->estimateDistance);
         if ($formData->tripData->comment) $trip->setComment($formData->tripData->comment);
 
-        $em->persist($trip);
+        if(count($errors)) {
+            return $this->json([
+                'status' => 'error',
+                'errors' => $errors,
+            ]);
+        }
 
+        $em->persist($trip);
         $em->flush();
 
         return $this->json([
             'status' => 'ok',
+            'tripId' => $trip->getId()
         ]);
     }
 

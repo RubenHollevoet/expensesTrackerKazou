@@ -152,7 +152,7 @@ class TripGroup
     }
 
     /**
-     * @return mixed
+     * @return TripGroup
      */
     public function getParent()
     {

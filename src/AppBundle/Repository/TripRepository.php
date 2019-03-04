@@ -14,27 +14,28 @@ use Doctrine\ORM\EntityRepository;
 
 class TripRepository extends EntityRepository
 {
-    public function findAllRecentTripsForUser(User $user, $limit)
+    public function findAllOpenTripsForUser(User $user)
     {
         return $this->createQueryBuilder('trip')
             ->andWhere('trip.user = :user')
+            ->andWhere('trip.deletedAt IS NULL')
             ->setParameter('user', $user)
             ->orderBy('trip.createdAt', 'DESC')
-            ->setMaxResults($limit)
             ->getQuery()
             ->execute();
     }
 
-    public function findAllValidTripsSorted($regionId, $group, $denied, $awaiting, $approved, $sorting) {
-
+    public function findAllValidTripsSorted($regionId, $groupSearch = null, $group = null, $denied = true, $awaiting = true, $approved = true, $sorting = '') {
 
         $qb = $this->createQueryBuilder('trip')
             ->orderBy('trip.user', 'DESC')
-            ->where('trip.region = :regionId')->setParameter(':regionId', $regionId);
+            ->where('trip.region = :regionId')->setParameter(':regionId', $regionId)
+            ->andWhere('trip.deletedAt IS NULL')
+            ;
 
-        if($group) {
-            $qb->andWhere('trip.group = :group')->setParameter(':group', $group);
-        }
+//        if($group) {
+//            $qb->andWhere('trip.group = :group')->setParameter(':group', $group);
+//        }
 
         //filter
         $filters = [];
@@ -49,6 +50,28 @@ class TripRepository extends EntityRepository
         else {
             return [];
         }
+
+        $searchGroupArr = explode(',', $groupSearch);
+        $groupFilters = [];
+        foreach($searchGroupArr as $i=>$filter) {
+            $groupFilters[] = 'trip.groupStack LIKE :filter'.$i;
+            $qb->setParameter('filter'.$i, '%'.$filter.'%');
+        }
+        $orFilterStatement = implode(' OR ', $groupFilters);
+        if($orFilterStatement) {
+            $qb->andWhere($orFilterStatement);
+        }
+        else {
+            return [];
+        }
+
+//        if($groupSearch) {
+//            $qb->andWhere('trip.groupStack LIKE :groupSearch');
+////            $qb->andWhere('trip.groupStack LIKE :groupSearch');
+////            $qb->setParameter('groupSearch', "%{$groupSearch}%")
+////            ;
+//            ;
+//        }
 
         //sorting
         if($sorting === 'name') {

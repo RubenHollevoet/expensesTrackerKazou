@@ -49,16 +49,12 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
     <div id="expenses_app"
-            {#{% if app.user %}#}
          :json="setStartData(
             {
                 user: {name: '{{ app.user.firstName }} {{ app.user.lastName }}', email: '{{ app.user.email }}', personId: '{{ app.user.personId }}', iban: '{{ app.user.iban }}', address: '{{ app.user.address }}'},
                 region: {id: {{ userRegion.id }}, name: '{{ userRegion.name }}'}
             }
          )">
-        {#{% else %}#}
-            {#:json="setUserData({});setRegionId({{ regionId }})">#}
-        {#{% endif %}#}
         <div>
             <h2>enkele spelregels</h2>
             <div class="col-md-12">
@@ -137,8 +133,9 @@
                     <div class="flex-left">
                         <div>
                             <crumb
-                                    v-for="(crumb, index) in crumbTrace"
-                                    v-bind:name="crumb.name"
+                                    v-for="(name, index) in crumbTrace"
+                                    v-bind:name="name"
+                                    v-bind:key="index"
                             >
                             </crumb>
                         </div>
@@ -153,6 +150,7 @@
                             v-bind:tree="subTree.children"
                             v-bind:details="subTree.details"
                             v-bind:name="subTree.name"
+                            v-bind:key="index"
                     ></group-node>
                 </div>
             </div>
@@ -164,6 +162,7 @@
                     <activity-node
                             v-for="(activity, index) in activityNodes"
                             v-bind:name="activity.activity"
+                            v-bind:key="index"
                     ></activity-node>
                 </div>
             </div>
@@ -207,32 +206,21 @@
                            v-model="tripData.to" placeholder="waar vond de activiteit plaats?"
                            type="text">
                 </div>
-
             </div>
 
 
             <div class="validator" v-bind:class="[tripData.from !== '' ? 'validator-ok' : 'validator-to-finish']">
                 <h3>Vertrekplaats</h3>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="btnGroup" role="group">
-                                <span class="btn btn-light" v-on:click="updateFrom(userData.address)"
-                                      v-bind:class="[tripData.from === userData.address ? 'btn-primary' : 'btn-light']"><span
-                                            class="fa fa-home"></span> Thuis</span>
-                                <span class="btn btn-light" v-on:click="updateFrom('')"
-                                      v-bind:class="[tripData.from !== userData.address ? 'btn-primary' : 'btn-light']">elders</span>
-                            </div>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="btnGroup" role="group">
-                                <input id="departureLocation" class="form-control"
-                                       v-show="tripData.from !== userData.address"
-                                       v-model="tripData.from" @blur.native="calculateDistance()"
-                                       placeholder="vertrekplaats" type="text">
-                            </div>
-                        </div>
+                <div class="flex-left">
+                    <div class="form-group">
+                        <span class="btn btn-light nowrap" @click="updateFrom(userData.address)">
+                            <span class="fa fa-home"></span> Thuis
+                        </span>
                     </div>
+                    <span>OF</span>
+                    <input id="departureLocation" class="form-control"
+                           v-model="tripData.from" @blur.native="calculateDistance()"
+                           placeholder="vertrekplaats" type="text">
                 </div>
             </div>
             <div class="validator" v-bind:class="[tripData.transportType !== '' && tripData.company !== '' ? 'validator-ok' : 'validator-to-finish']">
@@ -251,55 +239,58 @@
                           v-on:click="tripData.transportType = 'scooter'">brommer (-50cc)</span>
                 </div>
                 <div class="btnGroup" v-show="tripData.transportType === 'car'">
-                    <span class="btn btn-light"
+                    <span class="btn"
                           v-bind:class="[tripData.company === 'soloDriver' ? 'btn-primary' : 'btn-light']"
                           v-on:click="tripData.company = 'soloDriver'">alleen gereden
                     </span>
-                    <span class="btn btn-light"
+                    <span class="btn"
                           v-bind:class="[tripData.company === 'groupDriver' ? 'btn-primary' : 'btn-light']"
                           v-on:click="tripData.company = 'groupDriver'">carpool (als bestuurder)
                     </span>
-                    <span class="btn btn-light"
+                    <span class="btn"
                           v-bind:class="[tripData.company === 'carpooler' ? 'btn-primary' : 'btn-light']"
                           v-on:click="tripData.company = 'carpooler'">carpool (geen bestuurder)
                     </span>
                 </div>
                 <div v-show="tripData.transportType === 'publicTransport'">
-                    <div class="row form-group" v-if="!tripData.tickets.length">
-                        <h4 class="center">Upload al je ticketjes</h4>
-                        <div class="flex-left">
+                    <div class="uploadPriceContainer btnGroup">
+                        <div class="upload-btn-wrapper">
+                            <span class="btn btn-light"><span class="fa fa-folder"></span> Upload ticketjes</span>
                             <input type="file" @change="onFileChange" class="form-control" id="files" name="report"
                                    multiple="" required="true">
                         </div>
+                        <div>
+                            <div class="input-group width140">
+                                <input class="form-control" v-model="tripData.price" placeholder="0"
+                                       type="number" min="0" max="500"
+                                       step="0.01">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">&euro;</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="row publicTransportTicketsGroup" v-else>
+                    <div class="publicTransportTicketsGroup">
                         <div class="row publicTransportTicketContainer" v-for="(ticket, i) in tripData.tickets">
+                            <div class="col-md-2 col-xs-2"></div>
                             <div class="col-md-10 col-xs-10">
                                 <img :src="ticket.content" class="width100"/>
                             </div>
-                            <div class="col-md-2 col-xs-2">
-                                <span @click="removeTicket(i)" class="btn btn-danger fa fa-remove"></span>
-                            </div>
+                            <div class="col-md-2 col-xs-2"></div>
                         </div>
-                        <button @click="removeTicket" class="center btn btn-danger">alle afbeeldingen verwijderen
-                        </button>
-                    </div>
-                    <div class="row form-group">
-                        <div class="col-md-3"></div>
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <input class="form-control" v-model="tripData.price" placeholder="vertrekplaats"
-                                       type="number" min="0" max="500"
-                                       step="0.01">
-                                <div class="input-group-addon">&euro;</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3"></div>
+                        <span v-if="tripData.tickets.length > 0" @click="removeTickets()" class="btn btn-outline btn-danger"><span class="fa fa-remove"></span> verwijderen</span>
                     </div>
                 </div>
                 <div v-show="tripData.transportType === 'car' && (tripData.company === 'soloDriver' || tripData.company === 'groupDriver')">
                     <h3>Hoeveel Km heb je afgelegd? (heen + terug)</h3>
                     <div v-show="tripData.estimateDistance > 0">
+                        <div class="flex-center-h">
+                            <p class="flex-center-h">Schatting Google maps is <strong>${String(tripData.estimateDistance).replace('.',',')} Km</strong></p>
+                            <span class="btn btn-light fa fa-pencil"></span>
+                        </div>
+
+
+
                         <span class="btnGroup">
                             <span class="estimateDistanceProposal">
                                 <span>schatting: </span>
@@ -340,13 +331,23 @@
                 <h3>Opmerkingen</h3>
                 <div class="form-group">
                 <textarea class="form-control" v-model="tripData.comment"
-                          placeholder="zijn er nog opmerkingen? Ben je iemand gaan ophalen? Vermeld hier dan wie en waar"
+                          placeholder="verdere opmerkingen? Ben je iemand gaan ophalen? Vermeld hier wie en waar"
                           type="text"></textarea>
                 </div>
             </div>
-            <span class="flex1"></span>
-            <div class="col-md-12" v-show="formErrors.length">
-                <div class="<div alert alert-danger">
+            <div class="validator" v-bind:class="submitStatusClass">
+                <h3>Indienen</h3>
+                <button class="btn btn-success" @click="createTrip">Indienen</button>
+                <div v-if="submitStatus === 1" class="flex-center-h">
+                    <div>
+                        <span class="gray">onkosten indienen...</span>
+                        <div class="square-holder">
+                            <div class="square"></div>
+                        </div>
+                    </div>
+                </div>
+                <div v-show="submitStatus === 200" class="alert alert-success">Je onkosten zijn succesvol opgeslagen!</div>
+                <div v-show="submitStatus === 500 && formErrors.length" class="<div alert alert-danger">
                     <ul>
                         <form-errors
                                 v-for="error in formErrors"
@@ -355,18 +356,19 @@
                         </form-errors>
                     </ul>
                 </div>
+                <div v-show="submitStatus === 500" class="alert alert-danger">
+                    Er heeft zich een probleem voorgedaan en je onkosten zij niet opgeslagen.
+                    </br>Contacteer of alle velden correct werden ingevuld. Indien het probleem zich blijft voor doen, kan je het Kazou team contacteren.
+                </div>
+
             </div>
+
+            <div id="qrcode"></div>
+
+
+
         </div>
-        <div>
-            <h2>Bevestigen</h2>
-            <div class="largeIconContainer">
-                <span v-bind:class="submitStatusClass"></span>
-            </div>
-            <h2 v-show="submitStatus === 0">je data is onderweg naar de server</h2>
-            <h2 v-show="submitStatus === 200">Je onkosten zijn succesvol opgeslagen!</h2>
-            <h2 v-show="submitStatus === 500">Er heeft zich een probleem voorgedaan en je onkosten zij niet opgeslagen.
-                Contacteer het Kazou team indien het probleem zich blijft voordoen.</h2>
-        </div>
+
     </div>
 
 {% endblock %}
@@ -374,23 +376,10 @@
 
     {% block javascripts %}
         {{ parent() }}
+        <script src="{{ asset('js/lib/cleave.min.js') }}"></script>
+        <script src="{{ asset('js/lib/qrcode.min.js') }}"></script>
 
         <script src={{ asset('/js/vue/expensesAdd.js?v=1') }}></script>
-
-        <script src="{{ asset('js/lib/cleave.min.js') }}"></script>
-        <script>
-            // var cleave_iban = new Cleave('#iban', {
-            //     blocks: [4, 4, 4, 4],
-            //     uppercase: true
-            // });
-            //
-            // var cleave_personId = new Cleave('#personId', {
-            //     delimiters: ['.', '.', '-', '.'],
-            //     blocks: [2, 2, 2, 3, 2],
-            //     uppercase: true
-            // });
-        </script>
-
 
         <script>
             // This example displays an address form, using the autocomplete feature
@@ -440,7 +429,7 @@
         </script>
 
         <script type="text/x-template" id="group-node-template">
-            <span data-id="1" @click="onClick" class="btn btn-light">{{ "{{ name }}" }}</span>
+            <span data-id="1" @click="onClick" class="btn btn-light">{{ "{{ getLabel }}" }}</span>
         </script>
 
         <script type="text/x-template" id="activity-node-template">

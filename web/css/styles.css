@@ -250,3 +250,27 @@ body > footer {
 .home.container {
     margin-top: 30px;
 }
+
+.width140 {
+    width: 140px;
+}
+
+
+
+
+/*upload wrapper*/
+.upload-btn-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.upload-btn-wrapper input[type=file] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+}
+
+

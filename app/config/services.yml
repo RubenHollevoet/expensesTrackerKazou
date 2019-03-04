@@ -61,3 +61,8 @@ services:
                 - '@Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface'
 #            calls:
 #                - [ setTokenStorageInterface, [ '@Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface' ] ]
+
+    AppBundle\Command\migrateGroupAndActivityCommand:
+          autowire: true
+          tags:
+              - { name: 'console.command', command: 'app:group:mi' }
