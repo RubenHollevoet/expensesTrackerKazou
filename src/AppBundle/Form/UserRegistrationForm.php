@@ -2,7 +2,9 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\Region;
 use AppBundle\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -26,6 +28,11 @@ class UserRegistrationForm extends AbstractType
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email'
+            ])
+            ->add('region', EntityType::class, [
+                'class' => Region::class,
+                'choice_name' => 'name',
+                'label' => 'Regio'
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,

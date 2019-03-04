@@ -11,11 +11,30 @@
             }
         }
 
-
         html {
             scroll-behavior: smooth;
         }
 
+        .estimateDistance {
+            font-weight: 700;
+            padding-left: 5px;
+        }
+
+        .crumb-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .crumb-container > span {
+            margin: 4px 0;
+        }
+
+        .form-group > .btn {
+            margin: 6px !important;
+        }
 
         /*loading animation*/
         .square-holder {
@@ -131,7 +150,7 @@
 
                 <div class="center-flex">
                     <div class="flex-left">
-                        <div>
+                        <div class="crumb-container">
                             <crumb
                                     v-for="(name, index) in crumbTrace"
                                     v-bind:name="name"
@@ -284,27 +303,12 @@
                 <div v-show="tripData.transportType === 'car' && (tripData.company === 'soloDriver' || tripData.company === 'groupDriver')">
                     <h3>Hoeveel Km heb je afgelegd? (heen + terug)</h3>
                     <div v-show="tripData.estimateDistance > 0">
+                        <br>
                         <div class="flex-center-h">
-                            <p class="flex-center-h">Schatting Google maps is <strong>${String(tripData.estimateDistance).replace('.',',')} Km</strong></p>
-                            <span class="btn btn-light fa fa-pencil"></span>
+                            <p class="flex-center-h">Schatting Google maps is <span class="estimateDistance">${String(tripData.estimateDistance).replace('.',',')} Km</span></p>
+                            <span v-on:click="tripData.distance = Math.ceil(tripData.distance) - 1" class="btn btn-light fa fa-pencil"></span>
                         </div>
 
-
-
-                        <span class="btnGroup">
-                            <span class="estimateDistanceProposal">
-                                <span>schatting: </span>
-                                <span class="green">${String(tripData.estimateDistance).replace('.',',')} Km</span>
-                            </span>
-                            <span class="btn btn-light"
-                                  v-bind:class="[tripData.distance === tripData.estimateDistance ? 'btn-primary' : 'btn-light']"
-                                  v-on:click="tripData.distance = tripData.estimateDistance">gebruik schatting
-                            </span>
-                            <span class="btn btn-light"
-                                  v-bind:class="[tripData.distance !== tripData.estimateDistance ? 'btn-primary' : 'btn-light']"
-                                  v-on:click="tripData.distance = 0">zelf invullen
-                            </span>
-                        </span>
                     </div>
                     <div class="form-group" v-show="tripData.distance !== tripData.estimateDistance">
                         <div class="row">
@@ -358,7 +362,7 @@
                 </div>
                 <div v-show="submitStatus === 500" class="alert alert-danger">
                     Er heeft zich een probleem voorgedaan en je onkosten zij niet opgeslagen.
-                    </br>Contacteer of alle velden correct werden ingevuld. Indien het probleem zich blijft voor doen, kan je het Kazou team contacteren.
+                    </br>Controleer of alle velden correct werden ingevuld. Indien het probleem zich blijft voor doen, kan je het Kazou team contacteren.
                 </div>
 
             </div>

@@ -28,7 +28,7 @@ class UserController extends Controller
         $form = $this->createForm(UserProfileForm::class, $this->getUser());
 
         $form->handleRequest($request);
-        if ($form->isValid()) {
+        if ($form->isSubmitted()) {
             $em = $this->getDoctrine()->getManager();
             $user = $form->getData();
             $userWithEmail = $em->getRepository(User::class)->findOneBy([ 'email' => $user->getEmail()]);
@@ -60,7 +60,7 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/user/register", name="user_register")
+     * @Route("/register", name="user_register")
      * @Route("{regionId}/user/register", name="user_register_region")
      */
     public function registerUser(Request $request, $regionId = 0)

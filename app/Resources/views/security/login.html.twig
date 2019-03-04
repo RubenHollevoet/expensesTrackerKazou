@@ -7,12 +7,12 @@
 
 {% block body %}
     <div class="container">
-        <div class="row register-selector">
+        <div class="register-selector">
             <div class="register-facebook">
                 <a href="{{ fbLoginUrl }}" target="_top" class="fb-login-btn"><span class="fa fa-facebook"></span>Login met Facebook</a>
             </div>
             <span class="split">OF</span>
-            <div>
+            <div class="form">
                 {% if error %}
                     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                 {% endif %}

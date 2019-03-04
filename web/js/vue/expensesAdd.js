@@ -114,7 +114,7 @@ var app = new Vue({
             to: '',
             date: '',
             transportType: '',
-            company: '',
+            company: 'soloDriver',
             distance: 0,
             estimateDistance: -1,
             comment: '',
@@ -281,6 +281,7 @@ var app = new Vue({
             }
         },
         setStartData(data) {
+            console.log(data);
             if (!this.startDataSet) {
                 this.userData = Object.assign({}, this.userData, data.user);
                 this.region = data.region;
@@ -340,7 +341,7 @@ var app = new Vue({
 
             this.$root.tripData.activity = '';
 
-            this.$root.fetchTree(this.id);
+            this.$root.fetchTree(this.region.id);
         }
     },
     mounted: function () {

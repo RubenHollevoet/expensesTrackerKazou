@@ -33,10 +33,13 @@
                     <div class="col-md-4">
                         {{ form_row(form.personId) }}
                     </div>
+                    <div class="col-md-4">
+                        {{ form_row(form.address, {'attr': {'placeholder':'straat, nummer, postcode, gemeente'}}) }}
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        {{ form_row(form.address, {'attr': {'placeholder':'straat, nummer, postcode, gemeente'}}) }}
+                        {{ form_row(form.region) }}
                     </div>
                 </div>
                 <div class="row">

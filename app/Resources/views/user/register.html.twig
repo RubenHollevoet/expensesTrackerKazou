@@ -7,7 +7,7 @@
 
 {% block body %}
     <div class="container">
-        <div class="row register-selector">
+        <div class="register-selector">
             <div class="register-facebook">
                 <a href="{{ fbLoginUrl }}" target="_top" class="fb-login-btn"><span class="fa fa-facebook"></span>Registreer met Facebook</a>
             </div>
@@ -17,6 +17,7 @@
                 {{ form_row(form.firstName) }}
                 {{ form_row(form.lastName) }}
                 {{ form_row(form.email) }}
+                {{ form_row(form.region) }}
                 {{ form_row(form.plainPassword.first) }}
                 {{ form_row(form.plainPassword.second) }}
                 <button type="submit" class="btn btn-yellow" formnovalidate>Registreer</button>

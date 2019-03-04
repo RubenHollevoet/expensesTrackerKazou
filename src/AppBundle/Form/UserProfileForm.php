@@ -8,7 +8,10 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\Region;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -37,6 +40,11 @@ class UserProfileForm extends AbstractType
             ])
             ->add('address', TextType::class, [
                 'label' => 'Woonplaats (volledige adres)'
+            ])
+            ->add('region', EntityType::class, [
+                'class' => Region::class,
+                'choice_name' => 'name',
+                'label' => 'Regio'
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
