@@ -307,3 +307,12 @@
         padding-left: 5px;
     }
 }
+
+#qrcode img {
+    margin: 0 auto;
+}
+
+.qrCode_text {
+    padding-top: 5px;
+    text-align: center;
+}

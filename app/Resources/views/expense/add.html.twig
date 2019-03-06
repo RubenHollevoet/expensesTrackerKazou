@@ -4,6 +4,16 @@
     <link rel="stylesheet" href="{{ asset('css/expenses.css') }}?v={{ random(999999) }}">
     {{ parent() }}
     <style>
+        @media (max-width: 768px) {
+            .crumb-container {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 0;
+            }
+        }
+
         @media (min-width: 768px) {
             .main-content {
                 background: url('/img/vvgps/menuBg.jpg');
@@ -20,14 +30,6 @@
             padding-left: 5px;
         }
 
-        .crumb-container {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 0;
-        }
-
         .crumb-container > span {
             margin: 4px 0;
         }
@@ -42,7 +44,7 @@
         }
 
         .square {
-            animation: loadingG 1.5s cubic-bezier(.17,.37,.43,.67) infinite;
+            animation: loadingG 1.5s cubic-bezier(.17, .37, .43, .67) infinite;
         }
 
         .square {
@@ -53,9 +55,15 @@
         }
 
         @keyframes loadingG {
-            0% {transform: translate(-40px,0) rotate(0deg);}
-            50% {transform: translate(40px,0) rotate(360deg);}
-            100% {transform: translate(-40px,0) rotate(0deg);}
+            0% {
+                transform: translate(-40px, 0) rotate(0deg);
+            }
+            50% {
+                transform: translate(40px, 0) rotate(360deg);
+            }
+            100% {
+                transform: translate(-40px, 0) rotate(0deg);
+            }
         }
     </style>
 {% endblock %}
@@ -74,7 +82,7 @@
                 region: {id: {{ userRegion.id }}, name: '{{ userRegion.name }}'}
             }
          )">
-        <div>
+        <div v-if="submitStatus !== 200">
             <h2>enkele spelregels</h2>
             <div class="col-md-12">
                 <div class="alert alert-info">
@@ -102,8 +110,6 @@
                     </ul>
                 </div>
             </div>
-        </div>
-        <div>
             <h2 id="myDetails">Mijn gegevens</h2>
             <div class="validator" v-bind:class="[1 === 1 ? 'validator-ok' : 'validator-to-finish']">
                 <div>
@@ -126,7 +132,9 @@
             <h2>Waarvoor dien je reisonkosten in?</h2>
             <div class="validator validator-ok">
                 <h3 id="region">verbond</h3>
-                <p>Je dient onkosten in voor <strong>${ region.name }</strong>. <span class="link" v-on:click="enableRegionSelector">Klik hier</span> om onkosten in te dienen voor een ander verbond.</p>
+                <p>Je dient onkosten in voor <strong>${ region.name }</strong>. <span class="link"
+                                                                                      v-on:click="enableRegionSelector">Klik hier</span>
+                    om onkosten in te dienen voor een ander verbond.</p>
                 <div v-show="regionSelectorActive" class="btnGroup">
                     <region
                             v-for="region in regions"
@@ -138,7 +146,8 @@
                 </div>
             </div>
 
-            <div class="validator" v-bind:class="[groupNodes.length == 0 & crumbTrace.length > 0 ? 'validator-ok' : 'validator-to-finish']">
+            <div class="validator"
+                 v-bind:class="[groupNodes.length == 0 & crumbTrace.length > 0 ? 'validator-ok' : 'validator-to-finish']">
                 <h3>Groep</h3>
 
                 <div v-show="groupNodes.length == 0 & activityNodes.length == 0" class="center-flex">
@@ -190,8 +199,10 @@
                 <h3>Datum</h3>
                 <div class="flex-left">
                     <div class="form-group">
-                        <span class="btn btn-light" @click="setTripDate('yesterday')">gisteren</span>
-                        <span class="btn btn-light" @click="setTripDate('today')">vandaag</span>
+                        <span class="btn" v-bind:class="[tripData.date === getDaysAgo(0) ? 'btn-primary' : 'btn-light']"
+                              @click="setTripDate('today')">vandaag</span>
+                        <span class="btn" v-bind:class="[tripData.date === getDaysAgo(1) ? 'btn-primary' : 'btn-light']"
+                              @click="setTripDate('yesterday')">gisteren</span>
                     </div>
                     <span>OF</span>
                     <input class="form-control flex1" v-model="tripData.date" type="date">
@@ -232,7 +243,8 @@
                 <h3>Vertrekplaats</h3>
                 <div class="flex-left">
                     <div class="form-group">
-                        <span class="btn btn-light nowrap" @click="updateFrom(userData.address)">
+                        <span class="btn nowrap" @click="updateFrom(userData.address)"
+                              v-bind:class="[userData.address === tripData.from ? 'btn-primary' : 'btn-light']">
                             <span class="fa fa-home"></span> Thuis
                         </span>
                     </div>
@@ -242,7 +254,8 @@
                            placeholder="vertrekplaats" type="text">
                 </div>
             </div>
-            <div class="validator" v-bind:class="[tripData.transportType !== '' && tripData.company !== '' ? 'validator-ok' : 'validator-to-finish']">
+            <div class="validator"
+                 v-bind:class="[tripData.transportType !== '' && tripData.company !== '' ? 'validator-ok' : 'validator-to-finish']">
                 <h3>Transportmiddel</h3>
                 <div class="btnGroup">
                     <div v-bind:class="[tripData.transportType ? 'car' : '123', '456']"></div>
@@ -297,7 +310,8 @@
                             </div>
                             <div class="col-md-2 col-xs-2"></div>
                         </div>
-                        <span v-if="tripData.tickets.length > 0" @click="removeTickets()" class="btn btn-outline btn-danger"><span class="fa fa-remove"></span> verwijderen</span>
+                        <span v-if="tripData.tickets.length > 0" @click="removeTickets()"
+                              class="btn btn-outline btn-danger"><span class="fa fa-remove"></span> verwijderen</span>
                     </div>
                 </div>
                 <div v-show="tripData.transportType === 'car' && (tripData.company === 'soloDriver' || tripData.company === 'groupDriver')">
@@ -305,8 +319,10 @@
                     <div v-show="tripData.estimateDistance > 0">
                         <br>
                         <div class="flex-center-h">
-                            <p class="flex-center-h">Schatting Google maps is <span class="estimateDistance">${String(tripData.estimateDistance).replace('.',',')} Km</span></p>
-                            <span v-on:click="tripData.distance = Math.ceil(tripData.distance) - 1" class="btn btn-light fa fa-pencil"></span>
+                            <p class="flex-center-h">Schatting Google maps is <span class="estimateDistance">${String(tripData.estimateDistance).replace('.',',')} Km</span>
+                            </p>
+                            <span v-on:click="tripData.distance = Math.ceil(tripData.distance) - 1"
+                                  class="btn btn-light fa fa-pencil"></span>
                         </div>
 
                     </div>
@@ -339,39 +355,44 @@
                           type="text"></textarea>
                 </div>
             </div>
-            <div class="validator" v-bind:class="submitStatusClass">
-                <h3>Indienen</h3>
-                <button class="btn btn-success" @click="createTrip">Indienen</button>
-                <div v-if="submitStatus === 1" class="flex-center-h">
-                    <div>
-                        <span class="gray">onkosten indienen...</span>
-                        <div class="square-holder">
-                            <div class="square"></div>
-                        </div>
-                    </div>
-                </div>
-                <div v-show="submitStatus === 200" class="alert alert-success">Je onkosten zijn succesvol opgeslagen!</div>
-                <div v-show="submitStatus === 500 && formErrors.length" class="<div alert alert-danger">
-                    <ul>
-                        <form-errors
-                                v-for="error in formErrors"
-                                v-bind:error="error"
-                                v-bind:key="error">
-                        </form-errors>
-                    </ul>
-                </div>
-                <div v-show="submitStatus === 500" class="alert alert-danger">
-                    Er heeft zich een probleem voorgedaan en je onkosten zij niet opgeslagen.
-                    </br>Controleer of alle velden correct werden ingevuld. Indien het probleem zich blijft voor doen, kan je het Kazou team contacteren.
-                </div>
-
-            </div>
-
-            <div id="qrcode"></div>
-
 
 
         </div>
+
+
+        <div class="validator" v-bind:class="submitStatusClass">
+            <h3>Indienen</h3>
+            <button v-if="submitStatus !== 200" class="btn btn-success" @click="createTrip">Indienen</button>
+            <a href="{{ path('expenses') }}" v-if="submitStatus === 200" class="btn btn-success" @click="createTrip">Terug naar overzicht</a>
+            <div v-if="submitStatus === 1" class="flex-center-h">
+                <div>
+                    <span class="gray">onkosten indienen...</span>
+                    <div class="square-holder">
+                        <div class="square"></div>
+                    </div>
+                </div>
+            </div>
+            <div v-show="submitStatus === 200" class="alert alert-success">Je onkosten zijn succesvol opgeslagen!<br>Je kan de QR code hieronder gebruiken om je onkost te delen met anderen.
+                <br>Zo maak je het hen nog makkelijker!</div>
+            <div v-show="submitStatus === 500 && formErrors.length" class="<div alert alert-danger">
+                <ul>
+                    <form-errors
+                            v-for="error in formErrors"
+                            v-bind:error="error"
+                            v-bind:key="error">
+                    </form-errors>
+                </ul>
+            </div>
+            <div v-show="submitStatus === 500" class="alert alert-danger">
+                Er heeft zich een probleem voorgedaan en je onkosten zij niet opgeslagen.
+                </br>Controleer of alle velden correct werden ingevuld. Indien het probleem zich blijft voor doen, kan
+                je het Kazou team contacteren.
+            </div>
+
+        </div>
+
+        <div id="qrcode"></div>
+        <p class="qrCode_text">${qrLink}</p>
 
     </div>
 
@@ -437,7 +458,7 @@
         </script>
 
         <script type="text/x-template" id="activity-node-template">
-            <span data-id="1" @click="onClick" class="btn"  v-bind:class="getBtnType">{{ "{{ name }}" }}</span>
+            <span data-id="1" @click="onClick" class="btn" v-bind:class="getBtnType">{{ "{{ name }}" }}</span>
         </script>
 
     {% endblock %}

@@ -107,6 +107,7 @@ var app = new Vue({
             address: ''
         },
         tripData: {
+            id: 0,
             groupCode: '',
             groupStack: [],
             activity: '',
@@ -141,11 +142,31 @@ var app = new Vue({
                 'validator-nok': this.submitStatus === 500,
                 'validator-to-finish': this.submitStatus === 0
             }
+        },
+        qrLink : function () {
+            if(this.tripData.id) {
+                return "onkosten.kazourmt.be/add?t=" + this.tripData.id;
+            }
+
+            return '';
         }
     },
     methods: {
         enableRegionSelector: function () {
             this.regionSelectorActive = true
+        },
+        getDaysAgo: function (daysAgo) {
+            let date = new Date();
+            date.setDate(date.getDate() - daysAgo);
+
+            let month = '' + (date.getMonth() + 1);
+            let day = '' + date.getDate();
+            const year = date.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('-');
         },
         createTrip: function () {
             var self = this;
@@ -164,8 +185,9 @@ var app = new Vue({
                     console.log(response.data.status);
                     if(response.data.status === 'ok') {
                         self.submitStatus = 200;
+                        self.tripData.id = response.data.tripId;
 
-                        new QRCode(document.getElementById("qrcode"), "onkosten.kazourmt.be/add?t=" + response.data.tripId);
+                        new QRCode(document.getElementById("qrcode"), "onkosten.kazourmt.be/add?t=" + self.tripData.id);
                     }
                     else {
                         self.submitStatus = 500;
