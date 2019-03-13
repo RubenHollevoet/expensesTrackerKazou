@@ -62,7 +62,10 @@
                         {{ form_row(form.plainPassword.second) }}
                     </div>
                 </div>
-                <button type="submit" class="btn btn-yellow" formnovalidate>Opslaan</button>
+                <div>
+                    <a href="{{ path('expenses') }}" class="btn btn-danger">Terug</a>
+                    <button type="submit" class="btn btn-success" formnovalidate>Opslaan</button>
+                </div>
                 {{ form_end(form) }}
             </div>
         </div>

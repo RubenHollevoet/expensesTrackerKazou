@@ -15,10 +15,15 @@
 {% block body %}
     <div class="container">
         <div class="row">
-            <div class="col-md-2">
-            </div>
-            <div class="col-md-8 centerBox">
-                <h1>Welkom op de onkostentool</h1>
+            <div class="col-md-12 centerBox">
+                <br>
+                {% if app.user %}
+                    <h1>{{ welcomeMessage }}, {{ app.user.firstName }}</h1>
+                    <br>
+                    <p>Welkom op de onkostentool. Hier kan je:</p>
+                 <a href="{{ path('expenses_add') }}" class="btn btn-outline-primary">reisonkosten indienen</a>
+                    <br>
+
 
                 {#<span class="alert alert-info">#}
                     {#<h4>De onkostentool staat nog maar in zijn kinderschoentjes en dus kan ik jouw hulp zeker goed gebruiken!</h4>#}
@@ -26,12 +31,10 @@
                     {#<a class="btn btn-yellow" target="_blank" href="https://goo.gl/forms/NkVAowEoqFXlvcaK2">Vul het feedback formulier in!</a>#}
                 {#</span>#}
 
-                <p class="center">Hier kan je al je transport onkosten indienen. Je vindt verder ook een overzicht van je
-                    eerder ingediende onkosten.
+                {#<p class="center">Hier kan je al je transport onkosten indienen. Je vindt verder ook een overzicht van je#}
+                    {#eerder ingediende onkosten.#}
                     {#Voor meer info over waar je een killometervergoeding voor kan indienen, kan je de <a href="">onkostennota</a> raadplegen.#}
-                </p>
-                {% if app.user %}
-                    <a href="{{ path("expenses_add") }}" class="btn btn-yellow btn-zoom">onkosten toevoegen</a>
+                {#</p>#}
                 {% else %}
                     <div class="alert alert-info width100">
                         <span>Om onkosten in te dienen moet je ingelogd zijn.</span>
@@ -47,14 +50,12 @@
                     </div>
                 {% endif %}
             </div>
-            <div class="col-md-2">
-            </div>
         </div>
 
         {% if app.user %}
             <div class="row">
                 <div class="col-md-12 centerBox">
-                    <h2>Ingediende onkosten</h2>
+                    <h2 id="myExpensesTitle" >Jouw ingediende onkosten</h2>
                 </div>
             </div>
 
@@ -67,10 +68,8 @@
                         <th scope="col">Activiteit</th>
                         <th scope="col">Van</th>
                         <th scope="col">Naar</th>
-                        {#<th scope="col">Rit info</th>#}
-                        {#<th scope="col">Bedrag</th>#}
                         <th scope="col">Status</th>
-                        <th scope="col">Meer info</th>
+                        <th scope="col">Details</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -81,8 +80,7 @@
                             <td>{{ tripCount }}</td>
                             <td class="nowrap">{{ trip.date|date('j-n-Y') }}</td>
                             {#<td>{{ trip.group.name }} - {{ trip.activity.name }}</td>#}
-                            <td title="{{ trip.groupStack|join(' - ') }}">{{ trip.groupStack|last }}</td>
-                            <td>{{ trip.activityName }}</td>
+                            <td title="{{ trip.groupStack|join(' - ') }}">{{ trip.groupStack|last }} - {{ trip.activityName }}</td>
                             <td>{{ trip.from }}</td>
                             <td>{{ trip.to }}</td>
                             {#{% if trip.distance %}#}
@@ -130,6 +128,7 @@
                     <span>Een educatief medewerker heeft een opmerking toegevoegd aan je onkost en deze mogelijks aangepast.</span>
                 </div>
             </div>
+
         {% endif %}
     </div>
 

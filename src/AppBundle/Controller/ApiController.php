@@ -67,6 +67,37 @@ class ApiController extends Controller
     }
 
     /**
+     * @Route("/getShareTripDetails")
+     */
+    public function getShareTripDetails(Request $request) {
+        $tripId = $request->query->get('tripId');
+
+        if(!$this->getUser()) {
+            throw new NotFoundHttpException('User not signed in');
+        }
+
+        if($tripId === null) {
+            throw new NotFoundHttpException('Trip ID not found');
+        }
+
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var Trip $trip */
+        $trip = $em->getRepository(Trip::class)->find($tripId);
+
+        return new JsonResponse([
+            'tripId' => $trip->getId(),
+            'regionId' => $trip->getRegion()->getId(),
+            'regionName' => $trip->getRegion()->getName(),
+            'to' => $trip->getTo(),
+            'date' => $trip->getDate()->format('Y-m-d'),
+            'groupCode' => $trip->getGroupCode(),
+            'crumbTrace' => $trip->getGroupStack(),
+            'activity' => $trip->getActivityName(),
+        ]);
+    }
+
+    /**
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/validate/{regionId}/getLevels", name="validate_fetch_levels")
      */

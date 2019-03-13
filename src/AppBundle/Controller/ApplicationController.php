@@ -48,7 +48,25 @@ class ApplicationController extends Controller
 //        $trips = $em->getRepository(Trip::class)->findBy(['user' => $user]);
         $trips = $em->getRepository(Trip::class)->findAllOpenTripsForUser($user);
 
+        $h = date('H');
+        if($h > 22) {
+            $welcomeMsg = 'goede nacht';
+        }
+        if($h > 18) {
+            $welcomeMsg = 'goed avond';
+        }
+        elseif($h > 12) {
+            $welcomeMsg = 'goede namiddag';
+        }
+        elseif($h > 8) {
+            $welcomeMsg = 'goedmorgen';
+        }
+        else {
+            $welcomeMsg = 'goede nacht';
+        }
+
         return $this->render('expense/show.html.twig', [
+            'welcomeMessage' => $welcomeMsg,
             'regionId' => $regionId,
             'trips' => $trips,
             'fbLoginUrl' => $this->container->get('app.service.facebook_user_provider')->getLoginUrl()
@@ -467,6 +485,10 @@ class ApplicationController extends Controller
         }
         else {
             $errors[] = 'Activiteit incorrect';
+        }
+
+        if($formData->tripData->shareFromTrip) {
+            $trip->setShareFromTrip($formData->tripData->shareFromTrip);
         }
 
         if($formData->tripData->transportType) {

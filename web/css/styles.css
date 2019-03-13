@@ -256,6 +256,12 @@ body > footer {
 }
 
 
+.homeBtn {
+    color: white;
+    font-size: 42px;
+    padding-top: 10px;
+}
+
 
 
 /*upload wrapper*/
@@ -274,3 +280,6 @@ body > footer {
 }
 
 
+.strikethrough {
+    text-decoration: line-through;
+}

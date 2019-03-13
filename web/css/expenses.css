@@ -78,26 +78,29 @@
 /*}*/
 
 .expense-status {
-    color: white;
     font-weight: bold;
     padding: 4px 9px;
     border-radius: 4px;
 }
 
 .expense-status.awaiting {
-    background-color: #ff852c;
+    color: #ff852c;
+    background-color: #ff852c22;
 }
 
 .expense-status.approved {
-    background-color: #6faf2a;
+    color: #6faf2a;
+    background-color: #6faf2a22;
 }
 
 .expense-status.processed {
-    background-color: #6faf2a;
+    color: #6faf2a;
+    background-color: #6faf2a22;
 }
 
 .expense-status.denied {
-    background-color: #c9302c;
+    color: #c9302c;
+    background-color: #c9302c22;
 }
 
 @media (min-width: 600px) {
@@ -315,4 +318,10 @@
 .qrCode_text {
     padding-top: 5px;
     text-align: center;
+}
+
+
+.limitWidthGroup {
+    width: auto !important;
+    height: 38px;
 }

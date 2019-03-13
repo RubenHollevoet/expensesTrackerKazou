@@ -142,6 +142,11 @@ class Trip
     private $payment;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $shareFromTrip;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     protected $createdAt;
@@ -532,6 +537,22 @@ class Trip
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShareFromTrip()
+    {
+        return $this->shareFromTrip;
+    }
+
+    /**
+     * @param mixed $shareFromTrip
+     */
+    public function setShareFromTrip($shareFromTrip)
+    {
+        $this->shareFromTrip = $shareFromTrip;
     }
 
     /**

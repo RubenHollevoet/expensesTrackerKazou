@@ -21,9 +21,14 @@
 {% block header %}
     <header class="main-header">
         <div class="container">
+
+            <a href="{{ path('expenses') }}"><span class="fa fa-home homeBtn"></span></a>
+
+            <div class="flex1"></div>
+
             <div class="row header-content">
 
-                <div class="flex1"></div>
+
 
                 <div class="actions">
                     {% if is_granted('ROLE_USER') %}

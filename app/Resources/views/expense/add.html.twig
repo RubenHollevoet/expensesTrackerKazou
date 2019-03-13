@@ -150,7 +150,7 @@
                  v-bind:class="[groupNodes.length == 0 & crumbTrace.length > 0 ? 'validator-ok' : 'validator-to-finish']">
                 <h3>Groep</h3>
 
-                <div v-show="groupNodes.length == 0 & activityNodes.length == 0" class="center-flex">
+                <div v-show="groupNodes.length == 0 & activityNodes.length == 0 & crumbTrace.length == 0" class="center-flex">
                     <span class="gray">activiteiten ophalen...</span>
                     <div class="square-holder">
                         <div class="square"></div>
@@ -215,19 +215,19 @@
                 <div class="flex-left">
 
                     <div v-if="region.id == 0" class="form-group">
-                        <span class="btn btn-light" v-on:click="updateTo('CM Mechelen Noord')"
+                        <span class="btn" v-on:click="updateTo('CM Mechelen Noord')"
                               v-bind:class="[tripData.to === 'CM Mechelen Noord' ? 'btn-primary' : 'btn-light']">Rezzon</span>
-                        <span class="btn btn-light" v-on:click="updateTo('CM Turnhout')"
+                        <span class="btn" v-on:click="updateTo('CM Turnhout')"
                               v-bind:class="[tripData.to === 'CM Turnhout' ? 'btn-primary' : 'btn-light']">Bar Volontar</span>
                     </div>
                     <div v-if="region.id == 1" class="form-group">
-                        <span class="btn btn-light" v-on:click="updateTo('Haachtsesteenweg 1805, 1130 Haren')"
+                        <span class="btn" v-on:click="updateTo('Haachtsesteenweg 1805, 1130 Haren')"
                               v-bind:class="[tripData.to === 'Haachtsesteenweg 1805, 1130 Haren' ? 'btn-primary' : 'btn-light']">Verbondsgebouw</span>
-                        <span class="btn btn-light" v-on:click="updateTo('Wilgenlaan 1, 1861 Meise')"
+                        <span class="btn" v-on:click="updateTo('Wilgenlaan 1, 1861 Meise')"
                               v-bind:class="[tripData.to === 'Wilgenlaan 1, 1861 Meise' ? 'btn-primary' : 'btn-light']">CM Meise</span>
-                        <span class="btn btn-light" v-on:click="updateTo('Ninoofsesteenweg 176, 1700 Dilbeek')"
+                        <span class="btn" v-on:click="updateTo('Ninoofsesteenweg 176, 1700 Dilbeek')"
                               v-bind:class="[tripData.to === 'Ninoofsesteenweg 176, 1700 Dilbeek' ? 'btn-primary' : 'btn-light']">CM Dilbeek</span>
-                        <span class="btn btn-light" v-on:click="updateTo('Molenbos1, 1731 Asse')"
+                        <span class="btn" v-on:click="updateTo('Molenbos1, 1731 Asse')"
                               v-bind:class="[tripData.to === 'Molenbos1, 1731 Asse' ? 'btn-primary' : 'btn-light']">Vertrekplaats Asse</span>
                     </div>
                     {#{% endif %}#}
@@ -319,25 +319,25 @@
                     <div v-show="tripData.estimateDistance > 0">
                         <br>
                         <div class="flex-center-h">
-                            <p class="flex-center-h">Schatting Google maps is <span class="estimateDistance">${String(tripData.estimateDistance).replace('.',',')} Km</span>
+                            <p class="flex-center-h">Schatting Google maps is <span class="estimateDistance"  v-bind:class="[tripData.distance !== tripData.estimateDistance ? 'strikethrough' : '']">${String(tripData.estimateDistance).replace('.',',')} Km</span>
                             </p>
-                            <span v-on:click="tripData.distance = Math.ceil(tripData.distance) - 1"
+                            <span v-on:click="tripData.distance = Math.ceil(tripData.estimateDistance) - 1"
                                   class="btn btn-light fa fa-pencil"></span>
                         </div>
 
                     </div>
+
                     <div class="form-group" v-show="tripData.distance !== tripData.estimateDistance">
-                        <div class="row">
-                            <div class="col-md-3"></div>
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <input class="form-control" v-model="tripData.distance" placeholder="vertrekplaats"
-                                           type="number" min="0" max="5000"
-                                           step="0.01">
-                                    <div class="input-group-addon">Km</div>
+                        <div class="btnGroup">
+                            <div class="input-group limitWidthGroup">
+                                <input class="form-control" v-model="tripData.distance" placeholder="vertrekplaats"
+                                       type="number" min="0" max="5000"
+                                       step="0.01">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Km</span>
                                 </div>
                             </div>
-                            <div class="col-md-3"></div>
+                            <span v-show="tripData.estimateDistance > 0" class="btn btn-outline-danger" @click="tripData.distance = tripData.estimateDistance">reset</span>
                         </div>
                     </div>
                 </div>

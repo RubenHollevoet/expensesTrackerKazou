@@ -120,7 +120,8 @@ var app = new Vue({
             estimateDistance: -1,
             comment: '',
             tickets: [],
-            price: 0
+            price: 0,
+            shareFromTrip: null
         },
         crumbTrace: [],
         groupNodes: [],
@@ -364,11 +365,36 @@ var app = new Vue({
             this.$root.tripData.activity = '';
 
             this.$root.fetchTree(this.region.id);
+        },
+        fetchShareTripDetails: function(tripId) {
+            var self = this;
+            axios.post('/api/getShareTripDetails?tripId=' + tripId)
+                .then(function (response) {
+                    self.tripData.shareFromTrip = response.data.tripId;
+                    self.tripData.to = response.data.to;
+                    self.tripData.date = response.data.date;
+                    self.region = { id:response.data.regionId, name: response.data.regionName};
+                    self.tripData.regionId = response.data.regionId;
+                    self.tripData.groupCode = response.data.groupCode ? response.data.groupCode : '-';
+                    self.crumbTrace = response.data.crumbTrace;
+                    // todo: set distance multiplier
+                    self.activityNodes = [{distanceMultiplier: 2, activity:response.data.activity}];
+                    self.tripData.activity = response.data.activity;
+                })
+                .catch(function (error) {
+                    console.log('>>>> ',error);
+                });
         }
     },
     mounted: function () {
-        // this.fetchGroups(0);
-        this.fetchTree(this.region.id);
-        this.fetchRegions();
+
+        if(getUrlParameter('t')) {
+            this.fetchShareTripDetails(getUrlParameter('t'));
+        }
+        else {
+            this.fetchTree(this.region.id);
+            this.fetchRegions();
+        }
+
     }
 });
