@@ -363,7 +363,7 @@
         <div class="validator" v-bind:class="submitStatusClass">
             <h3>Indienen</h3>
             <button v-if="submitStatus !== 200" class="btn btn-success" @click="createTrip">Indienen</button>
-            <a href="{{ path('expenses') }}" v-if="submitStatus === 200" class="btn btn-success" @click="createTrip">Terug naar overzicht</a>
+            <a href="{{ path('expenses') }}" v-if="submitStatus === 200" class="btn btn-success">Terug naar overzicht</a>
             <div v-if="submitStatus === 1" class="flex-center-h">
                 <div>
                     <span class="gray">onkosten indienen...</span>
