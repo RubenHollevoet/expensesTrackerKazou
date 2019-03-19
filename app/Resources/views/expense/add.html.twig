@@ -230,6 +230,10 @@
                         <span class="btn" v-on:click="updateTo('Molenbos1, 1731 Asse')"
                               v-bind:class="[tripData.to === 'Molenbos1, 1731 Asse' ? 'btn-primary' : 'btn-light']">Vertrekplaats Asse</span>
                     </div>
+                    <div v-if="region.id == 4" class="form-group">
+                        <span class="btn" v-on:click="updateTo('Lostraat 541, 3010 Kessel-Lo')"
+                              v-bind:class="[tripData.to === 'Lostraat 541, 3010 Kessel-Lo' ? 'btn-primary' : 'btn-light']">Verbondsgebouw Leuven</span>
+                    </div>
                     {#{% endif %}#}
                     <span>OF</span>
                     <input id="meetingLocation" class="form-control flex1"
