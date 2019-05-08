@@ -227,53 +227,6 @@ class ApplicationController extends Controller
     }
 
     /**
-     * @Route("/api/getExpenses")
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function getTrips(Request $request)
-    {
-        $error = [];
-
-        $em = $this->getDoctrine()->getManager();
-        $group = $em->getRepository(TripGroup::class)->find((int)$request->query->get('group'));
-        $denied = $request->query->get('denied') !== 'false';
-        $awaiting = $request->query->get('awaiting') !== 'false';
-        $approved = $request->query->get('approved') !== 'false';
-        $sorting = $request->query->get('sorting') ?: '';
-
-        $trips = $this->getDoctrine()->getRepository(Trip::class)->findAllValidTripsSorted($group->getRegion()->getId(), $group, $denied, $awaiting, $approved, $sorting);
-
-        $result = [
-            'groupName' => $group->getName(),
-            'trips' => []
-        ];
-        foreach ($trips as $trip) {
-
-            $result['trips'][] = [
-                'id' => $trip->getId(),
-                'name' => $trip->getUser()->getFirstName().' '.$trip->getUser()->getLastName(),
-                'from' => $trip->getFrom(),
-                'date' => $trip->getDate()->format('d/m/y'),
-                'to' => $trip->getTo(),
-                'activity' => $trip->getActivity()->getName(),
-                'comment' => $trip->getComment(),
-                'adminComment' => $trip->getCommentAdmin(),
-                'transportType' => $trip->getTransportType(),
-                'tickets' => $trip->getTickets(),
-                'distance' => $trip->getDistance(),
-                'estimatedDistance' => $trip->getEstimateDistance(),
-                'price' => $trip->getPrice(),
-                'status' => $trip->getStatus(),
-            ];
-        }
-
-        return $this->json([
-            'status' => $error ? 'error' : 'ok',
-            'data' => $error ?: $result
-        ]);
-    }
-
-    /**
      * @Route("/api/updateExpense")
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
@@ -308,7 +261,7 @@ class ApplicationController extends Controller
     }
 
     /**
-     * @Route("/api/getValidateTree")
+         * @Route("/api/getValidateTree")
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function getValidateTree(Request $request)
@@ -317,17 +270,18 @@ class ApplicationController extends Controller
         $error = [];
         $regionId = $request->query->get('region');
         if($regionId === null) $error[] = 'GET parameter \'region\' is missing.';
-        $denied = $request->query->get('denied') !== 'false';
-        $awaiting = $request->query->get('awaiting') !== 'false';
-        $approved = $request->query->get('approved') !== 'false';
-        $sorting = $request->query->get('sorting') ?: '';
 
         $tree = [];
 
         $region = $this->getDoctrine()->getRepository(Region::class)->findBy(['id' => $regionId]);
         $groups = $this->getDoctrine()->getRepository(TripGroup::class)->findBy(['region' => $region]);
 
-        $trips = $this->getDoctrine()->getRepository(Trip::class)->findAllValidTripsSorted($region, null, $denied, $awaiting, $approved, $sorting);
+        $filter = [
+            'status' => $request->query->get('status') ?: [],
+            'group' => $request->query->get('search') ?: []
+        ];
+
+        $trips = $this->getDoctrine()->getRepository(Trip::class)->findAllValidTripsSorted($region, $filter);
 
         foreach($groups as $group) {
             $group->tripCount = 0;

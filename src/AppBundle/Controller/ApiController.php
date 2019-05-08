@@ -108,7 +108,16 @@ class ApiController extends Controller
          */
         $em = $this->getDoctrine()->getManager();
         $region = $em->getRepository(Region::class)->find($regionId);
-        $trips = $em->getRepository(Trip::class)->findAllValidTripsSorted($regionId);
+        if(!$region) {
+            return new JsonResponse(['error' => 'no region found for id '.$regionId.'.']);
+        }
+
+        $filter = [
+            'status' => $request->query->get('status') ?: [],
+            'group' => $request->query->get('search') ?: []
+        ];
+
+        $trips = $em->getRepository(Trip::class)->findAllValidTripsSorted($regionId, $filter);
 
         $levels = [];
 
@@ -146,7 +155,8 @@ class ApiController extends Controller
 
         $json = [
             'region' => $region->getName(),
-            'levels' => $levels
+            'levels' => $levels,
+            'count' => count($trips)
         ];
 
         return new JsonResponse($json);
@@ -163,13 +173,14 @@ class ApiController extends Controller
          */
         $em = $this->getDoctrine()->getManager();
 
-        $denied = $request->query->get('denied') !== 'false';
-        $awaiting = $request->query->get('awaiting') !== 'false';
-        $approved = $request->query->get('approved') !== 'false';
-        $sorting = $request->query->get('sorting') ?: '';
-        $groupSearch = $request->query->get('search') ?: '';
+        $filter = [
+            'status' => $request->query->get('status') ?: [],
+            'group' => $request->query->get('search') ?: []
+        ];
 
-        $trips = $em->getRepository(Trip::class)->findAllValidTripsSorted($regionId, $groupSearch, $denied, $awaiting, $approved, $sorting);
+        $sorting = $request->query->get('sorting');
+
+        $trips = $em->getRepository(Trip::class)->findAllValidTripsSorted($regionId, $filter, $sorting);
 
         $result = [
 //            'groupName' => $group->getName(),

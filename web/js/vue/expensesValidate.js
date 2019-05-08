@@ -18,14 +18,17 @@ Vue.component('group-item', {
         group: {},
         active: false
     },
-    template: `<span v-show="filterCheck" class="btn btn-default" v-bind:class="btnType" @click="toggleActive">{{ group.name }} ({{ group.count }}) - {{ group.level }}</span>`,
+    template: `<span v-show="filterCheck" class="btn btn-default" v-bind:class="btnType" @click="toggleActive">{{ group.name }} ({{ group.count }})</span>`,
     methods: {
         toggleActive: function () {
+            console.log('starting to fetsh trips -0');
             this.active = !this.active;
 
             if(this.active) {
                 // add fo filter
+                console.log(this.group.level);
                 this.$root.groupFilters[this.group.level].push(this.group.name);
+                console.log('starting to fetsh trips -2');
             }
             else {
                 // remove from filter
@@ -35,6 +38,7 @@ Vue.component('group-item', {
                 }
             }
 
+            console.log('starting to fetsh trips');
             this.$root.fetchTrips();
 
             if(this.active) {
@@ -242,7 +246,7 @@ var app = new Vue({
             }
         },
         methods: {
-            fetchGroups: function () {
+            /*fetchGroups: function () {
                 this.groupStack = [];
                 this.tripGroups = [];
                 var self = this;
@@ -260,8 +264,8 @@ var app = new Vue({
                         self.fetchError = error;
                         alert('error fetching trip');
                     })
-            },
-            setStartData(data) {
+            },*/
+            setStartData: function(data) {
                 if (!this.startDataSet) {
                     this.startDataSet = true;
                 }
@@ -269,7 +273,7 @@ var app = new Vue({
             setRegionId: function (regionId) {
                 this.regionId = regionId;
                 console.log(this.regionId);
-                this.fetchGroups();
+                //this.fetchGroups();
 
                 this.fetchLevels();
             },
@@ -279,22 +283,28 @@ var app = new Vue({
 
                 console.log('kk', this.regionId);
                 if(this.regionId !== null) {
-                    this.fetchGroups();
+                    this.fetchLevels();
+                    //this.fetchGroups();
                 }
             },
             setSortingValue: function(sortingOrder) {
                 this.sorting = sortingOrder;
 
                 if(this.regionId !== null) {
-                    this.fetchGroups();
+                    this.fetchLevels();
+                    //this.fetchGroups();
                 }
             },
             fetchLevels: function () {
 
+                //clear search filters when reloading levels
+             //   this.groupFilters = [];
+
                 var self = this;
-                axios.post('/api/validate/' + this.regionId + '/getLevels')
+                axios.post('/api/validate/' + this.regionId + '/getLevels?' + this.getFiltersAsQueryParameters())
                     .then(function (response) {
                         self.levels = response.data.levels;
+                        self.tripCount = response.data.count;
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -306,15 +316,11 @@ var app = new Vue({
 
                 this.$root.tripGroups = [];
 
-                var search = [];
-                for(var i = 0; i < this.groupFilters.length; ++i) {
-                    for(var j = 0; j < this.groupFilters[i].length; ++j) {
-                        search.push(this.groupFilters[i][j]);
-                        console.log(search);
-                    }
-                }
+                // var url = '/app_dev.php/api/validate/' + this.regionId + '/getTrips?' + this.getFiltersAsQueryParameters();
+                var url = '/api/validate/' + this.regionId + '/getTrips?' + this.getFiltersAsQueryParameters();
+                console.log(url);
 
-                axios.get('/app_dev.php/api/validate/' + this.regionId + '/getTrips?search=' + encodeURI(search.toString()) + '&denied=' + this.$root.tripStatusFilter[0] + '&awaiting=' + this.$root.tripStatusFilter[1] + '&approved=' + this.$root.tripStatusFilter[2] + '&sorting=' + this.$root.sorting)
+                axios.get(url)
                     .then(function (response) {
                         if(response.data.status === 'ok') {
                             console.log(response.data);
@@ -330,6 +336,41 @@ var app = new Vue({
                     .catch(function (error) {
                         self.fetchError = error;
                     })
+            },
+            getFiltersAsQueryParameters: function() {
+
+                var url = '';
+
+                //group filters
+                var search = [];
+                for(var i = 0; i < this.groupFilters.length; ++i) {
+                    for(var j = 0; j < this.groupFilters[i].length; ++j) {
+                        search.push(this.groupFilters[i][j]);
+                    }
+                }
+
+                if(search.length > 0) {
+                    url += 'search=' + encodeURI(search.toString()) + '&';
+                }
+
+                //status filters
+                var statusOptions = [];
+                if(this.$root.tripStatusFilter[0]) statusOptions.push('denied');
+                if(this.$root.tripStatusFilter[1]) statusOptions.push('awaiting');
+                if(this.$root.tripStatusFilter[2]) statusOptions.push('approved');
+
+                if(statusOptions.length > 0) {
+                    url += 'status=' + statusOptions.toString() + '&';
+                }
+
+                if(this.$root.sorting) {
+                    url += 'sorting=' + this.$root.sorting;
+                }
+
+                //remove last character of string if = '&'
+                if(url.charAt(url.length-1) === '&') url = url.substring(0, url.length - 1);
+
+                return url;
             }
         },
         mounted: function () {
