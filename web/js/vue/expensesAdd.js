@@ -90,6 +90,8 @@ Vue.component('activity-node', {
     }
 });
 
+Vue.component('flat-pickr', VueFlatpickr);
+
 var app = new Vue({
     delimiters: ['${', '}'],
     el: '#expenses_app',
@@ -134,7 +136,11 @@ var app = new Vue({
         },
         region: {},
         regions: [],
-        regionSelectorActive: false
+        regionSelectorActive: false,
+        datePickerConfig: {
+            altFormat: "Y-m-d",
+            altInput: true
+        }
     },
     computed: {
         submitStatusClass: function (transportType) {

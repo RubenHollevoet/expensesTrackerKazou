@@ -36,6 +36,8 @@ class migrateGroupAndActivityCommand extends Command
 
     protected function configure()
     {
+        $this->setName('app:migrateGroupAndActivity');
+
         $this
             // the short description shown while running "php bin/console list"
             ->setDescription('migrate existing groups and activities to new field on trips')
