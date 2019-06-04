@@ -32,12 +32,6 @@ class Trip
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="TripGroup", inversedBy="trips")
-     * @ORM\JoinColumn()
-     */
-    private $group;
-
-    /**
      * @ORM\Column(type="json_array")
      */
     private $groupStack;
@@ -46,12 +40,6 @@ class Trip
      * @ORM\Column(type="string")
      */
     private $groupCode;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="TripActivity", inversedBy="trips")
-     * @ORM\JoinColumn()
-     */
-    private $activity;
 
     /**
      * @ORM\Column(type="string")
@@ -124,6 +112,25 @@ class Trip
      */
     private $handledBy;
 
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $code_vacation;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $code_s2;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $code_s3;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $code_s5;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -228,14 +235,6 @@ class Trip
     }
 
     /**
-     * @return TripGroup
-     */
-    public function getGroup()
-    {
-        return $this->group;
-    }
-
-    /**
      * @param mixed $group
      */
     public function setGroup($group)
@@ -273,22 +272,6 @@ class Trip
     public function setRegion($region)
     {
         $this->region = $region;
-    }
-
-    /**
-     * @return TripActivity
-     */
-    public function getActivity()
-    {
-        return $this->activity;
-    }
-
-    /**
-     * @param mixed $activity
-     */
-    public function setActivity($activity)
-    {
-        $this->activity = $activity;
     }
 
     /**
@@ -513,6 +496,70 @@ class Trip
     public function setHandledAt($handledAt)
     {
         $this->handledAt = $handledAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCodeVacation()
+    {
+        return $this->code_vacation;
+    }
+
+    /**
+     * @param mixed $code_vacation
+     */
+    public function setCodeVacation($code_vacation)
+    {
+        $this->code_vacation = $code_vacation;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCodeS2()
+    {
+        return $this->code_s2;
+    }
+
+    /**
+     * @param mixed $code_s2
+     */
+    public function setCodeS2($code_s2)
+    {
+        $this->code_s2 = $code_s2;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCodeS3()
+    {
+        return $this->code_s3;
+    }
+
+    /**
+     * @param mixed $code_s3
+     */
+    public function setCodeS3($code_s3)
+    {
+        $this->code_s3 = $code_s3;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCodeS5()
+    {
+        return $this->code_s5;
+    }
+
+    /**
+     * @param mixed $code_s5
+     */
+    public function setCodeS5($code_s5)
+    {
+        $this->code_s5 = $code_s5;
     }
 
     /**

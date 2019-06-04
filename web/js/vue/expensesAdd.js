@@ -35,7 +35,7 @@ Vue.component('group-node', {
     template: '#group-node-template',
     computed: {
         getLabel: function() {
-            console.log(this.details);
+            // console.log(this.details);
 
             var label = '';
             label += this.name;
@@ -57,12 +57,19 @@ Vue.component('group-node', {
                 this.$root.tripData.groupCode = this.details.hash;
             }
 
+            if(this.details.code) this.$root.tripData.code_vacation = this.details.code;
+            if(this.details.code_s2) this.$root.tripData.code_s2 = this.details.code_s2;
+            if(this.details.code_s3) this.$root.tripData.code_s3 = this.details.code_s3;
+            if(this.details.code_s5) this.$root.tripData.code_s5 = this.details.code_s5;
+            console.log(this.details);
+
             if(this.details && this.details.activities) {
                 this.$root.activityNodes = this.details.activities;
-                console.log(this.details.activities, 'activities');
+                // console.log(this.details.activities, 'activities');
                 this.$root.groupNodes = [];
             }
             else {
+                console.log(this.tree);
                 this.$root.groupNodes = this.tree;
                 this.$root.activityNodes = [];
             }
@@ -123,8 +130,13 @@ var app = new Vue({
             comment: '',
             tickets: [],
             price: 0,
-            shareFromTrip: null
+            shareFromTrip: null,
+            code_vacation: null,
+            code_s2: null,
+            code_s3: null,
+            code_s5: null
         },
+        distanceError: '',
         crumbTrace: [],
         groupNodes: [],
         activityNodes: [],
@@ -179,7 +191,7 @@ var app = new Vue({
             var self = this;
             self.submitStatus = 1;
 
-            console.log(this.tripData);
+            // console.log(this.tripData);
 
             this.tripData.groupStack = this.crumbTrace;
 
@@ -187,9 +199,10 @@ var app = new Vue({
                 tripData: this.tripData,
                 regionId: this.region.id
             };
+            // axios.post('/app_dev.php/api/createTrip', tripData)
             axios.post('/api/createTrip', tripData)
                 .then(function (response) {
-                    console.log(response.data.status);
+                    // console.log(response.data.status);
                     if(response.data.status === 'ok') {
                         self.submitStatus = 200;
                         self.tripData.id = response.data.tripId;
@@ -198,45 +211,14 @@ var app = new Vue({
                     }
                     else {
                         self.submitStatus = 500;
+                        console.log(self.formErrors);
                         self.formErrors = response.data.errors;
                     }
                 })
                 .catch(function (error) {
                     self.submitStatus = 500;
-                    console.log(error);
                 });
         },
-        // fetchGroups: function (id = 0) {
-        //     var self = this;
-        //     axios.get('/api/getChildGroups?group=' + id.toString() + '&region=' + this.regionId)
-        //         .then(function (response) {
-        //             self.activeGroups = response.data.data;
-        //             self.formErrors = [];
-        //             if (response.data.data.length < 1) self.fetchActivity(self.groupStack.slice(-1)[0].id)
-        //         })
-        //         .catch(function (error) {
-        //             self.fetchError = error;
-        //         })
-        // },
-        // fetchActivity: function (id) {
-        //     var self = this;
-        //     axios.get('/app_dev.php/api/getTripActivities?group=' + id.toString() + '&region=' + this.regionId)
-        //         .then(function (response) {
-        //             // console.log(response.data.status);
-        //             if (response.data.status === 'ok') {
-        //                 self.activeGroups = response.data.data;
-        //                 self.formErrors = [];
-        //             }
-        //             else {
-        //                 self.formErrors.push('De huidige groep bezit geen activiteiten. Contacteer het Kazou team.');
-        //                 console.log('error when requesting activities', response.data);
-        //             }
-        //         })
-        //         .catch(function (error) {
-        //             self.fetchError = error;
-        //             console.log('error 123', error);
-        //         })
-        // },
         onFileChange: function(e) {
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
@@ -248,10 +230,7 @@ var app = new Vue({
 
             var self = this;
 
-            console.log(files);
-
             for (var i = 0; i < files.length; i++) {
-                console.log(files[i]);
 
                 var file = files[i];
                 var reader = new FileReader();
@@ -301,16 +280,30 @@ var app = new Vue({
                 };
                 axios.post('/api/getTripDistance', locationData)
                     .then(function (response) {
-                        self.tripData.estimateDistance = (response.data.distance * 2) / 1000;
-                        self.tripData.distance = self.tripData.estimateDistance;
+                        console.log(response);
+                        if(response.data.status === 'error') {
+                            self.distanceError = 'Er kan momenteel geen verbinding gemaakt worden met de Google Maps service.\nAutomatische afstandsberekening is bij gevolg momenteel niet mogelijk.';
+                            self.tripData.estimateDistance = -1;
+                            console.log(response.data.message);
+                        }
+                        else if(response.data.status === 'no_data_found') {
+                            self.distanceError = 'Er kon geen afstand berekend worden voor de door jou opgegeven route.\nVul daarom zelf je afgelegde aantal Km\'s in.';
+                            self.tripData.estimateDistance = -1;
+                            console.log('no results found for the given route.');
+                        }
+                        else if(response.data.status === 'ok') {
+                            self.distanceError = '';
+                            self.tripData.estimateDistance = (response.data.distance * 2) / 1000;
+                            self.tripData.distance = self.tripData.estimateDistance;
+                        }
                     })
                     .catch(function (error) {
+                        self.distanceError = 'Er kon geen afstand berekend worden voor de door jou opgegeven route.\nVul daarom zelf je afgelegde aantal Km\'s in.';
                         self.tripData.estimateDistance = -1;
                     });
             }
         },
         setStartData(data) {
-            console.log(data);
             if (!this.startDataSet) {
                 this.userData = Object.assign({}, this.userData, data.user);
                 this.region = data.region;
@@ -332,8 +325,12 @@ var app = new Vue({
 
             axios.post('/api/getActivityTree?regionId=' + regionId)
                 .then(function (response) {
-                    self.groupNodes = response.data.data;
-                    console.log(response.data.data);
+                    console.log(response);
+                    if(response.data.data) {
+                        self.groupNodes = response.data.data;
+                    }
+
+                    // console.log(response.data.data);
 
                     // console.log(self.activityTree);
                 })
@@ -382,6 +379,12 @@ var app = new Vue({
                     self.region = { id:response.data.regionId, name: response.data.regionName};
                     self.tripData.regionId = response.data.regionId;
                     self.tripData.groupCode = response.data.groupCode ? response.data.groupCode : '-';
+                    self.tripData.code_vacation = response.data.code_vacation;
+                    self.tripData.code_s2 = response.data.code_s2;
+                    self.tripData.code_s3 = response.data.code_s3;
+                    self.tripData.code_s5 = response.data.code_s5;
+                    console.log(response);
+
                     self.crumbTrace = response.data.crumbTrace;
                     // todo: set distance multiplier
                     self.activityNodes = [{distanceMultiplier: 2, activity:response.data.activity}];

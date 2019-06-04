@@ -46,23 +46,12 @@ services:
                 - { name: doctrine.event_listener, event: prePersist }
                 - { name: doctrine.event_listener, event: preUpdate }
 
-    app.doctrine.order_trip_group_listener:
-            class: AppBundle\Doctrine\OrderTripGroupListener
-            autowire: true
-            tags:
-                - { name: doctrine.event_listener, event: prePersist }
-                - { name: doctrine.event_listener, event: preUpdate }
-                - { name: doctrine.event_listener, event: onFlush }
-
-    app.trip_activity_repository:
-            class: AppBundle\Repository\TripActivityRepository
-            autowire: true
-            arguments:
-                - '@Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface'
-#            calls:
-#                - [ setTokenStorageInterface, [ '@Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface' ] ]
-
     AppBundle\Command\migrateGroupAndActivityCommand:
           autowire: true
           tags:
               - { name: 'console.command', command: 'app:group:mi' }
+
+    AppBundle\Command\SyncCodesCommand:
+          autowire: true
+          tags:
+              - { name: 'console.command', command: 'app:trip:sync' }

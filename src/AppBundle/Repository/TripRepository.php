@@ -9,6 +9,7 @@
 namespace AppBundle\Repository;
 
 
+use AppBundle\Entity\Region;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
 
@@ -59,6 +60,33 @@ class TripRepository extends EntityRepository
         elseif($sorting === 'date') {
             $qb->orderBy('trip.date', 'ASC');
         }
+
+        return $qb->getQuery()->execute();
+    }
+
+    public function findTripsForExport($regionId) {
+        $qb = $this->createQueryBuilder('trip')
+            ->where('trip.region = :regionId')->setParameter(':regionId', $regionId)
+            ->andWhere('trip.status = \'approved\'')
+            ->andWhere('trip.deletedAt IS NULL')
+            ->orderBy('trip.code_vacation', 'ASC')
+            ->addOrderBy('trip.code_s2', 'ASC')
+            ->addOrderBy('trip.code_s3', 'ASC')
+            ->addOrderBy('trip.code_s5', 'ASC')
+            ->addOrderBy('trip.groupStack', 'ASC')
+            ->addOrderBy('trip.user', 'DESC')
+        ;
+
+        return $qb->getQuery()->execute();
+    }
+
+    public function findUnpaidTripsForRegionWithoutCodes($regionId) {
+        $qb = $this->createQueryBuilder('trip')
+            ->where('trip.region = :regionId')->setParameter(':regionId', $regionId)
+            ->andWhere('trip.code_s2 IS NULL OR trip.code_s3 IS NULL OR trip.code_s5 IS NULL')
+            ->andWhere('trip.status != \'processed\'')
+            ->andWhere('trip.deletedAt IS NULL')
+        ;
 
         return $qb->getQuery()->execute();
     }

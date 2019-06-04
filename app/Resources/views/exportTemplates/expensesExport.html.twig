@@ -46,7 +46,15 @@
 {% endif %}
 
 {% for trip in trips %}
-    <h3>{{ trip.code }} | {{ trip.group }}</h3>
+    {% for group in trip.groups %}
+        <h3>{{ group }}</h3>
+    {% endfor %}
+    <ul>
+        <li>Vakantie code: {{ trip.code_vacation }}</li>
+        <li>S2: {{ trip.s2 }}</li>
+        <li>S3: {{ trip.s3 }}</li>
+        <li>S5: {{ trip.s5 }}</li>
+    </ul>
 
     {% for user in trip.users %}
         <div class="group">
@@ -67,7 +75,6 @@
                     <th>naar</th>
                     <th>afstand</th>
                     <th>bedrag</th>
-                    <th>groep</th>
                     <th>activiteit</th>
                     <th>opmerking</th>
                     <th>opmerking edu</th>
@@ -78,13 +85,13 @@
                         <td>{{ trip.to }}</td>
                         <td>{{ trip.distance }}</td>
                         <td>{{ trip.price }}</td>
-                        <td>{{ trip.group }}</td>
                         <td>{{ trip.activity }}</td>
                         <td>{{ trip.comment }}</td>
                         <td>{{ trip.adminComment }}</td>
                     </tr>
                 {% endfor %}
             </table>
+            <br>
         </div>
 
     {% endfor %}

@@ -50,16 +50,23 @@ class ApiController extends Controller
     public function getActivityTree(Request $request) {
         $regionId = $request->get('regionId');
 
+//        echo '1';
+
         if($regionId === null) {
             throw new NotFoundHttpException('Region ID not found');
         }
 
+//        echo '2';
+
         $em = $this->getDoctrine()->getManager();
+
+//        echo '3';
 
         /** @var Region $region */
         $region = $em->getRepository(Region::class)->find($regionId);
         $sheetsId = $region->getGoogleSheetsKey();
 
+//        $json = file_get_contents('https://script.google.com/macros/s/AKfycbzTrarQnhNLPAi_3Scr3cyEas1RSXbxvK4nMXzbf49kfHe7UVm5/exec?file='.$sheetsId);
         $json = file_get_contents('https://script.google.com/macros/s/AKfycbwoHHF7gDJfsxw7hINO9bWCdXeARGxTUO4IVx9PsZUKc4y4rgk/exec?file='.$sheetsId);
         $obj = json_decode($json);
 
@@ -94,6 +101,11 @@ class ApiController extends Controller
             'groupCode' => $trip->getGroupCode(),
             'crumbTrace' => $trip->getGroupStack(),
             'activity' => $trip->getActivityName(),
+            'code_vacation' => $trip->getCodeVacation(),
+            'code_s2' => $trip->getCodeS2(),
+            'code_s3' => $trip->getCodeS3(),
+            'code_s5' => $trip->getCodeS5(),
+            'shareFromTrip' => $trip->getId()
         ]);
     }
 
@@ -114,7 +126,7 @@ class ApiController extends Controller
 
         $filter = [
             'status' => $request->query->get('status') ?: [],
-            'group' => $request->query->get('search') ?: []
+            'group' => $request->query->get('search') ?: ''
         ];
 
         $trips = $em->getRepository(Trip::class)->findAllValidTripsSorted($regionId, $filter);
@@ -129,7 +141,7 @@ class ApiController extends Controller
             $groups = $trip->getGroupStack();
             $levelCount = [0,0,0];
 
-            foreach ($groups as $indexGroup=>$group) {
+            foreach ($groups as $indexGroup => $group) {
                 if(!isset($levels[$indexGroup])) $index[$indexGroup] = [];
 
                 $parent = '';

@@ -21,7 +21,7 @@ Vue.component('group-item', {
     template: `<span v-show="filterCheck" class="btn btn-default" v-bind:class="btnType" @click="toggleActive">{{ group.name }} ({{ group.count }})</span>`,
     methods: {
         toggleActive: function () {
-            console.log('starting to fetsh trips -0');
+            console.log(this.group);
             this.active = !this.active;
 
             if(this.active) {
@@ -60,79 +60,6 @@ Vue.component('group-item', {
         this.active = false;
     }
 });
-
-// Vue.component('groupstack-item', {
-//     props: ['group'],
-//     template: `<li v-bind:data-id="group.id"><span class="btn btn-info fa fa-check" v-on:click="loadExpenses"></span> {{ group.name }} ({{ group.tripCount }})
-//                     <groupstack-item
-//                         v-for="group in this.$root.groupStack"
-//                         v-bind:group="group"
-//                         v-bind:key="group.id">
-//                     </groupstack-item>
-//                 </li>`,
-//     methods: {
-//         loadExpenses: function (evt) {
-//             console.log('todo: load expenses');
-//             // var newArrayLength = $(evt.currentTarget.parentElement).index();
-//             // this.$root.groupStack = this.$root.groupStack.slice(0, newArrayLength);
-//             //
-//             // var prevParentId = this.$root.groupStack[newArrayLength - 1] ? this.$root.groupStack[newArrayLength - 1].id : 0;
-//             // this.$root.fetchGroups(prevParentId);
-//         }
-//     }
-// });
-
-// define the item component
-// Vue.component('tree-item', {
-//     template: '#item-template',
-//     props: {
-//         model: Object,
-//
-//     },
-//     data: function () {
-//         return {
-//             open: false,
-//             inChecklist: false
-//         }
-//     },
-//     computed: {
-//         isFolder: function () {
-//             return this.model.children;
-//         },
-//         getTripCount: function () {
-//             return this.model.tripCount;
-//         }
-//     },
-//     methods: {
-//         toggle: function () {
-//             if (this.model.children !== []) {
-//                 this.open = !this.open
-//             }
-//         },
-//         fetchTrips: function () {
-//             var groupId = this.model.id;
-//             var self = this;
-//             axios.get('/api/validate/' + this.groupId + '/getTrips?denied=' + this.$root.tripStatusFilter[0] + '&awaiting=' + this.$root.tripStatusFilter[1] + '&approved=' + this.$root.tripStatusFilter[2] + '&sorting=' + this.$root.sorting)
-//                 .then(function (response) {
-//                     if(response.data.status === 'ok') {
-//                         self.inChecklist = true;
-//                         self.$root.tripGroups.push(response.data.data);
-//                         console.log('reques finished: ', self.$root.tripGroups);
-//                     }
-//                     else {
-//                         alert('error fetching trips. Check console log');
-//                         console.log(response.data.status);
-//                     }
-//                 })
-//                 .catch(function (error) {
-//                     self.fetchError = error;
-//                 })
-//         }
-//     },
-//     mounted: function () {
-//         // console.log(this.model);
-//     }
-// });
 
 Vue.component('groupsavaliable-item', {
     props: ['group'],

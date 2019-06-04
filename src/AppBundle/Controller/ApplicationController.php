@@ -11,10 +11,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Payment;
 use AppBundle\Entity\Region;
 use AppBundle\Entity\Trip;
-use AppBundle\Entity\TripActivity;
-use AppBundle\Entity\TripGroup;
 use AppBundle\Entity\User;
-use AppBundle\Repository\TripGroupRepository;
 use AppBundle\Repository\TripRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -131,100 +128,6 @@ class ApplicationController extends Controller
     }
 
     /* --- API --- */
-    /**
-     * @Route("/api/getChildGroups")
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function getChildGroups(Request $request)
-    {
-        $children = [];
-
-        $groupId = $request->query->get('group') ?: null;
-
-        $region = $this->getDoctrine()->getRepository(Region::class)->findBy(['id' => $request->query->get('region')]);
-        $groups = $this->_getChildGroups($groupId, $region);
-
-        if ($groups) {
-            $trips = $this->getDoctrine()->getRepository(Trip::class)->findBy(['group' => $groups]);
-//                dump($groups);
-//            dump($trips);
-//            die();
-
-            foreach ($groups as $child) {
-                $startDate = $child->getStartDate();
-                if ($startDate) $startDate = $startDate->format('j/n');
-
-//                $tripGroupIds = $this->getDoctrine()->getRepository(TripGroup::class)->getParentGroupsById($child);
-                $tripGroupIds = array_keys($this->_getChildGroups($child->getId(), $region));
-                $tripGroupIds[] = $child->getId();
-//                dump(array_keys($tripGroupIds));
-//                die;
-
-                $tripsAwaitingConfirmation = 0;
-                foreach ($trips as $trip) {
-                    //todo: check if trip id is in array of connected group ID's
-                    if(in_array($trip->getActivity()->getId(), $tripGroupIds)) {
-//                    if ($trip-> === 'photo') {
-                        $tripsAwaitingConfirmation++;
-                    }
-                }
-
-                $children[] = [
-                    'id' => $child->getId(),
-                    'name' => $child->getName(),
-                    'type' => 'group',
-                    'startDate' => $startDate,
-                    'code' => $child->getCode(),
-                    'tripsAwaitingConfirmation' => $tripsAwaitingConfirmation
-                ];
-            }
-        }
-
-        return $this->json([
-            'status' => 'ok',
-            'data' => $children
-        ]);
-    }
-
-    /**
-     * @Route("/api/getTripActivities")
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function getTripActivities(Request $request)
-    {
-        $tripActivities = [];
-        $error = '';
-
-        $groupId = explode('-', $request->query->get('group'))[0];
-        if ($groupId) {
-            $relatedGroupIds = $this->getDoctrine()->getRepository(TripGroup::class)->getParentGroupsById((int)$groupId);
-            if ($relatedGroupIds) {
-                $tripActivities = $this->getDoctrine()->getRepository(TripGroup::class)->getActivitiesByGroupArr($relatedGroupIds);
-            }
-        } else {
-            $error = 'group doesn\'t exist';
-        }
-
-        if (count($tripActivities) < 1) {
-            $error = 'no groups exist on this activity';
-        }
-
-        if ($tripActivities) {
-            foreach ($tripActivities as $child) {
-                $activities[] = [
-                    'id' => $child->getId(),
-                    'name' => $child->getName(),
-                    'type' => 'activity',
-                    'code' => $child->getCode()
-                ];
-            }
-        }
-
-        return $this->json([
-            'status' => $error ? 'error' : 'ok',
-            'data' => $error ?: $activities
-        ]);
-    }
 
     /**
      * @Route("/api/updateExpense")
@@ -257,84 +160,6 @@ class ApplicationController extends Controller
                 'tripStatus' => $trip->getStatus()
             ],
             'request' => $tripData,
-        ]);
-    }
-
-    /**
-         * @Route("/api/getValidateTree")
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function getValidateTree(Request $request)
-    {
-
-        $error = [];
-        $regionId = $request->query->get('region');
-        if($regionId === null) $error[] = 'GET parameter \'region\' is missing.';
-
-        $tree = [];
-
-        $region = $this->getDoctrine()->getRepository(Region::class)->findBy(['id' => $regionId]);
-        $groups = $this->getDoctrine()->getRepository(TripGroup::class)->findBy(['region' => $region]);
-
-        $filter = [
-            'status' => $request->query->get('status') ?: [],
-            'group' => $request->query->get('search') ?: []
-        ];
-
-        $trips = $this->getDoctrine()->getRepository(Trip::class)->findAllValidTripsSorted($region, $filter);
-
-        foreach($groups as $group) {
-            $group->tripCount = 0;
-            foreach($trips as $trip) {
-                if($trip->getGroup() === $group) {
-                    $group->tripCount++;
-                }
-            }
-        }
-
-        foreach($groups as $group) {
-
-            if($group->getParent() === null) {
-                $children2 = [];
-                foreach ($groups as $group2) {
-                    $children3 = [];
-                    foreach ($groups as $group3) {
-                        if($group3->getParent() === $group2)
-                        {
-                            $tripCount3 = $group3->tripCount;
-                            $children3[$group3->getId()] = [
-                                'id' => $group3->getId(),
-                                'name' => $group3->getName(),
-                                'tripCount' => $tripCount3
-                            ];
-                        }
-                    }
-
-                    if($group2->getParent() === $group) {
-                        $tripCount2 = $group2->tripCount;
-                        $children2[$group2->getId()] = [
-                            'id' => $group2->getId(),
-                            'name' => $group2->getName(),
-                            'tripCount' => $tripCount2,
-                        ];
-                        if($children3) $children2[$group2->getId()]['children'] = $children3;
-                    }
-                }
-
-                $tripCount = $group->tripCount;
-                $tree[$group->getId()] = [
-                    'id' => $group->getId(),
-                    'name' => $group->getName(),
-                    'tripCount' => $tripCount,
-                ];
-                if($children2) $tree[$group->getId()]['children'] = $children2;
-            }
-        }
-
-        return $this->json([
-            'status' => $error ? 'error' : 'ok',
-            'data' => $error ?: $tree,
-            'count' => count($trips)
         ]);
     }
 
@@ -379,6 +204,23 @@ class ApplicationController extends Controller
 
         $trip = new Trip();
         $errors = [];
+
+        //set codes
+        if($formData->tripData->code_vacation) {
+            $trip->setCodeVacation($formData->tripData->code_vacation);
+        }
+
+        if($formData->tripData->code_s2) {
+            $trip->setCodeS2($formData->tripData->code_s2);
+        }
+
+        if($formData->tripData->code_s3) {
+            $trip->setCodeS3($formData->tripData->code_s3);
+        }
+
+        if($formData->tripData->code_s5) {
+            $trip->setCodeS5($formData->tripData->code_s5);
+        }
 
         if($formData->tripData->date) {
             $tripDate = new \DateTime($formData->tripData->date);
@@ -566,13 +408,8 @@ class ApplicationController extends Controller
     public function generateExportFile(Request $request, $regionId, $type) {
 
         $em = $this->getDoctrine()->getManager();
-        $region = $em->getRepository(Region::class)->find($regionId);
 
-        if($region === null) {
-            throw new NotFoundHttpException('Unable to find region. Region is equal to null');
-        }
-
-        $trips = $em->getRepository(Trip::class)->findBy(['status' => 'approved', 'region' => $region]);
+        $trips = $em->getRepository(Trip::class)->findTripsForExport($regionId);
 
         if(!$trips) {
             $this->addFlash('warning','Er zijn geen ritten om een export van te nemen.');
@@ -587,9 +424,69 @@ class ApplicationController extends Controller
 
         $tripGroups = [];
 
+
+        /**
+        * @var $trip Trip
+        */
         foreach ($trips as $trip) {
 
-            $activityStack = [$trip->getGroup()->getName()];
+            if(count($tripGroups) < 1
+                || end($tripGroups)['s2'] !== $trip->getCodeS2()
+                || end($tripGroups)['s3'] !== $trip->getCodeS3()
+                || end($tripGroups)['s5'] !== $trip->getCodeS5()
+                || end($tripGroups)['code_vacation'] !== $trip->getCodeVacation()
+            ) {
+                $tripGroups[] = [
+                    'users' => [],
+                   'groups' => [],
+                   'code_vacation' => $trip->getCodeVacation(),
+                   's2' => $trip->getCodeS2(),
+                   's3' => $trip->getCodeS3(),
+                   's5' => $trip->getCodeS5(),
+                ];
+            }
+
+            $lastTG = count($tripGroups) - 1;
+
+            //add groupStack to groups list if not added yet
+            if (!in_array(implode($trip->getGroupStack(), ' -> '), $tripGroups[$lastTG]['groups']))
+            {
+                $tripGroups[$lastTG]['groups'][] = implode($trip->getGroupStack(), ' -> ');
+            }
+
+            /**
+             * @var $user User
+             */
+            $user = $trip->getUser();
+            //add user if not added yet
+            if (!array_key_exists($user->getId(), $tripGroups[$lastTG]['users']))
+            {
+                $tripGroups[$lastTG]['users'][$user->getId()] = [
+                    'name' => $user->getFirstName().' '.$user->getLastName(),
+                    'personId' => $user->getPersonId(),
+                    'address' => $user->getAddress(),
+                    'iban' => $user->getIban(),
+                    'trips' => [],
+                    'price' => 0
+                ];
+            }
+
+            //increase user price
+            $tripGroups[$lastTG]['users'][$user->getId()]['price'] += $trip->getPrice();
+
+            //add trip
+            $tripGroups[$lastTG]['users'][$user->getId()]['trips'][] = [
+                'activity' => $trip->getActivityName(),
+                'comment' => $trip->getComment(),
+                'adminComment' => $trip->getCommentAdmin(),
+                'distance' => $trip->getDistance(),
+                'price' => $trip->getPrice(),
+                'from' => $trip->getFrom(),
+                'to' => $trip->getTo()
+            ];
+
+
+           /* $activityStack = [$trip->getGroup()->getName()];
             if($trip->getGroup()->getParent()) {
                 array_unshift($activityStack, $trip->getGroup()->getParent()->getName());
                 if($trip->getGroup()->getParent()->getParent()) {
@@ -629,7 +526,7 @@ class ApplicationController extends Controller
                 'price' => $trip->getPrice(),
                 'from' => $trip->getFrom(),
                 'to' => $trip->getTo()
-            ];
+            ];*/
 
             if($type === 'final') {
                 $trip->setStatus('processed');
@@ -652,7 +549,7 @@ class ApplicationController extends Controller
             $em->persist($payment);
             $em->flush();
 
-            $dir = $this->getParameter('export_path').'/'.$region->getId();
+            $dir = $this->getParameter('export_path').'/'.$regionId;
             if (!file_exists($dir)) {
                 mkdir($dir, 0777, true);
             }
@@ -704,29 +601,35 @@ class ApplicationController extends Controller
      */
     function getDistance(Request $request)
     {
+        if(!$this->getUser()) {
+            return $this->json([
+                'status' => 'error',
+                'message' => 'unauthorized user'
+            ]);
+        }
+
         $formData = json_decode($request->getContent());
-        $distanceMatrixCall = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins=' . $formData->from . '&destinations=' . $formData->to . '&key=' . $this->getParameter('google_api_key');
+        $distanceMatrixCall = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins=' . $formData->from . '&destinations=' . $formData->to . '&key=' . $this->getParameter('google_api_key.private');
         $distanceMatrixCall = str_replace(' ', '+', $distanceMatrixCall);
 
         $json = json_decode(file_get_contents($distanceMatrixCall));
+
+        if(property_exists($json, 'error_message')) {
+            return $this->json([
+                'status' => 'error',
+                'message' => $json->error_message
+            ]);
+        }
+
+        if(!$json->rows[0]) {
+            return $this->json([
+                'status' => 'no_data_found'
+            ]);
+        }
 
         return $this->json([
             'status' => 'ok',
             'distance' => $json->rows[0]->elements[0]->distance->value
         ]);
-    }
-
-    private function _getChildGroups($group, $region = null, $recursive = false)
-    {
-        if($region) {
-            $result = $this->getDoctrine()->getRepository(TripGroup::class)->findBy(['parent' => $group, 'region' => $region], ['startDate' => 'asc']);
-        }
-        else {
-            $result = $this->getDoctrine()->getRepository(TripGroup::class)->findBy(['parent' => $group], ['startDate' => 'asc']);
-        }
-        if($recursive) {
-
-        }
-        return $result;
     }
 }

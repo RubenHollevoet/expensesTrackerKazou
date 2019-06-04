@@ -9,13 +9,10 @@ easy_admin:
             css: ['css/easyAdmin.css']
         menu:
             - { label: 'Website' }
-            - { entity: 'Link', icon: 'link'}
             - { label: 'Algemeen' }
             - { entity: 'User', icon: 'users'}
             - { label: 'Onkosten' }
             - { entity: 'Trip', icon: 'car'}
-#            - { entity: 'TripGroup', icon: 'filter'}
-#            - { entity: 'TripActivity', icon: 'list'}
             - { entity: 'TripValidate', icon: 'check' }
             - { entity: 'TripExport', icon: 'download'}
             - { entity: 'TripManual', icon: 'book' }
@@ -32,7 +29,7 @@ easy_admin:
             list:
                 title: '%%entity_label%%'
                 dql_filter: "entity.status != 'processed'"
-                fields: ['user', 'activity', 'from', 'to', 'date']
+                fields: ['user', 'activity_name', 'from', 'to', 'date']
                 sort: 'createdAt'
                 actions:
                     - { name: 'edit', icon: 'pencil', label: '' }
@@ -48,6 +45,10 @@ easy_admin:
                     - { property: 'distance', type: 'text'}
                     - { property: 'distance', type: 'text'}
                     - { property: 'price'}
+                    - { property: 'code_s2'}
+                    - { property: 'code_s3'}
+                    - { property: 'code_s5'}
+                    - { property: 'code_vacation'}
                     - { property: 'status', type: 'choice', type_options: { choices: '%trip_status%' }, help: 'Zet nooit een onkost met de status "behandeld" op "in afwachting" of "goedgekeurd". Anders zal deze opnieuw uitbetaald kunnen worden.'}
                     - { property: 'comment', type: 'textarea'}
                     - { property: 'commentAdmin', type: 'textarea'}
@@ -55,6 +56,10 @@ easy_admin:
                 fields:
                     - user
                     - groupCode
+                    - code_vacation
+                    - code_s2
+                    - code_s3
+                    - code_s5
                     - groupStack
                     - activityName
                     - from
@@ -70,58 +75,6 @@ easy_admin:
                     - comment
                     - commentAdmin
 
-#        TripGroup:
-#            class: AppBundle\Entity\TripGroup
-#            label: 'Groepen'
-#            list:
-#                title: '%%entity_label%%'
-#                sort: ['order', 'ASC']
-#                fields:
-#                    - { property: 'order' }
-#                    - { property: 'code' }
-#                    - { property: 'nameHierarchy', label: 'Naam', template: 'easyAdmin/typeTemplates/hierarchyType.html.twig' }
-#                    - { property: 'startDate' }
-#                    - { property: 'endDate' }
-#                    - { property: 'location' }
-#            new:
-#                title: '%%entity_label%%'
-#                fields:
-#                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.general' }
-#                    - { property: 'code', label: 'admin.code' }
-#                    - { property: 'name', label: 'admin.name' }
-#                    - { property: 'parent', type_options: { expanded: false, multiple: false }, label: 'admin.parent' }
-#                    - { property: 'tripActivity', label: 'admin.tripActivity' }
-#                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.forHolidays' }
-#                    - { property: 'startDate', label: 'admin.startDate', type_options: { widget: 'single_text' }  }
-#                    - { property: 'endDate', label: 'admin.endDate', type_options: { widget: 'single_text' } }
-#                    - { property: 'location', label: 'admin.location' }
-#            edit:
-#                title: '%%entity_label%%'
-#                fields:
-#                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.general' }
-#                    - { property: 'code', label: 'admin.code' }
-#                    - { property: 'name', label: 'admin.name' }
-#                    - { property: 'parent', label: 'admin.parent' }
-#                    - { property: 'tripActivity', label: 'admin.tripActivity' }
-#                    - { type: 'group', css_class: 'col-sm-6', label: 'admin.forHolidays' }
-#                    - { property: 'startDate', label: 'admin.startDate' }
-#                    - { property: 'endDate', label: 'admin.endDate', type: 'datetime' ,type_options: { widget: 'single_text' } }
-#                    - { property: 'location', label: 'admin.location', type: 'datetime', type_options: { widget: 'single_text' } }
-#        TripActivity:
-#            class: AppBundle\Entity\TripActivity
-#            label: 'Activiteiten'
-#            list:
-#                title: '%%entity_label%%'
-#            new:
-#                title: '%%entity_label%%'
-#                fields:
-#                    - { property: 'code', label: 'admin.code' }
-#                    - { property: 'name', label: 'admin.name' }
-#            edit:
-#                title: '%%entity_label%%'
-#                fields:
-#                    - { property: 'code', label: 'admin.code' }
-#                    - { property: 'name', label: 'admin.name' }
         TripValidate:
             class: AppBundle\Entity\Trip
             label: 'Onkosten valideren'
@@ -176,27 +129,3 @@ easy_admin:
                 dql_filter: "entity.roles = '[\"ROLE_USER\",\"ROLE_ADMIN\"]'"
                 fields: ['firstName', 'lastName', 'email', 'region']
             disabled_actions: ['show', 'new', 'delete', 'edit']
-        Link:
-            class: AppBundle\Entity\Link
-            label: 'Knoppen hoofdpagina'
-            list:
-                title: '%%entity_label%%'
-                fields:
-                    - { property: 'name', label: 'admin.name' }
-                    - { property: 'enabled', label: 'admin.enabled' }
-                    - { property: 'createdBy' }
-                    - { property: 'updatedBy' }
-                    - { property: 'updatedAt' }
-                    - { property: 'updatedAt' }
-            new:
-                title: '%%entity_label%%'
-                fields:
-                    - { property: 'name', label: 'admin.name' }
-                    - { property: 'link', label: 'admin.link' }
-                    - { property: 'enabled', label: 'admin.enabled' }
-            edit:
-                title: '%%entity_label%%'
-                fields:
-                    - { property: 'name', label: 'admin.name' }
-                    - { property: 'link', label: 'admin.link' }
-                    - { property: 'enabled', label: 'admin.enabled' }
