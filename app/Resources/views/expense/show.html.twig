@@ -102,6 +102,22 @@
                             </td>
                         </tr>
 
+                        {% if tripCount == 5 or tripCount == 25 %}
+                            <tr>
+                                <td colspan="7">
+                                    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                                    <ins class="adsbygoogle"
+                                         style="display:block"
+                                         data-ad-format="fluid"
+                                         data-ad-layout-key="-hs-7+2w-11-86"
+                                         data-ad-client="ca-pub-8405807820052594"
+                                         data-ad-slot="3120572575"></ins>
+                                    <script>
+                                        (adsbygoogle = window.adsbygoogle || []).push({});
+                                    </script>
+                                </td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                     </tbody>
                 </table>
@@ -203,7 +219,6 @@
 
 
         $removeIntros = document.querySelectorAll('.js-remove-intro');
-        console.log($removeIntros);
         for (var i = 0; i < $removeIntros.length; i++) {
             $removeIntros[i].addEventListener('click', function(evt) {
                 evt.currentTarget.parentElement.querySelector('.js-remove-confirm-box').classList.remove('hidden');
@@ -216,13 +231,5 @@
                 evt.currentTarget.parentElement.parentElement.querySelector('.js-remove-confirm-box').classList.add('hidden');
             });
         }
-
-        // document.querySelector('#js-remove-intro').addEventListener('click', function() {
-        //     $removeConfirmBox.classList.remove('hidden');
-        // });
-        //
-        // document.querySelector('#js-remove-cancel').addEventListener('click', function() {
-        //     $removeConfirmBox.classList.add('hidden');
-        // })
     </script>
 {% endblock %}

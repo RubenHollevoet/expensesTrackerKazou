@@ -74,6 +74,7 @@ class SyncCodesCommand extends Command
          */
         $em = $this->entityManager;
         $trips = $em->getRepository(Trip::class)->findUnpaidTripsForRegionWithoutCodes($regionId);
+        $validTripCount = 0;
 
         $json = file_get_contents('https://script.google.com/macros/s/AKfycbwoHHF7gDJfsxw7hINO9bWCdXeARGxTUO4IVx9PsZUKc4y4rgk/exec?file='.$region->getGoogleSheetsKey());
         $obj = json_decode($json)->data;
@@ -91,6 +92,8 @@ class SyncCodesCommand extends Command
                 //this command is only designed for group stacks with 3 items
                 continue;
             }
+
+            $validTripCount++;
 
             $round1 = $groupStack[0];
             if(property_exists($obj, $round1))
@@ -164,6 +167,6 @@ class SyncCodesCommand extends Command
         if(!$dryRun) $em->flush();
 
         $output->writeln('In total ' . $updateCount.' trips have been updated. Finished.');
-        $output->writeln('Unable to find: '. (count($trips) - $updateCount));
+        $output->writeln('Unable to find: '. ($validTripCount - $updateCount));
     }
 }

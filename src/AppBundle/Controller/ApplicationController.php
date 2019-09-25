@@ -476,6 +476,7 @@ class ApplicationController extends Controller
 
             //add trip
             $tripGroups[$lastTG]['users'][$user->getId()]['trips'][] = [
+                'groupStack' => implode(' -> ',$trip->getGroupStack()),
                 'activity' => $trip->getActivityName(),
                 'comment' => $trip->getComment(),
                 'adminComment' => $trip->getCommentAdmin(),
