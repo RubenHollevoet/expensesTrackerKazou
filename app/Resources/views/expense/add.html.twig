@@ -89,22 +89,22 @@
                             jezelf) een dienst mee!
                         </li>
                         <li>Bij misbruik worden er geen onkosten terugbetaald.</li>
-                        <li>
-                            5 keer per jaar betalen wij vervoersonkosten terug. Belangrijk is dat je vergaderingen
-                            onmiddellijk
-                            ingeeft in de onkostentool.<br>
-                            Wanneer je onkosten doorgeeft van een initiatief na de deadline van terugbetaling, kunnen
-                            wij geen
-                            terugbetaling meer voorzien voor dat initiatief.<br>
-                            Volgende data zijn jaarlijks vastgelegd:
-                            <ul>
-                                <li>Herfst: 30 November</li>
-                                <li>Kerst: 31 januari</li>
-                                <li>Krokus: 31 maart</li>
-                                <li>Pasen: 31 mei</li>
-                                <li>Zomer: 30 September</li>
-                            </ul>
-                        </li>
+{#                        <li>#}
+{#                            5 keer per jaar betalen wij vervoersonkosten terug. Belangrijk is dat je vergaderingen#}
+{#                            onmiddellijk#}
+{#                            ingeeft in de onkostentool.<br>#}
+{#                            Wanneer je onkosten doorgeeft van een initiatief na de deadline van terugbetaling, kunnen#}
+{#                            wij geen#}
+{#                            terugbetaling meer voorzien voor dat initiatief.<br>#}
+{#                            Volgende data zijn jaarlijks vastgelegd:#}
+{#                            <ul>#}
+{#                                <li>Herfst: 30 November</li>#}
+{#                                <li>Kerst: 31 januari</li>#}
+{#                                <li>Krokus: 31 maart</li>#}
+{#                                <li>Pasen: 31 mei</li>#}
+{#                                <li>Zomer: 30 September</li>#}
+{#                            </ul>#}
+{#                        </li>#}
                     </ul>
                 </div>
             </div>
@@ -262,29 +262,65 @@
                 <h3>Transportmiddel</h3>
                 <div class="btnGroup">
                     <div v-bind:class="[tripData.transportType ? 'car' : '123', '456']"></div>
-                    <span class="btn" v-bind:class="[tripData.transportType === 'car' ? 'btn-primary' : 'btn-light']"
-                          v-on:click="tripData.transportType = 'car'">auto of moto (+50cc)</span>
+                    <span class="btn" v-bind:class="[tripData.transportType === 'car' ? 'btn-outline-primary' : 'btn-outline-light']"
+                          v-on:click="tripData.transportType = 'car'">
+                        <img
+                                src="{{ asset('img/icons/suv-car.svg') }}"
+                                alt="money icon"
+                                height="120px"
+                                width="120px" />
+                        <br>
+                    +50 cc</span>
                     <span class="btn"
-                          v-bind:class="[tripData.transportType === 'publicTransport' ? 'btn-primary' : 'btn-light']"
-                          v-on:click="tripData.transportType = 'publicTransport'">openbaar vervoer</span>
-                    <span class="btn" v-bind:class="[tripData.transportType === 'bike' ? 'btn-primary' : 'btn-light']"
-                          v-on:click="tripData.transportType = 'bike'">fiets</span>
+                          v-bind:class="[tripData.transportType === 'publicTransport' ? 'btn-outline-primary' : 'btn-outline-light']"
+                          v-on:click="tripData.transportType = 'publicTransport'">
+                        <img
+                                src="{{ asset('img/icons/train.svg') }}"
+                                alt="money icon"
+                                height="120px"
+                                width="120px" />
+                    </span>
+                    <span class="btn" v-bind:class="[tripData.transportType === 'bike' ? 'btn-outline-primary' : 'btn-outline-light']"
+                          v-on:click="tripData.transportType = 'bike'">
+                        <img
+                                src="{{ asset('img/icons/bicycle.svg') }}"
+                                alt="money icon"
+                                height="120px"
+                                width="120px" />
+                    </span>
                     <span class="btn"
-                          v-bind:class="[tripData.transportType === 'scooter' ? 'btn-primary' : 'btn-light']"
-                          v-on:click="tripData.transportType = 'scooter'">brommer (-50cc)</span>
+                          v-bind:class="[tripData.transportType === 'scooter' ? 'btn-outline-primary' : 'btn-outline-light']"
+                          v-on:click="tripData.transportType = 'scooter'">
+                        <img
+                                src="{{ asset('img/icons/scooter.svg') }}"
+                                alt="money icon"
+                                height="120px"
+                                width="120px" />
+                        <br>
+                        -50 cc</span>
                 </div>
                 <div class="btnGroup" v-show="tripData.transportType === 'car'">
                     <span class="btn"
-                          v-bind:class="[tripData.company === 'soloDriver' ? 'btn-primary' : 'btn-light']"
-                          v-on:click="tripData.company = 'soloDriver'">alleen gereden
+                          v-bind:class="[tripData.company === 'soloDriver' ? 'btn-outline-primary' : 'btn-outline-light']"
+                          v-on:click="tripData.company = 'soloDriver'">
+                        <img
+                                src="{{ asset('img/icons/boss.svg') }}"
+                                alt="money icon"
+                                height="120px"
+                                width="120px" />
+                        <br>
+                        alleen gereden
                     </span>
                     <span class="btn"
-                          v-bind:class="[tripData.company === 'groupDriver' ? 'btn-primary' : 'btn-light']"
-                          v-on:click="tripData.company = 'groupDriver'">carpool (als bestuurder)
-                    </span>
-                    <span class="btn"
-                          v-bind:class="[tripData.company === 'carpooler' ? 'btn-primary' : 'btn-light']"
-                          v-on:click="tripData.company = 'carpooler'">carpool (geen bestuurder)
+                          v-bind:class="[tripData.company === 'groupDriver' ? 'btn-outline-primary' : 'btn-outline-light']"
+                          v-on:click="tripData.company = 'groupDriver'">
+                        <img
+                                src="{{ asset('img/icons/network.svg') }}"
+                                alt="money icon"
+                                height="120px"
+                                width="120px" />
+                        <br>
+                        mensen meegenomen
                     </span>
                 </div>
                 <div v-show="tripData.transportType === 'publicTransport'">
@@ -317,7 +353,17 @@
                               class="btn btn-outline btn-danger"><span class="fa fa-remove"></span> verwijderen</span>
                     </div>
                 </div>
-                <div v-show="tripData.transportType === 'car' && (tripData.company === 'soloDriver' || tripData.company === 'groupDriver')">
+                <div v-show="(tripData.transportType === 'bike' || tripData.transportType === 'car')" class="flex-center-h">
+                    <img
+                            src="{{ asset('img/icons/dollar.svg') }}"
+                            alt="money icon"
+                            height="32px"
+                            width="32px" />
+                    <strong v-show="(tripData.transportType === 'car')" style="padding-left: 6px;">0,25 &euro;/Km</strong>
+                    <strong v-show="(tripData.transportType === 'bike')" style="padding-left: 6px;">0,23 &euro;/Km</strong>
+                </div>
+                <br>
+                <div v-show="(tripData.transportType === 'car' || tripData.transportType === 'bike')">
                     <h3>Hoeveel Km heb je afgelegd? (heen + terug)</h3>
                     <div v-if="distanceError" class="alert alert-warning">
                         ${ distanceError }
@@ -345,11 +391,6 @@
                             <span v-show="tripData.estimateDistance > 0" class="btn btn-outline-danger" @click="tripData.distance = tripData.estimateDistance">reset</span>
                         </div>
                     </div>
-                </div>
-                <div class="alert alert-info"
-                     v-show="(tripData.company === 'carpooler' && tripData.transportType === 'car') || tripData.transportType === 'bike' || tripData.transportType === 'scooter'">
-                    Helaas, hiervoor betalen we geen onkosten terug. We vragen je toch het formulier in te dienen om zo
-                    een beeld te krijgen van welke vervoersmiddelen er allemaal gebruikt worden.
                 </div>
             </div>
             <div class="validator" v-bind:class="['todo' != 'todo' ? 'validator-ok' : 'validator-to-finish']">

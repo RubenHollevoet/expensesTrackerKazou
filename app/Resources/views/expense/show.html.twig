@@ -173,6 +173,8 @@
                                     auto
                                 {% elseif trip.transportType == 'OV' %}
                                     openbaar vervoer
+                                {% elseif trip.transportType == 'bike' %}
+                                    fiets
                                 {% endif %}
                             </p>
                             <p><strong>Datum activiteit: </strong>{{ trip.date|date('j-n-Y') }}</p>

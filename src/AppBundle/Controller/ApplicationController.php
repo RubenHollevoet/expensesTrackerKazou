@@ -150,6 +150,10 @@ class ApplicationController extends Controller
                 $trip->setDistance($tripData->distance);
                 $trip->setPrice($tripData->distance * 0.25);
             }
+            if($trip->getTransportType() === 'bike') {
+                $trip->setDistance($tripData->distance);
+                $trip->setPrice($tripData->distance * 0.23);
+            }
             $this->getDoctrine()->getManager()->persist($trip);
             $this->getDoctrine()->getManager()->flush();
         }
@@ -304,11 +308,11 @@ class ApplicationController extends Controller
                 else {
                     $errors[] = 'Geen ticketjes geupload';
                 }
-            } elseif($formData->tripData->transportType === 'car') {
+            } elseif($formData->tripData->transportType === 'car' || $formData->tripData->transportType === 'bike') {
                 if($formData->tripData->distance) {
                     if ($formData->tripData->distance) $trip->setDistance($formData->tripData->distance);
                     if ($formData->tripData->company) $trip->setCompany($formData->tripData->company);
-                    $trip->setPrice($formData->tripData->distance * 0.25);
+                    $trip->setPrice($formData->tripData->distance * ($formData->tripData->transportType === 'car' ? 0.25 : 0.23));
                 }
                 else {
                     $errors[] = 'Probleem bij het berekenen van de prijs. Geen afstand gevonden.';
