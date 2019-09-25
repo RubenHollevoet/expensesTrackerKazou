@@ -103,7 +103,7 @@ Vue.component('trip-item', {
                 return this.trip.distance * 0.25;
             }
             if(this.trip.transportType === 'bike') {
-                return this.trip.distance * 0.23;
+                return this.trip.distance * 0.22;
             }
             else {
                 return this.trip.price;
