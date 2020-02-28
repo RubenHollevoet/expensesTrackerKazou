@@ -50,13 +50,19 @@ class ApplicationController extends Controller
             $welcomeMsg = 'goede nacht';
         }
         if($h > 18) {
-            $welcomeMsg = 'goed avond';
+            $welcomeMsg = 'goede avond';
         }
         elseif($h > 12) {
             $welcomeMsg = 'goede namiddag';
         }
         elseif($h > 8) {
-            $welcomeMsg = 'goedmorgen';
+            $welcomeMsg = 'goedemorgen';
+        }
+        elseif($h > 4) {
+            $welcomeMsg = 'goedemorgen';
+        }
+        elseif($h > 3) {
+            $welcomeMsg = 'waarom ben jij nog wakker?';
         }
         else {
             $welcomeMsg = 'goede nacht';

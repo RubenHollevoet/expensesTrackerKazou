@@ -215,9 +215,11 @@
 
                     <div v-if="region.id == 0" class="form-group">
                         <span class="btn" v-on:click="updateTo('CM Mechelen Noord')"
-                              v-bind:class="[tripData.to === 'CM Mechelen Noord' ? 'btn-primary' : 'btn-light']">Rezzon</span>
+                              v-bind:class="[tripData.to === 'CM Mechelen Noord' ? 'btn-primary' : 'btn-light']">CM Mechelen</span>
                         <span class="btn" v-on:click="updateTo('CM Turnhout')"
                               v-bind:class="[tripData.to === 'CM Turnhout' ? 'btn-primary' : 'btn-light']">Bar Volontar</span>
+                        <span class="btn" v-on:click="updateTo('Nesselaerstraat, 3590 Diepenbeek')"
+                              v-bind:class="[tripData.to === 'Nesselaerstraat, 3590 Diepenbeek' ? 'btn-primary' : 'btn-light']">Vertrekplaats Diepenbeek</span>
                     </div>
                     <div v-if="region.id == 1" class="form-group">
                         <span class="btn" v-on:click="updateTo('Haachtsesteenweg 1805, 1130 Haren')"
@@ -228,10 +230,18 @@
                               v-bind:class="[tripData.to === 'Ninoofsesteenweg 176, 1700 Dilbeek' ? 'btn-primary' : 'btn-light']">CM Dilbeek</span>
                         <span class="btn" v-on:click="updateTo('Molenbos1, 1731 Asse')"
                               v-bind:class="[tripData.to === 'Molenbos1, 1731 Asse' ? 'btn-primary' : 'btn-light']">Vertrekplaats Asse</span>
+                        <span class="btn" v-on:click="updateTo('CM Mechelen Noord')"
+                              v-bind:class="[tripData.to === 'CM Mechelen Noord' ? 'btn-primary' : 'btn-light']">Vertrekplaats Mechelen</span>
+                        <span class="btn" v-on:click="updateTo('Nesselaerstraat, 3590 Diepenbeek')"
+                              v-bind:class="[tripData.to === 'Nesselaerstraat, 3590 Diepenbeek' ? 'btn-primary' : 'btn-light']">Vertrekplaats Diepenbeek</span>
                     </div>
                     <div v-if="region.id == 4" class="form-group">
-                        <span class="btn" v-on:click="updateTo('Lostraat 541, 3010 Kessel-Lo')"
-                              v-bind:class="[tripData.to === 'Lostraat 541, 3010 Kessel-Lo' ? 'btn-primary' : 'btn-light']">Verbondsgebouw Leuven</span>
+                        <span class="btn" v-on:click="updateTo('p')"
+                              v-bind:class="[tripData.to === 'Platte-lo straat 541, 3010 Kessel-Lo' ? 'btn-primary' : 'btn-light']">Verbondsgebouw Leuven</span>
+                        <span class="btn" v-on:click="updateTo('CM Mechelen Noord')"
+                              v-bind:class="[tripData.to === 'CM Mechelen Noord' ? 'btn-primary' : 'btn-light']">Vertrekplaats Mechelen</span>
+                        <span class="btn" v-on:click="updateTo('Nesselaerstraat, 3590 Diepenbeek')"
+                              v-bind:class="[tripData.to === 'Nesselaerstraat, 3590 Diepenbeek' ? 'btn-primary' : 'btn-light']">Vertrekplaats Diepenbeek</span>
                     </div>
                     {#{% endif %}#}
                     <span>OF</span>
@@ -427,7 +437,7 @@
                             v-bind:error="error"
                             v-bind:key="error">
                     </form-errors>
-                </ul>
+                </ul>g
             </div>
             <div v-show="submitStatus === 500" class="alert alert-danger">
                 Er heeft zich een probleem voorgedaan en je onkosten zij niet opgeslagen.
