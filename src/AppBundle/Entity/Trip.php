@@ -144,7 +144,7 @@ class Trip
 
 
     /**
-     * @ORM\ManyToOne(targetEntity="Payment")
+     * @ORM\ManyToOne(targetEntity="Payment", inversedBy="trips")
      */
     private $payment;
 

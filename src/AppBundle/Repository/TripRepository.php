@@ -90,4 +90,12 @@ class TripRepository extends EntityRepository
 
         return $qb->getQuery()->execute();
     }
+
+    public function findByPaymentOrderByUser($paymentId) {
+        $qb = $this->createQueryBuilder('trip')
+            ->where('trip.payment = :payment')->setParameter('payment', $paymentId)
+            ->orderBy('trip.user');
+
+        return $qb->getQuery()->execute();
+    }
 }

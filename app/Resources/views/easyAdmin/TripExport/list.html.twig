@@ -81,7 +81,12 @@
 
     <script type="text/x-template" id="export-template">
         <li>
-            <a v-bind:href="getDownloadLink">{{ "{{ getDisplayName }}" }}</a>
+            <span>
+                {{ "{{ getDisplayName }}" }}
+                <a v-bind:href="getDownloadLinkCsv">csv<span class="fa fa-download"></span></a>
+                <a v-bind:href="getDownloadLink">html<span class="fa fa-download"></span></a>
+            </span>
+
         </li>
     </script>
 {% endblock %}
@@ -115,21 +120,24 @@
 
         Vue.component('export', {
             props: {
+                id: 0,
                 name: ''
             },
             computed: {
                 getDisplayName: function () {
                    var parts = this.name.split('_');
-                   console.log(parts);
 
                    var name = parts[3].split('.')[0];
                    var dateParts = parts[1].split('-');
                    var date = dateParts[2] + '-' + dateParts[3] + '-' +dateParts[4];
 
-                   return 'export van ' + date + ' | ' + parts[2] + ' onkosten | gemaakt door ' + name;
+                   return date + ' | ' + parts[2] + ' onkosten | door ' + name;
                 },
                 getDownloadLink: function () {
                     return '/admin/downloadExport/' + this.$parent.data.id + '/' + this.name;
+                },
+                getDownloadLinkCsv: function () {
+                    return '/admin/generateCsv/' + this.$parent.data.id;
                 }
             },
             template: '#export-template',

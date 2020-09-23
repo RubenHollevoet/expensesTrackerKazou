@@ -201,7 +201,7 @@ var app = new Vue({
             };
             // axios.post('/app_dev.php/api/createTrip', tripData)
             axios.post('/api/createTrip', tripData)
-                .then(function (response) {
+                .then(function (respoconst axios = require('axios');nse) {
                     // console.log(response.data.status);
                     if(response.data.status === 'ok') {
                         self.submitStatus = 200;

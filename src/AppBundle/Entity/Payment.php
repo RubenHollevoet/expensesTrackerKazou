@@ -40,6 +40,11 @@ class Payment
     private $createdBy;
 
     /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Trip", mappedBy="payment")
+     */
+    private $trips;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -101,5 +106,13 @@ class Payment
     public function setCreatedBy($createdBy)
     {
         $this->createdBy = $createdBy;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTrips()
+    {
+        return $this->trips;
     }
 }

@@ -580,6 +580,43 @@ class ApplicationController extends Controller
     }
 
     /**
+     * @Route("/admin/generateCsv/{paymentId}", name="csvExport")
+     */
+    public function generateCsvByPayment(Request $request, $paymentId) {
+
+        $em = $this->getDoctrine()->getManager();
+
+        $trips = $em->getRepository(Trip::class)->findByPaymentOrderByUser($paymentId);
+
+        $fp = fopen('php://temp', 'w');
+        fputcsv($fp, ['Naam', 'Rijksregisternummer', 'adres', 'rekening', 'bedrag', 'S2', 'S3', 'S5', 'Activiteit of vakantie', 'Opmerkingen']);
+        foreach ($trips as $trip) {
+            /** @var Trip $trip */
+            fputcsv($fp, [
+                $trip->getUser()->getFirstName().' '.$trip->getUser()->getLastName(),
+                $trip->getUser()->getPersonId(),
+                $trip->getUser()->getAddress(),
+                $trip->getUser()->getIban(),
+                $trip->getPrice(),
+                $trip->getCodeS2(),
+                $trip->getCodeS3(),
+                $trip->getCodeS5(),
+                implode($trip->getGroupStack(), ' -> ').' | '.$trip->getActivityName(),
+                $trip->getComment(),
+            ]);
+        }
+
+        rewind($fp);
+        $response = new Response(stream_get_contents($fp));
+        fclose($fp);
+
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="export_'.date("d-m-Y").'.csv"');
+
+        return $response;
+    }
+
+    /**
      * @Route("/admin/downloadExport/{regionId}/{fileName}", name="downloadExport")
      *
      * @var string $fileName
