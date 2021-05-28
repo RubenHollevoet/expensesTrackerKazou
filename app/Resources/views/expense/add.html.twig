@@ -234,7 +234,7 @@
                               v-bind:class="[tripData.to === 'Nesselaerstraat, 3590 Diepenbeek' ? 'btn-primary' : 'btn-light']">Vertrekplaats Diepenbeek</span>
                     </div>
                     <div v-if="region.id == 4" class="form-group">
-                        <span class="btn" v-on:click="updateTo('p')"
+                        <span class="btn" v-on:click="updateTo('Platte-lo straat 541, 3010 Kessel-Lo')"
                               v-bind:class="[tripData.to === 'Platte-lo straat 541, 3010 Kessel-Lo' ? 'btn-primary' : 'btn-light']">Verbondsgebouw Leuven</span>
                         <span class="btn" v-on:click="updateTo('CM Mechelen Noord')"
                               v-bind:class="[tripData.to === 'CM Mechelen Noord' ? 'btn-primary' : 'btn-light']">Vertrekplaats Mechelen</span>
@@ -435,7 +435,7 @@
                             v-bind:error="error"
                             v-bind:key="error">
                     </form-errors>
-                </ul>g
+                </ul>
             </div>
             <div v-show="submitStatus === 500" class="alert alert-danger">
                 Er heeft zich een probleem voorgedaan en je onkosten zij niet opgeslagen.
